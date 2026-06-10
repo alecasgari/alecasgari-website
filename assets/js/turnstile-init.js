@@ -12,20 +12,16 @@
     var timer = setInterval(function () {
       attempts += 1;
       var token = document.querySelector('[name="cf-turnstile-response"]');
-      var iframe = document.querySelector('.cf-turnstile iframe');
       if (token && token.value) {
         setSubmitEnabled(true);
         clearInterval(timer);
-      } else if (iframe) {
+        return;
+      }
+      if (document.querySelector('.cf-turnstile iframe')) {
         setSubmitEnabled(true);
-      } else if (attempts > 60) {
+      }
+      if (attempts > 40) {
         clearInterval(timer);
-        document.querySelectorAll('[data-turnstile]').forEach(function (el) {
-          if (!el.querySelector('iframe')) {
-            el.innerHTML =
-              '<p class="text-danger small mb-0">Security check did not load. Add alecasgari.com in Cloudflare Turnstile hostnames, then refresh.</p>';
-          }
-        });
       }
     }, 500);
   }

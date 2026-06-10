@@ -5,14 +5,18 @@
 - **Site Key** (public): in HTML — `0x4AAAAAAADhpnAczaApE118F`
 - **Secret Key** (private): only in n8n — never commit to Git
 
-## Cloudflare dashboard (production)
+## Cloudflare dashboard (production) — required
 
-In **Turnstile → your widget → Hostname management**, add:
+Console error **400020** = widget cannot run on this domain.
 
-- `alecasgari.com`
-- `www.alecasgari.com`
+1. [Cloudflare Dashboard](https://dash.cloudflare.com) → **Turnstile**
+2. Open your widget (site key `0x4AAAAAAADhpnAczaApE118F`)
+3. **Hostname management** → Add:
+   - `alecasgari.com`
+   - `www.alecasgari.com`
+4. **Save** → wait 1–2 minutes → hard refresh the contact page
 
-Without this, the widget will not load on the live site.
+If it still fails, create a **new Turnstile widget** for this domain and update `turnstile-config.js` with the new site key.
 
 ---
 
