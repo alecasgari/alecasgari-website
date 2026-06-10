@@ -1,10 +1,14 @@
 (function () {
-  var host = location.hostname;
-  var isLocal = host === 'localhost' || host === '127.0.0.1';
+  var isLocal =
+    location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
   window.TURNSTILE_SITE_KEY = isLocal
     ? '1x00000000000000000000AA'
     : '0x4AAAAAAADhpnAczaApE118F';
 
-  window.TURNSTILE_IS_LOCAL = isLocal;
+  if (isLocal) {
+    document.querySelectorAll('.cf-turnstile').forEach(function (el) {
+      el.setAttribute('data-sitekey', '1x00000000000000000000AA');
+    });
+  }
 })();
