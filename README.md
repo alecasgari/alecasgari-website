@@ -7,6 +7,7 @@ Deploy on server: run `./deploy.sh` (or GitHub Actions — step 4).
 | GitHub | `https://github.com/alecasgari/alecasgari-website` |
 | Branch | `main` |
 | Server path | `/home/alecadmin/alecasgari-website` |
+| NPM forwards to | `http://alec-website-static:80` (Docker nginx container) |
 
 ## Preview
 ```bash
