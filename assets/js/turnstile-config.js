@@ -4,7 +4,7 @@
 
   window.TURNSTILE_SITE_KEY = isLocal
     ? '1x00000000000000000000AA'
-    : '0x4AAAAAAADhpnAczaApE118F';
+    : '0x4AAAAAAADiIsuX0j3E66Dk-';
 
   if (isLocal) {
     document.querySelectorAll('.cf-turnstile').forEach(function (el) {

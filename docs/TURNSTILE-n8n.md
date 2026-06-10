@@ -2,7 +2,7 @@
 
 ## Keys
 
-- **Site Key** (public): in HTML — `0x4AAAAAAADhpnAczaApE118F`
+- **Site Key** (public): in HTML — `0x4AAAAAAADiIsuX0j3E66Dk-`
 - **Secret Key** (private): only in n8n — never commit to Git
 
 ## Cloudflare dashboard (production) — required
@@ -10,7 +10,7 @@
 Console error **400020** = widget cannot run on this domain.
 
 1. [Cloudflare Dashboard](https://dash.cloudflare.com) → **Turnstile**
-2. Open your widget (site key `0x4AAAAAAADhpnAczaApE118F`)
+2. Open your widget (site key `0x4AAAAAAADiIsuX0j3E66Dk-`)
 3. **Hostname management** → Add:
    - `alecasgari.com`
    - `www.alecasgari.com`
