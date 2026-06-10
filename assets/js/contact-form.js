@@ -1,5 +1,5 @@
 /**
- * Contact form → n8n webhook + Cloudflare Turnstile token
+ * Contact form → n8n webhook (honeypot anti-spam)
  */
 (function () {
   const WEBHOOK = 'https://n8n.alecasgari.com/webhook/3d5997cf-3089-46fd-91e2-1183043092c4';
@@ -9,19 +9,13 @@
     if (!form) return;
 
     const btn = document.getElementById('submitBtn');
-    const siteKey = window.TURNSTILE_SITE_KEY;
 
-  form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      const tokenInput = form.querySelector('[name="cf-turnstile-response"]');
-      const token = tokenInput && tokenInput.value;
-      if (siteKey && !token) {
-        alert('Please wait for the security check to finish, then try again.');
-        return;
-      }
-
       const fd = new FormData(form);
+      if (fd.get('website')) return;
+
       const params = new URLSearchParams();
       const firstName = fd.get('firstName') || '';
       const lastName = fd.get('lastName') || '';
@@ -36,7 +30,6 @@
         phone: fd.get('phone') || '',
         message: fd.get('message') || '',
         service: fd.get('service') || '',
-        turnstile_token: token || '',
         page_url: location.href,
         timestamp: new Date().toISOString(),
       };
@@ -68,7 +61,6 @@
         console.error(err);
         alert('Could not send message. Please try again or email hello@alecasgari.com');
         if (btn) btn.disabled = false;
-        if (window.turnstile && siteKey) window.turnstile.reset();
       }
     });
   });
