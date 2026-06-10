@@ -17,17 +17,7 @@
       const tokenInput = form.querySelector('[name="cf-turnstile-response"]');
       const token = tokenInput && tokenInput.value;
       if (siteKey && !token) {
-        var widget = form.querySelector('[data-turnstile]');
-        var loaded = widget && widget.querySelector('iframe');
-        if (!loaded) {
-          alert(
-            window.TURNSTILE_IS_LOCAL
-              ? 'Security widget did not load. Refresh the page and wait a moment before submitting.'
-              : 'Security check is loading. Please wait a few seconds and try again.'
-          );
-        } else {
-          alert('Please complete the security check.');
-        }
+        alert('Please wait for the security check to finish, then try again.');
         return;
       }
 

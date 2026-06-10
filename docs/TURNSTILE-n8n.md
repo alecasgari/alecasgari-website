@@ -5,6 +5,15 @@
 - **Site Key** (public): in HTML — `0x4AAAAAAADhpnAczaApE118F`
 - **Secret Key** (private): only in n8n — never commit to Git
 
+## Cloudflare dashboard (production)
+
+In **Turnstile → your widget → Hostname management**, add:
+
+- `alecasgari.com`
+- `www.alecasgari.com`
+
+Without this, the widget will not load on the live site.
+
 ---
 
 ## Workflow order
