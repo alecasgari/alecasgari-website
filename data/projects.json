@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Automated-Webinar-Registration-and-Lead-Management-System",
+    "title": "Automated Webinar Registration and Lead Management System",
+    "excerpt": "A comprehensive end-to-end automation system for managing webinar registrations, lead categorization, and automated certificate issuance.",
+    "image": "/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "Webinar automation",
+      "Lead management",
+      "n8n automation",
+      "Telegram bot",
+      "Certificate automation"
+    ],
+    "technologies": [
+      "n8n",
+      "Telegram Bot API",
+      "Google Sheets",
+      "Google Drive",
+      "Google Slides"
+    ],
+    "date": "2026-06-08",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "4 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Automated-Webinar-Registration-and-Lead-Management-System.html",
+    "url": "/projects/Automated-Webinar-Registration-and-Lead-Management-System.html"
+  },
+  {
     "slug": "ERP-System-Implementation",
     "title": "Complete ERP System Implementation for Pharma Tech Pharmaceutical Company",
     "excerpt": "Implemented a comprehensive ERP system tailored for Pharma Tech, covering all essential modules from procurement to logistics. The project enhanced workflow automation and increased sales by 40%.",
