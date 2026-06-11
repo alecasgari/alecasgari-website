@@ -1,5 +1,32 @@
 [
   {
+    "slug": "End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration",
+    "title": "End-to-End IPTV Smart Pro Platform Development and Integration",
+    "excerpt": "A comprehensive end-to-end IPTV solution developed and implemented for the IPTV Smart Pro project, utilizing cutting-edge technologies to enhance streaming capabilities.",
+    "image": "/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.jpg",
+    "category": "System Integration",
+    "tags": [
+      "IPTV",
+      "Smart Pro",
+      "System Integration",
+      "Streaming Technology",
+      "Network Infrastructure"
+    ],
+    "technologies": [
+      "IPTV Framework",
+      "Advanced Streaming Protocols",
+      "Network Integration Tools"
+    ],
+    "date": "2026-06-11",
+    "clientName": "Confidential Client",
+    "clientCompany": "IPTV Smart Pro",
+    "duration": "3 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.html",
+    "url": "/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.html"
+  },
+  {
     "slug": "Automated-Webinar-Registration-and-Lead-Management-System",
     "title": "Automated Webinar Registration and Lead Management System",
     "excerpt": "A comprehensive end-to-end automation system for managing webinar registrations, lead categorization, and automated certificate issuance.",
