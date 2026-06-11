@@ -87,7 +87,7 @@
     </div>`;
   }
 
-  document.addEventListener('DOMContentLoaded', async function () {
+  async function init() {
     const grid = document.getElementById('projects-grid');
     const loading = document.getElementById('results-loading');
     if (!grid) return;
@@ -115,6 +115,10 @@
 
       grid.innerHTML = projects.map((p, i) => renderCard(p, i)).join('');
 
+      if (typeof AOS !== 'undefined') {
+        AOS.refresh();
+      }
+
       document.dispatchEvent(new CustomEvent('projects:ready'));
     } catch (e) {
       console.error('Failed to load projects', e);
@@ -123,5 +127,11 @@
     } finally {
       if (loading) loading.classList.add('d-none');
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
