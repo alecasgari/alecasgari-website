@@ -6,18 +6,18 @@
     "image": "/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg",
     "category": "AI Automation",
     "tags": [
-      "Webinar automation",
-      "Lead management",
-      "n8n automation",
-      "Telegram bot",
-      "Certificate automation"
+      "Webinar Automation",
+      "Lead Management",
+      "n8n",
+      "Automated Certification",
+      "Telegram Bot"
     ],
     "technologies": [
       "n8n",
       "Telegram Bot API",
       "Google Sheets",
-      "Google Drive",
-      "Google Slides"
+      "Google Slides",
+      "Google Drive"
     ],
     "date": "2026-06-08",
     "clientName": "Confidential Client",
