@@ -1,0 +1,37 @@
+.project-featured-img {
+  max-height: 500px;
+  object-fit: cover;
+}
+
+.project-description {
+  line-height: 1.8;
+}
+
+.project-description h2,
+.project-description h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.project-description p {
+  margin-bottom: 1.5rem;
+}
+
+.project-description ul {
+  margin-bottom: 1.5rem;
+  padding-left: 1.25rem;
+}
+
+.project-description li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .project-featured-img {
+    max-height: 300px;
+  }
+}

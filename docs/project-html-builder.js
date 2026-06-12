@@ -1,7 +1,6 @@
-// n8n Code node: "Prepare HTML for GitHub"
-// Keep in sync with docs/project-html-builder.js — paste this whole file into n8n.
-
-const projectData = $('Get Project for photo').first().json;
+/**
+ * Shared project page HTML builder (used by n8n-prepare-project-html.js and regen script)
+ */
 
 function esc(s) {
   return String(s || '')
@@ -81,26 +80,50 @@ function splitCsv(val) {
 }
 
 function buildProjectHtml(data) {
-  const title = data.project_title;
-  const slug = slugify(title);
-  const excerpt = data.short_description || '';
+  const title = data.project_title || data.title;
+  const slug = data.slug || slugify(title);
+  const excerpt = data.short_description || data.excerpt || '';
   const category = data.category || '';
-  const status = 'Completed';
-  const featured = true;
-  const tags = splitCsv(data.tags);
-  const technologies = splitCsv(data.technologies_used);
-  const image = `/projects/${slug}.jpg`;
-  const url = `/projects/${slug}.html`;
+  const status = data.status || 'Completed';
+  const featured = data.featured !== false;
+  const tags = Array.isArray(data.tags) ? data.tags : splitCsv(data.tags);
+  const technologies = Array.isArray(data.technologies)
+    ? data.technologies
+    : splitCsv(data.technologies_used || data.technologies);
+  const image = data.image || `/projects/${slug}.jpg`;
+  const url = data.url || `/projects/${slug}.html`;
   const pageUrl = `https://alecasgari.com${url}`;
-  const date = String(data.project_date || '').slice(0, 10);
-  const bodyHtml = mdToHtml(data.project_description);
+  const date = String(data.project_date || data.date || '').slice(0, 10);
+  const clientName = data.client_name || data.clientName || '';
+  const clientCompany = data.client_company || data.clientCompany || '';
+  const duration = data.project_duration || data.duration || '';
+  const bodyHtml = mdToHtml(data.project_description || data.description || '');
+  const liveUrl = data.live_project_url || data.external_url || '';
+  const showLive =
+    liveUrl && !liveUrl.includes('alecasgari.com/projects/');
+
+  const featuredBadge = featured
+    ? '<span class="badge bg-warning text-dark">Featured</span>'
+    : '';
 
   const techBadges = technologies
     .map((t) => `<span class="badge text-bg-primary text-dark">${esc(t)}</span>`)
     .join('');
+
   const tagBadges = tags
     .map((t) => `<span class="badge text-white border border-white">${esc(t)}</span>`)
     .join('');
+
+  const liveCard = showLive
+    ? `<div class="sidebar-card p-4 bg-primary rounded-3">
+        <h5 class="mb-3 text-dark">Live Project</h5>
+        <p class="mb-3 text-dark text-opacity-70">Check out the live project and see the results for yourself.</p>
+        <a href="${esc(liveUrl)}" class="btn btn-light w-100" target="_blank" rel="noopener">
+          Visit Live Project
+          <iconify-icon icon="lucide:external-link" class="ms-2"></iconify-icon>
+        </a>
+      </div>`
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -136,7 +159,7 @@ function buildProjectHtml(data) {
             <div class="d-flex align-items-center gap-3 flex-wrap">
               <span class="badge text-bg-primary">${esc(category)}</span>
               <span class="badge text-bg-secondary">${esc(status)}</span>
-              <span class="badge bg-warning text-dark">Featured</span>
+              ${featuredBadge}
             </div>
             <h1 class="mb-0 fs-9">${esc(title)}</h1>
             <p class="fs-5 mb-0 text-opacity-70">${esc(excerpt)}</p>
@@ -144,8 +167,8 @@ function buildProjectHtml(data) {
               <div class="d-flex align-items-center gap-3">
                 <iconify-icon icon="solar:user-bold" class="fs-6 text-primary"></iconify-icon>
                 <div>
-                  <h6 class="mb-0">${esc(data.client_name)}</h6>
-                  <p class="mb-0 text-opacity-70 small">${esc(data.client_company)}</p>
+                  <h6 class="mb-0">${esc(clientName)}</h6>
+                  <p class="mb-0 text-opacity-70 small">${esc(clientCompany)}</p>
                 </div>
               </div>
               <div class="d-flex align-items-center gap-3">
@@ -159,7 +182,7 @@ function buildProjectHtml(data) {
                 <iconify-icon icon="solar:clock-circle-bold" class="fs-6 text-primary"></iconify-icon>
                 <div>
                   <h6 class="mb-0">Duration</h6>
-                  <p class="mb-0 text-opacity-70 small">${esc(data.project_duration)}</p>
+                  <p class="mb-0 text-opacity-70 small">${esc(duration)}</p>
                 </div>
               </div>
             </div>
@@ -193,9 +216,9 @@ function buildProjectHtml(data) {
               <div class="d-flex flex-column gap-3">
                 <div><h6 class="mb-1 text-white">Category</h6><p class="mb-0 text-white text-opacity-70">${esc(category)}</p></div>
                 <div><h6 class="mb-1 text-white">Status</h6><p class="mb-0 text-white text-opacity-70">${esc(status)}</p></div>
-                <div><h6 class="mb-1 text-white">Client</h6><p class="mb-0 text-white text-opacity-70">${esc(data.client_name)}</p></div>
+                <div><h6 class="mb-1 text-white">Client</h6><p class="mb-0 text-white text-opacity-70">${esc(clientName)}</p></div>
                 <div><h6 class="mb-1 text-white">Date</h6><p class="mb-0 text-white text-opacity-70">${esc(formatDate(date))}</p></div>
-                <div><h6 class="mb-1 text-white">Duration</h6><p class="mb-0 text-white text-opacity-70">${esc(data.project_duration)}</p></div>
+                <div><h6 class="mb-1 text-white">Duration</h6><p class="mb-0 text-white text-opacity-70">${esc(duration)}</p></div>
               </div>
             </div>
             <div class="sidebar-card p-4 bg-dark rounded-3 mb-4">
@@ -206,6 +229,7 @@ function buildProjectHtml(data) {
               <h5 class="mb-3 text-white">Tags</h5>
               <div class="d-flex flex-wrap gap-2">${tagBadges}</div>
             </div>
+            ${liveCard}
           </div>
         </div>
       </div>
@@ -248,32 +272,35 @@ function buildProjectHtml(data) {
 </html>`;
 }
 
-const slug = slugify(projectData.project_title);
-const html = buildProjectHtml(projectData);
+function buildProjectsJsonEntry(data) {
+  const slug = data.slug || slugify(data.project_title || data.title);
+  const pageUrl = `https://alecasgari.com/projects/${slug}.html`;
+  return {
+    slug,
+    title: data.project_title || data.title,
+    excerpt: data.short_description || data.excerpt,
+    image: data.image || `/projects/${slug}.jpg`,
+    category: data.category,
+    tags: Array.isArray(data.tags) ? data.tags : splitCsv(data.tags),
+    technologies: Array.isArray(data.technologies)
+      ? data.technologies
+      : splitCsv(data.technologies_used || data.technologies),
+    date: String(data.project_date || data.date || '').slice(0, 10),
+    clientName: data.client_name || data.clientName,
+    clientCompany: data.client_company || data.clientCompany,
+    duration: data.project_duration || data.duration,
+    status: data.status || 'Completed',
+    featured: data.featured !== false,
+    projectLink: pageUrl,
+    url: `/projects/${slug}.html`,
+  };
+}
 
-const projectsJsonEntry = {
-  slug,
-  title: projectData.project_title,
-  excerpt: projectData.short_description,
-  image: `/projects/${slug}.jpg`,
-  category: projectData.category,
-  tags: splitCsv(projectData.tags),
-  technologies: splitCsv(projectData.technologies_used),
-  date: String(projectData.project_date || '').slice(0, 10),
-  clientName: projectData.client_name,
-  clientCompany: projectData.client_company,
-  duration: projectData.project_duration,
-  status: 'Completed',
-  featured: true,
-  projectLink: `https://alecasgari.com/projects/${slug}.html`,
-  url: `/projects/${slug}.html`,
-};
-
-return {
-  slug,
-  project_id: projectData.project_id,
-  project_link: `https://alecasgari.com/projects/${slug}.html`,
-  image_path: `/projects/${slug}.jpg`,
-  base64_html: Buffer.from(html, 'utf8').toString('base64'),
-  projects_json_entry: projectsJsonEntry,
+module.exports = {
+  esc,
+  mdToHtml,
+  slugify,
+  splitCsv,
+  buildProjectHtml,
+  buildProjectsJsonEntry,
 };

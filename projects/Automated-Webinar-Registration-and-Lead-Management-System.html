@@ -10,53 +10,151 @@
 <link rel="stylesheet" href="/assets/libs/aos-master/dist/aos.css">
 <link rel="stylesheet" href="/assets/css/styles.css">
 <link rel="stylesheet" href="/assets/css/extra.css">
+<link rel="stylesheet" href="/assets/css/project-detail.css">
 </head>
 <body>
 <header class="header border-4 border-primary border-top position-fixed start-0 top-0 w-100">
   <div class="container">
     <div class="header-wrapper d-flex align-items-center justify-content-between">
       <div class="logo">
-        <a href="/"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" class="logo-img"></a>
+        <a href="/" class="logo-dark"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" class="logo-img"></a>
       </div>
       <a href="/projects.html" class="btn btn-sm btn-outline-dark">All Projects</a>
     </div>
   </div>
 </header>
-<div class="page-wrapper overflow-hidden" style="padding-top:100px">
-  <section class="py-5 bg-light-gray">
-    <div class="container col-lg-10">
-      <span class="badge text-bg-primary">AI Automation</span>
-      <span class="badge text-bg-secondary ms-2">Completed</span>
-      <h1 class="mt-4">Automated Webinar Registration and Lead Management System</h1>
-      <p class="fs-5 text-opacity-70">A comprehensive end-to-end automation system for managing webinar registrations, lead categorization, and automated certificate issuance.</p>
-      <p class="small mb-0">Confidential Client · Confidential Client · 2026-06-08 · 4 weeks</p>
+<div class="page-wrapper overflow-hidden">
+  <section class="project-hero py-5 py-lg-11 py-xl-12 bg-light-gray" style="padding-top:120px">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-10 col-xxl-8">
+          <div class="d-flex flex-column gap-6">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <span class="badge text-bg-primary">AI Automation</span>
+              <span class="badge text-bg-secondary">Completed</span>
+              <span class="badge bg-warning text-dark">Featured</span>
+            </div>
+            <h1 class="mb-0 fs-9">Automated Webinar Registration and Lead Management System</h1>
+            <p class="fs-5 mb-0 text-opacity-70">A comprehensive end-to-end automation system for managing webinar registrations, lead categorization, and automated certificate issuance.</p>
+            <div class="d-flex flex-column flex-md-row gap-4">
+              <div class="d-flex align-items-center gap-3">
+                <iconify-icon icon="solar:user-bold" class="fs-6 text-primary"></iconify-icon>
+                <div>
+                  <h6 class="mb-0">Confidential Client</h6>
+                  <p class="mb-0 text-opacity-70 small">Confidential Client</p>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <iconify-icon icon="solar:calendar-bold" class="fs-6 text-primary"></iconify-icon>
+                <div>
+                  <h6 class="mb-0">Date</h6>
+                  <p class="mb-0 text-opacity-70 small">6/8/2026</p>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <iconify-icon icon="solar:clock-circle-bold" class="fs-6 text-primary"></iconify-icon>
+                <div>
+                  <h6 class="mb-0">Duration</h6>
+                  <p class="mb-0 text-opacity-70 small">4 weeks</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-  <section class="py-4">
-    <div class="container col-lg-10">
-      <img src="/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg" alt="Automated Webinar Registration and Lead Management System" class="img-fluid w-100 rounded-3">
+  <section class="project-featured-image py-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <img src="/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg" alt="Automated Webinar Registration and Lead Management System" class="img-fluid w-100 rounded-3 project-featured-img">
+        </div>
+      </div>
     </div>
   </section>
-  <section class="py-5">
-    <div class="container col-lg-8 project-description">
-      <h2>Project Overview
-This project involved the development of a fully automated system for webinar registration and lead management. The system streamlines the entire user journey, from initial sign-up via Telegram to post-webinar certificate delivery.</h2>
-<h3>The Problem
-Manual registration and certificate issuance processes were inefficient and prone to human error, hindering the scalability of educational webinars.</h3>
-<h3>The Solution
-- **Telegram Registration:** A custom Telegram bot allows users to register or retrieve existing records.
-- **Data Handling:** Seamlessly updates databases with user details including specialized skills and contact info.
-- **Automation Workflow:** Using n8n, the system handles the entire logic flow, from event registration to post-event engagement.
-- **Certification:** Automated generation and distribution of personalized certificates upon webinar completion.</h3>
-<h3>Technologies Used
-- **Automation Platform:** n8n
-- **Communication:** Telegram Bot API
-- **Presentation & Documentation:** Google Slides, Google Drive
-- **Database:** Google Sheets
-- **Integration:** Automated email notifications and data sync</h3>
+  <section class="project-content py-5 py-lg-11 py-xl-12">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="project-details">
+            <h2 class="mb-4">Project Details</h2>
+            <div class="project-description"><h3>Project Overview</h3>
+<p>This project involved the development of a fully automated system for webinar registration and lead management. The system streamlines the entire user journey, from initial sign-up via Telegram to post-webinar certificate delivery.</p>
+<h3>The Problem</h3>
+<p>Manual registration and certificate issuance processes were inefficient and prone to human error, hindering the scalability of educational webinars.</p>
+<h3>The Solution</h3>
+<ul>
+<li><strong>Telegram Registration:</strong> A custom Telegram bot allows users to register or retrieve existing records.</li>
+<li><strong>Data Handling:</strong> Seamlessly updates databases with user details including specialized skills and contact info.</li>
+<li><strong>Automation Workflow:</strong> Using n8n, the system handles the entire logic flow, from event registration to post-event engagement.</li>
+<li><strong>Certification:</strong> Automated generation and distribution of personalized certificates upon webinar completion.</li>
+</ul>
+<h3>Technologies Used</h3>
+<ul>
+<li><strong>Automation Platform:</strong> n8n</li>
+<li><strong>Communication:</strong> Telegram Bot API</li>
+<li><strong>Presentation &amp; Documentation:</strong> Google Slides, Google Drive</li>
+<li><strong>Database:</strong> Google Sheets</li>
+<li><strong>Integration:</strong> Automated email notifications and data sync</li>
+</ul></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="project-sidebar">
+            <div class="sidebar-card p-4 bg-dark rounded-3 mb-4">
+              <h5 class="mb-3 text-white">Project Info</h5>
+              <div class="d-flex flex-column gap-3">
+                <div><h6 class="mb-1 text-white">Category</h6><p class="mb-0 text-white text-opacity-70">AI Automation</p></div>
+                <div><h6 class="mb-1 text-white">Status</h6><p class="mb-0 text-white text-opacity-70">Completed</p></div>
+                <div><h6 class="mb-1 text-white">Client</h6><p class="mb-0 text-white text-opacity-70">Confidential Client</p></div>
+                <div><h6 class="mb-1 text-white">Date</h6><p class="mb-0 text-white text-opacity-70">6/8/2026</p></div>
+                <div><h6 class="mb-1 text-white">Duration</h6><p class="mb-0 text-white text-opacity-70">4 weeks</p></div>
+              </div>
+            </div>
+            <div class="sidebar-card p-4 bg-dark rounded-3 mb-4">
+              <h5 class="mb-3 text-white">Technologies</h5>
+              <div class="d-flex flex-wrap gap-2"><span class="badge text-bg-primary text-dark">n8n</span><span class="badge text-bg-primary text-dark">Telegram Bot API</span><span class="badge text-bg-primary text-dark">Google Sheets</span><span class="badge text-bg-primary text-dark">Google Slides</span><span class="badge text-bg-primary text-dark">Google Drive</span></div>
+            </div>
+            <div class="sidebar-card p-4 bg-dark rounded-3 mb-4">
+              <h5 class="mb-3 text-white">Tags</h5>
+              <div class="d-flex flex-wrap gap-2"><span class="badge text-white border border-white">Webinar Automation</span><span class="badge text-white border border-white">Lead Management</span><span class="badge text-white border border-white">n8n</span><span class="badge text-white border border-white">Automated Certification</span><span class="badge text-white border border-white">Telegram Bot</span></div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="project-cta py-5 py-lg-11 py-xl-12 bg-dark">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-8 text-center">
+          <div class="d-flex flex-column gap-6">
+            <h2 class="mb-0 text-white">Ready to Start Your Project?</h2>
+            <p class="fs-5 mb-0 text-white text-opacity-70">Let's discuss how we can help you achieve similar results.</p>
+            <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+              <a href="https://calendar.app.google/twixZsNv5j4jvbuz6" class="btn" target="_blank" rel="noopener">
+                <span class="btn-text">Book a Discovery Call</span>
+                <iconify-icon icon="lucide:arrow-up-right" class="btn-icon bg-white text-dark round-52 rounded-circle hstack justify-content-center fs-7 shadow-sm"></iconify-icon>
+              </a>
+              <a href="/projects.html" class="btn border border-white">
+                <span class="btn-text">View All Projects</span>
+                <iconify-icon icon="lucide:arrow-up-right" class="btn-icon bg-white text-dark round-52 rounded-circle hstack justify-content-center fs-7 shadow-sm"></iconify-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </div>
+<footer class="footer bg-dark py-5 border-top border-white border-opacity-10">
+  <div class="container text-center">
+    <p class="mb-0 text-white text-opacity-70">© 2025 Alec Asgari · <a href="mailto:hello@alecasgari.com" class="text-white">hello@alecasgari.com</a></p>
+  </div>
+</footer>
+<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/libs/aos-master/dist/aos.js"></script>
 <script src="/assets/js/custom.js"></script>
