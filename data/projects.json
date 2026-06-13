@@ -1,5 +1,35 @@
 [
   {
+    "slug": "Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform",
+    "title": "Automated Blood Glucose Monitoring and Health Tracking Web Platform",
+    "excerpt": "A comprehensive web-based application designed to monitor and store user blood glucose data, offering real-time AI-driven insights and historical health analysis.",
+    "image": "/projects/Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform.jpg",
+    "category": "Web Development",
+    "tags": [
+      "HealthTech",
+      "Web Development",
+      "Data Analytics",
+      "JavaScript",
+      "AI Processing"
+    ],
+    "technologies": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "Cursor IDE",
+      "n8n",
+      "AI Processing"
+    ],
+    "date": "2026-06-01",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "Approximately 1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform.html",
+    "url": "/projects/Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform.html"
+  },
+  {
     "slug": "IPTV-Smart-Solutions-Development-for-IPTV-Smarters-Pro-2026",
     "title": "IPTV Smart Solutions Development for IPTV Smarters Pro 2026",
     "excerpt": "Comprehensive design and implementation of a full-scale IPTV system tailored for IPTV Smarters Pro, leveraging advanced modern technologies.",
