@@ -57,60 +57,6 @@
     "url": "/projects/Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform.html"
   },
   {
-    "slug": "IPTV-Smart-Solutions-Development-for-IPTV-Smarters-Pro-2026",
-    "title": "IPTV Smart Solutions Development for IPTV Smarters Pro 2026",
-    "excerpt": "Comprehensive design and implementation of a full-scale IPTV system tailored for IPTV Smarters Pro, leveraging advanced modern technologies.",
-    "image": "/projects/IPTV-Smart-Solutions-Development-for-IPTV-Smarters-Pro-2026.jpg",
-    "category": "Web Development",
-    "tags": [
-      "IPTV",
-      "IPTV Smarters Pro",
-      "Software Development",
-      "Streaming Solutions",
-      "System Architecture"
-    ],
-    "technologies": [
-      "IPTV Framework",
-      "Streaming Protocol Integration",
-      "Advanced Backend Systems"
-    ],
-    "date": "2026-06-12",
-    "clientName": "Confidential Client",
-    "clientCompany": "IPTV Smarters Pro",
-    "duration": "3 weeks",
-    "status": "Completed",
-    "featured": true,
-    "projectLink": "https://alecasgari.com/projects/IPTV-Smart-Solutions-Development-for-IPTV-Smarters-Pro-2026.html",
-    "url": "/projects/IPTV-Smart-Solutions-Development-for-IPTV-Smarters-Pro-2026.html"
-  },
-  {
-    "slug": "End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration",
-    "title": "End-to-End IPTV Smart Pro Platform Development and Integration",
-    "excerpt": "A comprehensive end-to-end IPTV solution developed and implemented for the IPTV Smart Pro project, utilizing cutting-edge technologies to enhance streaming capabilities.",
-    "image": "/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.jpg",
-    "category": "System Integration",
-    "tags": [
-      "IPTV",
-      "Smart Pro",
-      "System Integration",
-      "Streaming Technology",
-      "Network Infrastructure"
-    ],
-    "technologies": [
-      "IPTV Framework",
-      "Advanced Streaming Protocols",
-      "Network Integration Tools"
-    ],
-    "date": "2026-06-11",
-    "clientName": "Confidential Client",
-    "clientCompany": "IPTV Smart Pro",
-    "duration": "3 weeks",
-    "status": "Completed",
-    "featured": true,
-    "projectLink": "https://alecasgari.com/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.html",
-    "url": "/projects/End-to-End-IPTV-Smart-Pro-Platform-Development-and-Integration.html"
-  },
-  {
     "slug": "Automated-Webinar-Registration-and-Lead-Management-System",
     "title": "Automated Webinar Registration and Lead Management System",
     "excerpt": "A comprehensive end-to-end automation system for managing webinar registrations, lead categorization, and automated certificate issuance.",
