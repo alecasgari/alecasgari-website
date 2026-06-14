@@ -20,19 +20,16 @@
 
   function renderCard(p) {
     return (
-      '<div class="col-md-6 col-lg-4">' +
-      '<a href="' + esc(p.url) + '" class="text-decoration-none text-dark d-block h-100">' +
-      '<div class="project-card d-flex flex-column gap-3 h-100">' +
-      '<div class="project-card-img position-relative overflow-hidden">' +
-      '<div class="ratio ratio-16x9">' +
-      '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" class="img-cover" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
-      '</div></div>' +
-      '<div class="project-card-content d-flex flex-column gap-2">' +
-      '<span class="badge text-bg-primary align-self-start">' + esc(p.category) + '</span>' +
-      '<h3 class="mb-0 project-title fs-5">' + esc(p.title) + '</h3>' +
-      '<p class="mb-0 text-opacity-70 project-excerpt small">' + esc(p.excerpt) + '</p>' +
-      '<span class="small text-opacity-70">' + esc(formatDate(p.date)) + '</span>' +
-      '</div></div></a></div>'
+      '<article class="project-card-item">' +
+      '<a href="' + esc(p.url) + '" class="project-card-link">' +
+      '<div class="project-card">' +
+      '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" class="project-card-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
+      '<div class="project-card-body">' +
+      '<span class="project-tag">' + esc(p.category) + '</span>' +
+      '<h3>' + esc(p.title) + '</h3>' +
+      '<p>' + esc(p.excerpt) + '</p>' +
+      '<time>' + esc(formatDate(p.date)) + '</time>' +
+      '</div></div></a></article>'
     );
   }
 
@@ -41,7 +38,7 @@
     var loading = document.getElementById('results-loading');
     if (!grid) return;
 
-    if (loading) loading.classList.remove('d-none');
+    if (loading) loading.classList.remove('hidden');
 
     try {
       var res = await fetch('/data/projects.json?v=' + Date.now());
@@ -53,12 +50,13 @@
       });
 
       grid.innerHTML = projects.map(renderCard).join('');
+      grid.classList.add('is-visible');
     } catch (e) {
       console.error('Failed to load projects', e);
       grid.innerHTML =
-        '<div class="col-12"><p class="text-muted">Could not load projects. Please refresh.</p></div>';
+        '<p style="color:var(--muted)">Could not load projects. Please refresh.</p>';
     } finally {
-      if (loading) loading.classList.add('d-none');
+      if (loading) loading.classList.add('hidden');
     }
   }
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Lead Vetting Automation — Spring Future Case Study</title>
+  <meta name="description" content="How I built a multi-stage lead form with OTP verification and n8n AI agents for Spring Future, cutting manual data entry by 90% for an immigration consultancy.">
+  <link rel="canonical" href="https://alecasgari.com/case-studies/ai-lead-vetting-spring-future.html">
+  <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
+  <link rel="stylesheet" href="/assets/css/site.css?v=3">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="site-logo">
+        <img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="140" height="36">
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu"><iconify-icon icon="lucide:menu"></iconify-icon></button>
+      <nav>
+        <ul class="site-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About Me</a></li>
+          <li><a href="/case-studies.html" class="active">Case Studies</a></li>
+          <li><a href="/projects.html">Projects</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-detail-hero" style="background-image:url('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1400&amp;q=80')">
+      <div class="case-detail-hero-overlay"></div>
+      <div class="container">
+        <p class="eyebrow hero-in">
+          <iconify-icon icon="lucide:briefcase"></iconify-icon>
+          <a href="/case-studies.html">Case Studies</a> / AI Automation
+        </p>
+        <h1 class="hero-in hero-in-d1">AI-Driven Automation Engine for Lead Vetting</h1>
+        <p class="case-detail-client hero-in hero-in-d2">
+          <iconify-icon icon="lucide:building-2"></iconify-icon>
+          Spring Future — Immigration Consultancy
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container case-detail-layout">
+        <article class="case-detail-content reveal">
+          <h2><iconify-icon icon="lucide:file-text"></iconify-icon> Overview</h2>
+          <p>Spring Future supports clients exploring immigration pathways. Their sales team was drowning in web form submissions — many incomplete, duplicated, or clearly spam. Consultants spent the first part of every day copying data into spreadsheets and trying to guess which leads were worth a phone call.</p>
+          <p>I designed an automation engine that qualifies leads before they ever reach a human. The system collects structured answers, verifies phone numbers, scores intent with AI, and pushes only serious prospects to consultants through WhatsApp and Telegram alerts.</p>
+
+          <h2><iconify-icon icon="lucide:alert-circle"></iconify-icon> Challenge</h2>
+          <p>Immigration consultancies sell trust and expertise, not impulse purchases. That means leads need context — destination country, education history, budget range, timeline — before a consultant can help. The old single-page contact form collected names and vague messages, so staff had to chase missing details by phone.</p>
+          <p>Spam was the second problem. Competitor bots and fake numbers polluted the CRM. Manual review did not scale, and the team was burning hours on leads that would never convert. Spring Future needed a front door that was friendly for real users but firm against low-quality traffic.</p>
+
+          <h2><iconify-icon icon="lucide:route"></iconify-icon> Approach</h2>
+          <p>I built a multi-stage web form using Cursor-assisted development, breaking the intake into logical steps so applicants did not feel overwhelmed. Each step validated inputs before allowing progress. At the phone verification stage, the form called a webhook that issued a one-time password — only verified numbers moved forward.</p>
+          <p>Behind the form, n8n orchestrated the full pipeline. Submissions landed in a structured database, then passed through AI agents that summarized the profile, flagged risk signals, and assigned a priority score. High-intent leads triggered instant WhatsApp and Telegram messages to the duty consultant with a short briefing — not a raw JSON dump.</p>
+          <p>I also added engagement touchpoints: applicants received confirmation messages and gentle reminders if they abandoned a step. That kept real users moving while bots dropped off at verification gates.</p>
+
+          <h2><iconify-icon icon="lucide:layers"></iconify-icon> Technical Stack</h2>
+          <ul>
+            <li>Multi-step responsive web form (Cursor-assisted build)</li>
+            <li>Webhook API with dynamic OTP phone verification</li>
+            <li>n8n workflows for routing, scoring, and notifications</li>
+            <li>AI agents for lead summarization and intent analysis</li>
+            <li>WhatsApp and Telegram alert channels for consultants</li>
+            <li>Structured lead store for CRM handoff and reporting</li>
+          </ul>
+
+          <h2><iconify-icon icon="lucide:target"></iconify-icon> Results</h2>
+          <p>Manual data entry dropped by roughly 90%. Consultants stopped retyping form answers and started their days with prioritized lead briefings. Response times improved because the right person got notified the moment a qualified applicant finished the flow.</p>
+          <p>User engagement rose as well — completion rates climbed once the form felt like a guided conversation instead of a generic contact box. The team could finally measure which traffic sources produced real cases versus noise.</p>
+
+          <h2><iconify-icon icon="lucide:lightbulb"></iconify-icon> Key Takeaways</h2>
+          <p>Lead quality is a systems problem. Verification gates and staged questions filter spam better than any manual review queue. AI works best when it produces a short, actionable summary for humans — not when it tries to replace the sales conversation entirely. And for consultancies, speed of first response is still a competitive advantage, so alerts must land where staff already live: messaging apps.</p>
+
+          <div class="case-grid">
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:alert-circle"></iconify-icon> Problem</h3>
+              <p>An immigration company wasted hours manually reviewing unverified web leads and spam data.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:lightbulb"></iconify-icon> Solution</h3>
+              <p>Designed a multi-stage web form via Cursor. Implemented webhook responses with dynamic OTP phone verification gates and integrated backend AI agents via n8n to analyze lead profiles automatically.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:target"></iconify-icon> Impact</h3>
+              <div class="impact-box"><p><iconify-icon icon="lucide:trending-up"></iconify-icon> Stopped 90% of manual data entry work and increased user engagement via automated WhatsApp/Telegram alerts.</p></div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="sidebar-panel case-meta card-lift reveal">
+          <h3><iconify-icon icon="lucide:clipboard-list"></iconify-icon> Project at a Glance</h3>
+          <ul>
+            <li><iconify-icon icon="lucide:building-2"></iconify-icon><div><strong>Client</strong>Spring Future</div></li>
+            <li><iconify-icon icon="lucide:plane"></iconify-icon><div><strong>Industry</strong>Immigration consultancy</div></li>
+            <li><iconify-icon icon="lucide:bot"></iconify-icon><div><strong>Automation</strong>n8n + AI lead scoring</div></li>
+            <li><iconify-icon icon="lucide:shield-check"></iconify-icon><div><strong>Verification</strong>OTP phone gate</div></li>
+            <li><iconify-icon icon="lucide:trending-up"></iconify-icon><div><strong>Outcome</strong>90% less manual entry</div></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-alt section-tight">
+      <div class="container case-detail-cta reveal">
+        <a href="/case-studies.html" class="btn btn-outline">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+          All Case Studies
+        </a>
+        <a href="/contact.html" class="btn btn-primary">
+          <iconify-icon icon="lucide:mail"></iconify-icon>
+          Discuss Your Project
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <a href="/" class="footer-logo"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="120" height="32"></a>
+      <p class="footer-copy">© 2025 Alec Asgari</p>
+      <ul class="footer-links">
+        <li><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener"><iconify-icon icon="lucide:linkedin"></iconify-icon> LinkedIn</a></li>
+        <li><a href="https://github.com/alecasgari" target="_blank" rel="noopener"><iconify-icon icon="lucide:github"></iconify-icon> GitHub</a></li>
+        <li><a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> Email</a></li>
+      </ul>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-reveal.js"></script>
+</body>
+</html>

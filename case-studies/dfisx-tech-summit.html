@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DFISX 2023 Tech Summit Coordination — Case Study</title>
+  <meta name="description" content="Technical leadership for Dubai Future Innovation Summit 2023: custom event app, QR check-in, badge printing, and flawless 3-day execution for thousands of attendees.">
+  <link rel="canonical" href="https://alecasgari.com/case-studies/dfisx-tech-summit.html">
+  <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
+  <link rel="stylesheet" href="/assets/css/site.css?v=3">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="site-logo">
+        <img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="140" height="36">
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu"><iconify-icon icon="lucide:menu"></iconify-icon></button>
+      <nav>
+        <ul class="site-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About Me</a></li>
+          <li><a href="/case-studies.html" class="active">Case Studies</a></li>
+          <li><a href="/projects.html">Projects</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-detail-hero" style="background-image:url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1400&amp;q=80')">
+      <div class="case-detail-hero-overlay"></div>
+      <div class="container">
+        <p class="eyebrow hero-in">
+          <iconify-icon icon="lucide:briefcase"></iconify-icon>
+          <a href="/case-studies.html">Case Studies</a> / Events &amp; ICT
+        </p>
+        <h1 class="hero-in hero-in-d1">Technical Coordination for a Major Tech Summit</h1>
+        <p class="case-detail-client hero-in hero-in-d2">
+          <iconify-icon icon="lucide:map-pin"></iconify-icon>
+          Dubai Future Innovation Summit (DFISX 2023)
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container case-detail-layout">
+        <article class="case-detail-content reveal">
+          <h2><iconify-icon icon="lucide:file-text"></iconify-icon> Overview</h2>
+          <p>DFISX 2023 was a three-day innovation summit in Dubai bringing together thousands of attendees, international speakers, sponsors, and government partners. The organizing team needed more than a beautiful stage — they needed a digital backbone that could register guests, print badges on arrival, track sessions, and keep exhibitor data accurate in real time.</p>
+          <p>I served as the technical lead for the event's digital operations. That meant designing the attendee data model, building the check-in experience, wiring automations between registration and on-site hardware, and coordinating booth construction logistics so the technology worked from minute one of day one.</p>
+
+          <h2><iconify-icon icon="lucide:alert-circle"></iconify-icon> Challenge</h2>
+          <p>Large tech events fail quietly when data is messy. Duplicate registrations, misspelled names on badges, and slow check-in lines create a bad first impression before a single keynote begins. DFISX expected high walk-in volume, VIP guests with special access, and sponsor booths that needed live lead capture — all running on a compressed setup timeline.</p>
+          <p>The venue team also required precise coordination: power, networking, printer stations, and QR scanning points had to be mapped to physical floor plans. There was no room for a "we will fix it on day one" approach. The system had to be tested, staffed, and fault-tolerant before doors opened.</p>
+
+          <h2><iconify-icon icon="lucide:route"></iconify-icon> Approach</h2>
+          <p>I built a custom event application connected to no-code databases that held attendee profiles, ticket tiers, and sponsor categories. Registration updates flowed through n8n and Make automations so check-in staff always saw the latest record — even when last-minute changes arrived by email or WhatsApp.</p>
+          <p>At the entrance, QR code scanning triggered instant badge printing with the correct role color and session access. I set up redundant printer stations and trained volunteers on a simple recovery process if a device dropped offline. Behind the scenes, I coordinated booth fabrication timelines with the AV and construction vendors so network drops and power outlets landed exactly where hardware needed to sit.</p>
+          <p>During the event, I stayed on the floor as the escalation point for technical issues — not buried in a back office. That on-site leadership kept response times measured in minutes, not hours.</p>
+
+          <h2><iconify-icon icon="lucide:layers"></iconify-icon> Technical Stack</h2>
+          <ul>
+            <li>Custom event web app with mobile-friendly check-in UI</li>
+            <li>No-code databases (Airtable-style) for attendee and sponsor records</li>
+            <li>n8n and Make workflows for registration sync and notifications</li>
+            <li>QR scanning pipeline linked to on-site badge printers</li>
+            <li>Role-based badge templates for attendees, speakers, press, and VIPs</li>
+            <li>On-site tech runbook and volunteer training materials</li>
+          </ul>
+
+          <h2><iconify-icon icon="lucide:target"></iconify-icon> Results</h2>
+          <p>The summit ran across three days without a major systems outage. Check-in queues stayed manageable even during peak morning arrivals. Sponsors received usable lead data because capture tools were live before exhibitor hours began. Session operations staff could trust attendee counts instead of guessing from paper sign-in sheets.</p>
+          <p>After the event, the organizing committee received the "Best Event Organizer" trophy — a result of tight cross-team coordination, not just software. The digital layer made the human coordination visible: everyone worked from the same live data.</p>
+
+          <h2><iconify-icon icon="lucide:lightbulb"></iconify-icon> Key Takeaways</h2>
+          <p>Event technology is an operations problem first and a coding problem second. Automations matter, but on-site leadership matters more when thousands of people arrive at once. Build redundancy into check-in, keep badge printing simple, and test the full path from registration email to printed lanyard before attendees land in Dubai.</p>
+
+          <div class="case-grid">
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:alert-circle"></iconify-icon> Problem</h3>
+              <p>The event needed a high-precision digital setup to track data for thousands of attendees and global speakers.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:lightbulb"></iconify-icon> Solution</h3>
+              <p>Built a custom event app with no-code databases and n8n/Make automation for live QR code scanning and instant badge printing. Led on-site tech and booth construction logistics.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:target"></iconify-icon> Impact</h3>
+              <div class="impact-box"><p><iconify-icon icon="lucide:trophy"></iconify-icon> Flawless 3-day event execution. Awarded the &quot;Best Event Organizer&quot; Trophy.</p></div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="sidebar-panel case-meta card-lift reveal">
+          <h3><iconify-icon icon="lucide:clipboard-list"></iconify-icon> Project at a Glance</h3>
+          <ul>
+            <li><iconify-icon icon="lucide:mic"></iconify-icon><div><strong>Event</strong>DFISX 2023</div></li>
+            <li><iconify-icon icon="lucide:map-pin"></iconify-icon><div><strong>Location</strong>Dubai, UAE</div></li>
+            <li><iconify-icon icon="lucide:users"></iconify-icon><div><strong>Scale</strong>Thousands of attendees</div></li>
+            <li><iconify-icon icon="lucide:qr-code"></iconify-icon><div><strong>Check-in</strong>QR scan + badge printing</div></li>
+            <li><iconify-icon icon="lucide:trophy"></iconify-icon><div><strong>Outcome</strong>Best Event Organizer award</div></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-alt section-tight">
+      <div class="container case-detail-cta reveal">
+        <a href="/case-studies.html" class="btn btn-outline">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+          All Case Studies
+        </a>
+        <a href="/contact.html" class="btn btn-primary">
+          <iconify-icon icon="lucide:mail"></iconify-icon>
+          Discuss Your Project
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <a href="/" class="footer-logo"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="120" height="32"></a>
+      <p class="footer-copy">© 2025 Alec Asgari</p>
+      <ul class="footer-links">
+        <li><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener"><iconify-icon icon="lucide:linkedin"></iconify-icon> LinkedIn</a></li>
+        <li><a href="https://github.com/alecasgari" target="_blank" rel="noopener"><iconify-icon icon="lucide:github"></iconify-icon> GitHub</a></li>
+        <li><a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> Email</a></li>
+      </ul>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-reveal.js"></script>
+</body>
+</html>

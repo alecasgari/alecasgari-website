@@ -1,0 +1,2174 @@
+{
+  "name": "Alec Project Writer",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=projects/{{ $json.slug }}.html",
+        "fileContent": "={{ $json.base64_html }}",
+        "commitMessage": "=Auto-publish new project {{ $json.project_id }} from Telegram"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        592
+      ],
+      "id": "c40f028f-8469-41b5-b84e-27eed10e6eeb",
+      "name": "Upload HTML",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Prepare HTML for GitHub\"\n// Keep in sync with docs/project-html-builder.js — paste this whole file into n8n.\n\nconst projectData = $('Get Project for photo').first().json;\n\nfunction esc(s) {\n  return String(s || '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n}\n\nfunction inlineMd(text) {\n  return esc(text).replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');\n}\n\nfunction mdToHtml(md) {\n  const lines = String(md || '').split('\\n');\n  const out = [];\n  let inList = false;\n\n  function closeList() {\n    if (inList) {\n      out.push('</ul>');\n      inList = false;\n    }\n  }\n\n  for (const line of lines) {\n    const t = line.trim();\n    if (!t) {\n      closeList();\n      continue;\n    }\n    if (t.startsWith('## ')) {\n      closeList();\n      out.push(`<h3>${inlineMd(t.slice(3))}</h3>`);\n      continue;\n    }\n    if (t.startsWith('### ')) {\n      closeList();\n      out.push(`<h3>${inlineMd(t.slice(4))}</h3>`);\n      continue;\n    }\n    if (t.startsWith('- ')) {\n      if (!inList) {\n        out.push('<ul>');\n        inList = true;\n      }\n      out.push(`<li>${inlineMd(t.slice(2))}</li>`);\n      continue;\n    }\n    closeList();\n    out.push(`<p>${inlineMd(t)}</p>`);\n  }\n  closeList();\n  return out.join('\\n');\n}\n\nfunction formatDate(iso) {\n  if (!iso) return '';\n  const d = new Date(iso.includes('T') ? iso : iso + 'T00:00:00');\n  return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US');\n}\n\nfunction slugify(title) {\n  return String(title || '')\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .slice(0, 80);\n}\n\nfunction splitCsv(val) {\n  return String(val || '')\n    .split(',')\n    .map((t) => t.trim())\n    .filter(Boolean);\n}\n\nfunction buildProjectHtml(data) {\n  const title = data.project_title;\n  const slug = slugify(title);\n  const excerpt = data.short_description || '';\n  const category = data.category || '';\n  const status = 'Completed';\n  const featured = true;\n  const tags = splitCsv(data.tags);\n  const technologies = splitCsv(data.technologies_used);\n  const image = `/projects/${slug}.jpg`;\n  const url = `/projects/${slug}.html`;\n  const pageUrl = `https://alecasgari.com${url}`;\n  const date = String(data.project_date || '').slice(0, 10);\n  const bodyHtml = mdToHtml(data.project_description);\n\n  const techBadges = technologies\n    .map((t) => `<span class=\"badge text-bg-primary text-dark\">${esc(t)}</span>`)\n    .join('');\n  const tagBadges = tags\n    .map((t) => `<span class=\"badge text-white border border-white\">${esc(t)}</span>`)\n    .join('');\n\n  return `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>${esc(title)}</title>\n<meta name=\"description\" content=\"${esc(excerpt)}\">\n<link rel=\"canonical\" href=\"${pageUrl}\">\n<link rel=\"shortcut icon\" href=\"/assets/images/logos/favicon.svg\">\n<link rel=\"stylesheet\" href=\"/assets/libs/aos-master/dist/aos.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/styles.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/extra.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/project-detail.css\">\n</head>\n<body>\n<header class=\"header border-4 border-primary border-top position-fixed start-0 top-0 w-100\">\n  <div class=\"container\">\n    <div class=\"header-wrapper d-flex align-items-center justify-content-between\">\n      <div class=\"logo\">\n        <a href=\"/\" class=\"logo-dark\"><img src=\"/assets/images/logos/logo-dark.svg\" alt=\"Alec Asgari\" class=\"logo-img\"></a>\n      </div>\n      <a href=\"/projects.html\" class=\"btn btn-sm btn-outline-dark\">All Projects</a>\n    </div>\n  </div>\n</header>\n<div class=\"page-wrapper overflow-hidden\">\n  <section class=\"project-hero py-5 py-lg-11 py-xl-12 bg-light-gray\" style=\"padding-top:120px\">\n    <div class=\"container\">\n      <div class=\"row justify-content-center\">\n        <div class=\"col-xl-10 col-xxl-8\">\n          <div class=\"d-flex flex-column gap-6\">\n            <div class=\"d-flex align-items-center gap-3 flex-wrap\">\n              <span class=\"badge text-bg-primary\">${esc(category)}</span>\n              <span class=\"badge text-bg-secondary\">${esc(status)}</span>\n              <span class=\"badge bg-warning text-dark\">Featured</span>\n            </div>\n            <h1 class=\"mb-0 fs-9\">${esc(title)}</h1>\n            <p class=\"fs-5 mb-0 text-opacity-70\">${esc(excerpt)}</p>\n            <div class=\"d-flex flex-column flex-md-row gap-4\">\n              <div class=\"d-flex align-items-center gap-3\">\n                <iconify-icon icon=\"solar:user-bold\" class=\"fs-6 text-primary\"></iconify-icon>\n                <div>\n                  <h6 class=\"mb-0\">${esc(data.client_name)}</h6>\n                  <p class=\"mb-0 text-opacity-70 small\">${esc(data.client_company)}</p>\n                </div>\n              </div>\n              <div class=\"d-flex align-items-center gap-3\">\n                <iconify-icon icon=\"solar:calendar-bold\" class=\"fs-6 text-primary\"></iconify-icon>\n                <div>\n                  <h6 class=\"mb-0\">Date</h6>\n                  <p class=\"mb-0 text-opacity-70 small\">${esc(formatDate(date))}</p>\n                </div>\n              </div>\n              <div class=\"d-flex align-items-center gap-3\">\n                <iconify-icon icon=\"solar:clock-circle-bold\" class=\"fs-6 text-primary\"></iconify-icon>\n                <div>\n                  <h6 class=\"mb-0\">Duration</h6>\n                  <p class=\"mb-0 text-opacity-70 small\">${esc(data.project_duration)}</p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n  <section class=\"project-featured-image py-4\">\n    <div class=\"container\">\n      <div class=\"row justify-content-center\">\n        <div class=\"col-lg-10\">\n          <img src=\"${esc(image)}\" alt=\"${esc(title)}\" class=\"img-fluid w-100 rounded-3 project-featured-img\">\n        </div>\n      </div>\n    </div>\n  </section>\n  <section class=\"project-content py-5 py-lg-11 py-xl-12\">\n    <div class=\"container\">\n      <div class=\"row justify-content-center\">\n        <div class=\"col-lg-8\">\n          <div class=\"project-details\">\n            <h2 class=\"mb-4\">Project Details</h2>\n            <div class=\"project-description\">${bodyHtml}</div>\n          </div>\n        </div>\n        <div class=\"col-lg-4\">\n          <div class=\"project-sidebar\">\n            <div class=\"sidebar-card p-4 bg-dark rounded-3 mb-4\">\n              <h5 class=\"mb-3 text-white\">Project Info</h5>\n              <div class=\"d-flex flex-column gap-3\">\n                <div><h6 class=\"mb-1 text-white\">Category</h6><p class=\"mb-0 text-white text-opacity-70\">${esc(category)}</p></div>\n                <div><h6 class=\"mb-1 text-white\">Status</h6><p class=\"mb-0 text-white text-opacity-70\">${esc(status)}</p></div>\n                <div><h6 class=\"mb-1 text-white\">Client</h6><p class=\"mb-0 text-white text-opacity-70\">${esc(data.client_name)}</p></div>\n                <div><h6 class=\"mb-1 text-white\">Date</h6><p class=\"mb-0 text-white text-opacity-70\">${esc(formatDate(date))}</p></div>\n                <div><h6 class=\"mb-1 text-white\">Duration</h6><p class=\"mb-0 text-white text-opacity-70\">${esc(data.project_duration)}</p></div>\n              </div>\n            </div>\n            <div class=\"sidebar-card p-4 bg-dark rounded-3 mb-4\">\n              <h5 class=\"mb-3 text-white\">Technologies</h5>\n              <div class=\"d-flex flex-wrap gap-2\">${techBadges}</div>\n            </div>\n            <div class=\"sidebar-card p-4 bg-dark rounded-3 mb-4\">\n              <h5 class=\"mb-3 text-white\">Tags</h5>\n              <div class=\"d-flex flex-wrap gap-2\">${tagBadges}</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n  <section class=\"project-cta py-5 py-lg-11 py-xl-12 bg-dark\">\n    <div class=\"container\">\n      <div class=\"row justify-content-center\">\n        <div class=\"col-xl-8 text-center\">\n          <div class=\"d-flex flex-column gap-6\">\n            <h2 class=\"mb-0 text-white\">Ready to Start Your Project?</h2>\n            <p class=\"fs-5 mb-0 text-white text-opacity-70\">Let's discuss how we can help you achieve similar results.</p>\n            <div class=\"d-flex flex-column flex-md-row gap-3 justify-content-center\">\n              <a href=\"https://calendar.app.google/twixZsNv5j4jvbuz6\" class=\"btn\" target=\"_blank\" rel=\"noopener\">\n                <span class=\"btn-text\">Book a Discovery Call</span>\n                <iconify-icon icon=\"lucide:arrow-up-right\" class=\"btn-icon bg-white text-dark round-52 rounded-circle hstack justify-content-center fs-7 shadow-sm\"></iconify-icon>\n              </a>\n              <a href=\"/projects.html\" class=\"btn border border-white\">\n                <span class=\"btn-text\">View All Projects</span>\n                <iconify-icon icon=\"lucide:arrow-up-right\" class=\"btn-icon bg-white text-dark round-52 rounded-circle hstack justify-content-center fs-7 shadow-sm\"></iconify-icon>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</div>\n<footer class=\"footer bg-dark py-5 border-top border-white border-opacity-10\">\n  <div class=\"container text-center\">\n    <p class=\"mb-0 text-white text-opacity-70\">© 2025 Alec Asgari · <a href=\"mailto:hello@alecasgari.com\" class=\"text-white\">hello@alecasgari.com</a></p>\n  </div>\n</footer>\n<script src=\"/assets/libs/jquery/dist/jquery.min.js\"></script>\n<script src=\"/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js\"></script>\n<script src=\"/assets/libs/aos-master/dist/aos.js\"></script>\n<script src=\"/assets/js/custom.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js\"></script>\n</body>\n</html>`;\n}\n\nconst slug = slugify(projectData.project_title);\nconst html = buildProjectHtml(projectData);\n\nconst projectsJsonEntry = {\n  slug,\n  title: projectData.project_title,\n  excerpt: projectData.short_description,\n  image: `/projects/${slug}.jpg`,\n  category: projectData.category,\n  tags: splitCsv(projectData.tags),\n  technologies: splitCsv(projectData.technologies_used),\n  date: String(projectData.project_date || '').slice(0, 10),\n  clientName: projectData.client_name,\n  clientCompany: projectData.client_company,\n  duration: projectData.project_duration,\n  status: 'Completed',\n  featured: true,\n  projectLink: `https://alecasgari.com/projects/${slug}.html`,\n  url: `/projects/${slug}.html`,\n};\n\nreturn {\n  slug,\n  project_id: projectData.project_id,\n  project_link: `https://alecasgari.com/projects/${slug}.html`,\n  image_path: `/projects/${slug}.jpg`,\n  base64_html: Buffer.from(html, 'utf8').toString('base64'),\n  projects_json_entry: projectsJsonEntry,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        592
+      ],
+      "id": "dcda15c1-9761-4084-8c1b-ffbbd37cc0c3",
+      "name": "Prepare HTML for GitHub"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        80
+      ],
+      "id": "d1d48da0-b914-4d8a-8671-54c0af268433",
+      "name": "Telegram Trigger1",
+      "webhookId": "cd583b45-9aa1-4f05-8e8a-e7702cdecd69",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger1').item.json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        -208
+      ],
+      "id": "2a5509bb-0183-41f6-ab68-8b7853e90091",
+      "name": "Get a file2",
+      "webhookId": "208b3280-9a74-442e-b02c-36630cd2b3eb",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('AI Agent').item.json.output.project_title }}",
+        "regionCode": "AE",
+        "categoryId": "28",
+        "options": {
+          "publicStatsViewable": true
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        176
+      ],
+      "id": "7c2d0b25-ed6c-4a99-a14c-c4dac0670d01",
+      "name": "Upload a video1",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "aY8WcfaTLPQMpKtL",
+          "name": "YouTube account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Search video').item.json.videos[0].video_files[1].link }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "29532a48-45bf-479c-a465-50915c618108",
+      "name": "Download Pexels Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        928,
+        176
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($('Telegram Trigger1').isExecuted, $('Telegram Trigger1').item.json.message.chat.id, \"\") }}{{ $if($('Call Back').isExecuted, $('Call Back').item.json.callback_query.from.id, \"\") }}",
+        "text": "=⌛ Uploading to YouTube **Please Wait For The Link** ...\n👇",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        176
+      ],
+      "id": "6acf4b8a-af46-4cac-883e-6a0df6e98194",
+      "name": "Video text",
+      "webhookId": "af99cee0-a800-49ed-91e7-22007b7216d1",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "=✅ Youtube Link👇",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        176
+      ],
+      "id": "c7f37cfe-cc47-4f65-9289-b59aec619832",
+      "name": "Youtube Text1",
+      "webhookId": "af99cee0-a800-49ed-91e7-22007b7216d1",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "=https://www.youtube.com/watch?v={{ $('Upload a video1').item.json.uploadId }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        176
+      ],
+      "id": "f7afac68-57bc-4e50-8ca4-630ee50a5837",
+      "name": "Youtube Link1",
+      "webhookId": "af99cee0-a800-49ed-91e7-22007b7216d1",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        704,
+        -16
+      ],
+      "id": "7fefe287-af17-43e6-a28f-7fd5d508e0ac",
+      "name": "Wait",
+      "webhookId": "063761ea-5a73-46c0-ab00-dc79e2e73326"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "=To start writing a project please send a voice message including all information. In any language.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        -16
+      ],
+      "id": "ba172e9a-eb6e-49ed-a4bf-934bc71e4bac",
+      "name": "Message is Chat1",
+      "webhookId": "355166c6-d57d-45bf-9410-f84a45b27fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "text": "=Act as an AI assistant, dedicated to processing Alec Asgari input, detailing a completed IT project. Your primary task is to extract all essential project information and structure it into a comprehensive, SEO-optimized project summary, formatted using raw Markdown syntax, and delivered entirely.\n\n#Purpose and Goals:\n-Accurately transcribe and interpret project details from the user's input.\n-Structure the extracted information into a professional, English-language, SEO-optimized project summary.\n-Ensure all required deliverables are generated and presented clearly within the final output structure.\n\n#Behaviours and Rules:\n##Input Processing and Extraction:\n-Assume the user's input contains all necessary details (title, dates, client info, scope, etc.) for an IT project led by Alec Asgari.\n-Extract the core purpose, technologies used, challenges overcome, and results achieved [in Details].\n-If the input is in Persian, internally process and translate all extracted details accurately into English for the final summary.\n\n#Deliverables (All required elements must be included and clearly labelled):\na) **Project Title:** Generate a suitable, engaging, and SEO-friendly title reflecting the project's scope [between 50 to 70 characters]. Put this content in `project_title`\nb) **Short Description:** Write a concise, 2–3 sentence summary of the project. Put this content in `short_description`\nc) **Category Selection:** Select one category from the provided list that best classifies the project:\n   AI Automation, CRM Setup, Email Marketing, Data Migration, System Integration, Web Development, Consulting. Put this content in `category`\nd) **Tags:** Generate 4–5 highly relevant, SEO-optimised tags/keywords for the project. Put this content in `tags`\ne) **Project Date:** Extract the project completion date and convert it to the Gregorian calendar format (e.g., YYYY-MM-DD or Month Day, Year). Put this content in `project_date`\nf) **Project Description:** Write a full SEO-optimised explanation of the project. This section must detail the problem, solution, technologies, and measurable results. For this section, Use raw Markdown syntax to structure this section with:\n   ## and ### for headings\n   - for bullet points\n   ** for bold emphasis and other Markdown elements to enhance readability and SEO performance. Put this content in `project_description`\ng) **Client Info:** Extract the company name and the name of the specific contact/person for whom the project was completed. If client info is absent, state Confidential Client. Put this content in `client_name` and `client_company`\nh) **Technology Used:** Extract the technology used in the project. Put this content in `technologies_used`\ni) **Project Duration:** Based on the input, either extract the stated duration or provide a reasonable estimation (e.g., 3 weeks, 4 months). Put this content in `project_duration`\n\n#Output Format:\n- Maintain a professional, technical, and detail-oriented tone throughout the summary.\n- **CRITICAL:** Return ONLY a valid, raw JSON object. Do NOT wrap the JSON response in markdown code blocks (e.g., do NOT use ```json ... ```). Your entire response must be directly parseable by JSON.parse().\n\nExample:\n{\n  \"project_title\": \"AI-Powered Sales Assistant Chatbot\",\n  \"short_description\": \"A 24/7 intelligent chatbot to qualify leads and schedule appointments.\",\n  \"category\": \"AI Automation\",\n  \"tags\": [\"n8n\", \"OpenAI\", \"Chatbot\", \"Lead Qualification\"],\n  \"project_date\": \"2025-10-01\",\n  \"project_description\": \"## Project Overview\\n- The main goal was to automate the initial sales process...\\n### Technologies Used\\n- **Backend:** n8n\\n- **AI:** OpenAI GPT-4\",\n  \"client_name\": \"Basant Mohammed\",\n  \"client_company\": \"Basant Accounting Company\",\n  \"technologies_used\": [\"Figma\", \"Cursor\", \"WebSocket\", \"n8n\", \"OpenAI\", \"Vector Database\"],\n  \"project_duration\": \"3 weeks\"\n}\n\n#Overall Tone:\n-Highly professional, efficient, and methodical\n-Focused on clarity and precise information delivery\n-Maintain the persona of a dedicated technical assistant\n\n#Notes\n-Today is: {{ $now }} and always use Time zone in Asia/Dubai (GMT+4)",
+        "inputType": "binary",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -208
+      ],
+      "id": "aa70140e-85bd-4d03-883e-f9e8f570bd96",
+      "name": "Analyze audio",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0TqKEZFBkZpqUH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// دریافت متن خام خروجی از هوش مصنوعی با سینتکس درست n8n\nlet rawText = $input.first().json.candidates[0].content.parts[0].text;\n\n// پاک‌سازی باک‌تیک‌های مارک‌داون در صورتی که مدل آن‌ها را تولید کرده باشد\nif (rawText.includes('```')) {\n  rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n}\n\ntry {\n  // ۱. تبدیل متن تمیز شده به یک شیء JSON واقعی\n  const parsedData = JSON.parse(rawText);\n  \n  // ۲. اضافه کردن یک آیدی ۷ رقمی یکتا به جیسون\n  parsedData.project_id = Math.floor(1000000 + Math.random() * 9000000).toString();\n  \n  // ۳. بازگرداندن دیتای نهایی که الان آیدی هم توش هست\n  return parsedData;\n  \n} catch (error) {\n  // بازگرداندن خطا در صورت عدم موفقیت\n  return { error: \"JSON format invalid\", message: error.message, raw: rawText };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        -208
+      ],
+      "id": "113a3408-65fd-46c7-bbb8-65e79072096a",
+      "name": "Code - Text1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DreK4pmqbA5IPawe",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/DreK4pmqbA5IPawe",
+          "cachedResultName": "Alec Project Writer Serch in PEXELS"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tags": "={{ $json.tags }}"
+          },
+          "matchingColumns": [
+            "tags"
+          ],
+          "schema": [
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        -16
+      ],
+      "name": "Call Alec Project Writer Serch in PEXELS1",
+      "id": "a41dbdcb-97d7-4f40-8811-38fc2b99f7af"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "nLye0Fi4w6MewtQy",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nLye0Fi4w6MewtQy",
+          "cachedResultName": "Alec Project Writer Send Images and Video"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message_chat_id": "={{ $('Telegram Trigger1').item.json.callback_query.from.id }}",
+            "": "={{ $('Call Alec Project Writer Serch in PEXELS1').item.json }}"
+          },
+          "matchingColumns": [
+            "message_chat_id",
+            ""
+          ],
+          "schema": [
+            {
+              "id": "message_chat_id",
+              "displayName": "message_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "",
+              "displayName": "",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        -16
+      ],
+      "name": "Call Alec Project Writer Send Images and Video1",
+      "id": "49dc6bac-e179-4bc7-93eb-97e72baac11f"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {
+          "text": "Ok, Wait..."
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        176
+      ],
+      "id": "f2025a1e-96a2-4247-812a-7c664927a50a",
+      "name": "Answer Query a callback1",
+      "webhookId": "65ff41f6-9cdf-480c-b3d2-2fbaafa441e3",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ۱. دریافت متن پیام از ساختار تلگرام\nconst messageText = $('Telegram Trigger1').first().json.callback_query.message.text;\n\n// ۲. جداسازی خطوط، حذف فاصله‌های خالی و فیلتر کردن هدر و فوتر پیام\nconst tagsArray = messageText.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line !== '' && !line.toUpperCase().startsWith('TAGS ARE') && !line.includes('Do you need images'));\n\n// ۳. خروجی دادن به صورت یک آبجکت حاوی آرایه‌ای از تگ‌ها (دقیقاً مشابه تصویر شما)\nreturn {\n  tags: tagsArray\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -16
+      ],
+      "id": "f203d9ea-aeb1-4f90-85fa-e0941927d7b4",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger1').item.json.callback_query.data }}",
+                    "rightValue": "image-pexels-yes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "dc3a32a8-1b87-46d9-8a73-41b9a83ae89a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image needed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "98d04cb6-f780-46c0-b0c0-0c8c9bba6472",
+                    "leftValue": "={{ $('Telegram Trigger1').item.json.callback_query.data }}",
+                    "rightValue": "Video-Upload-Yes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "YouTube"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c4d9bf9a-b5f2-4e90-80e3-a7335f2bc9fd",
+                    "leftValue": "={{ $('Telegram Trigger1').item.json.callback_query.data }}",
+                    "rightValue": "confirm_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=Confirm"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        160
+      ],
+      "id": "ca163e42-81d8-450f-a0e4-8dc81721e42e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "=Got it. Please Wait...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        -208
+      ],
+      "id": "3e975b97-73b6-4f0e-b05c-f348d6eb4c73",
+      "name": "Welcome1",
+      "webhookId": "355166c6-d57d-45bf-9410-f84a45b27fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "5S0NiGqrMkrbhAiZ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/5S0NiGqrMkrbhAiZ",
+          "cachedResultName": "AlecProject Writer send gif"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -208
+      ],
+      "name": "Call AlecProject Writer send gif1",
+      "id": "58eaf0fc-40c3-49a0-8451-f159e28413ff"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "637839dc-3bc1-4d8d-a698-8693f6907b09",
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VOICE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9d194e9c-2aae-4af7-9458-9b71e6d06f33",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TEXT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8075d315-6c39-4c1f-b3de-a3ea134fddef",
+                    "leftValue": "={{ $json.message.video }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIDEO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "74b2cbdc-e5f7-43af-aea3-a16a9010414e",
+                    "leftValue": "={{ $json.message.animation.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GIF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "66986022-8549-4cf7-bb9c-cfee11b181af",
+                    "leftValue": "={{ $json.message.document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FILE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2d14e830-3300-4cb7-a372-dc1e19399d50",
+                    "leftValue": "={{ $json.callback_query }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CALL BACK"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "95896b3d-613e-449f-9fce-266c8dc00e18",
+                    "leftValue": "={{ $json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PHOTO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        0
+      ],
+      "id": "9a852e60-2ddd-40cc-80c8-cbfeb2ac2beb",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "project_id": "={{ $json.project_id }}",
+            "project_title": "={{ $('Code - Text1').item.json.project_title }}",
+            "short_description": "={{ $('Code - Text1').item.json.short_description }}",
+            "category": "={{ $('Code - Text1').item.json.category }}",
+            "tags": "={{ $('Code - Text1').item.json.tags.join(', ') }}",
+            "project_date": "={{ $('Code - Text1').item.json.project_date }}",
+            "project_description": "={{ $('Code - Text1').item.json.project_description }}",
+            "client_name": "={{ $('Code - Text1').item.json.client_name }}",
+            "client_company": "={{ $('Code - Text1').item.json.client_company }}",
+            "technologies_used": "={{ $('Code - Text1').item.json.technologies_used.join(', ') }}",
+            "project_duration": "={{ $('Code - Text1').item.json.project_duration }}",
+            "publish_status": "Pending",
+            "created_at": "={{ $now.format('yyyy-MM-dd hh:mm:ss') }}",
+            "telegram_id": "={{ $('Telegram Trigger1').item.json.message.from.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "project_id",
+              "displayName": "project_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "project_title",
+              "displayName": "project_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "short_description",
+              "displayName": "short_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_date",
+              "displayName": "project_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "client_company",
+              "displayName": "client_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "technologies_used",
+              "displayName": "technologies_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_duration",
+              "displayName": "project_duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_link",
+              "displayName": "video_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "youtube",
+              "displayName": "youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publish_status",
+              "displayName": "publish_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_link",
+              "displayName": "project_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        -208
+      ],
+      "id": "b91093a7-aae7-4f82-8d07-65c8b5ec6a93",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger1\").isExecuted, $(\"Telegram Trigger1\").item.json.message?.from?.id || $(\"Telegram Trigger1\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Here is the project:\n\nTitle:\n*{{ $json.project_title }}*\n\nShort Description:\n*{{ $json.short_description }}*\n\nCategory:\n*{{ $json.category }}*\n\nTags:\n*{{ $json.tags }}*\n\nTechnologies:\n*{{ $json.technologies_used }}*\n\nDate: *{{ $json.project_date }}*\nDuration: *{{ $json.project_duration }}*\n\nClient: \n*{{ $json.client_name }} | {{ $json.client_company }}*\n\nProject ID: {{ $json.project_id }}\n\nConfirmed?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Yes",
+                    "additionalFields": {
+                      "callback_data": "=confirm_{{$('Code - Text1').item.json.project_id}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1824,
+        -208
+      ],
+      "id": "b7de0f9f-ef48-4232-8d54-75dbe9119a91",
+      "name": "Send Project Preview1",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "publish_status": "Awaiting_Image",
+            "updated_at": "={{ $now.format('yyyy-MM-dd hh:mm:ss') }}",
+            "row_number": 0,
+            "project_id": "={{ $json.project_id }}"
+          },
+          "matchingColumns": [
+            "project_id"
+          ],
+          "schema": [
+            {
+              "id": "project_id",
+              "displayName": "project_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_title",
+              "displayName": "project_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "short_description",
+              "displayName": "short_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_date",
+              "displayName": "project_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_company",
+              "displayName": "client_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "technologies_used",
+              "displayName": "technologies_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_duration",
+              "displayName": "project_duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_link",
+              "displayName": "video_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "youtube",
+              "displayName": "youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publish_status",
+              "displayName": "publish_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_link",
+              "displayName": "project_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        928,
+        368
+      ],
+      "id": "74df4023-d590-424f-b244-1342b5699bc2",
+      "name": "Append image link1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger1\").isExecuted, $(\"Telegram Trigger1\").item.json.message?.from?.id || $(\"Telegram Trigger1\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Project ID: {{ $json.project_id }}\n\nThe project has been confirmed successfully. Please send the project image. \n\nFORCE REPLY MESSAGE\nDO NOT CHANGE IT",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        368
+      ],
+      "id": "055e840f-b72b-47a2-9e79-fb59e78bf2d9",
+      "name": "Send Ask Image1",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// اسکن کردن تمام آیتم‌های ورودی\nfor (const item of $input.all()) {\n  // اگر فایل باینری با نام data وجود داشت (که خروجی دیفالت تلگرامه)\n  if (item.binary && item.binary.data) {\n    // تغییر اجباری لیبل فایل به فرمت صوتی استاندارد تلگرام\n    item.binary.data.mimeType = 'audio/ogg';\n    item.binary.data.fileExtension = 'ogg';\n    item.binary.data.fileName = 'voice_message.ogg';\n  }\n}\n\n// بازگرداندن دیتای اصلاح‌شده به نود بعدی (جمنای)\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -208
+      ],
+      "id": "cd02f985-1d30-4274-a321-063984368c34",
+      "name": "Convert Voice1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger1').item.json.callback_query.data.split('_')[1] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        368
+      ],
+      "id": "7976bd94-b076-435e-b4e0-5827e6b4f5bf",
+      "name": "Get Project1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger1').item.json.message.photo[$('Telegram Trigger1').item.json.message.photo.length - 1].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        592
+      ],
+      "id": "d3ea2827-683e-4f8c-b3ed-6a3b5e6a277c",
+      "name": "Get a file3",
+      "webhookId": "bfb540d4-4241-4b48-af67-48a38b969d1f",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. گرفتن دیتای پروژه از شیت\nconst projectData = $('Get Project for photo').first().json;\n\n// 2. گرفتن باینری واقعی از n8n (در filesystem هم درست کار می‌کند)\nconst binaryData = await this.helpers.getBinaryDataBuffer(0, 'data');\n\n// 3. تبدیل به Base64 خام و تمیز\nconst base64String = binaryData.toString('base64');\n\n// 4. تابع slugify\nfunction slugify(title) {\n  return title\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .slice(0, 80);\n}\n\n// 5. ساخت مسیرها\nconst slug = slugify(projectData.project_title);\nconst imagePath = `/projects/${slug}.jpg`;\nconst projectLink = `https://alecasgari.com/projects/${slug}.html`;\n\n// 6. خروجی نهایی — همه چیز + base64 تمیز\nreturn {\n  project_id: projectData.project_id,\n  project_title: projectData.project_title,\n  slug,\n  project_link: projectLink,\n  image_path: imagePath,\n  base64_image: base64String\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        592
+      ],
+      "id": "d9bc063b-fef4-48aa-8288-5d2190faf969",
+      "name": "Prepare image for GitHub1"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=projects/{{ $json.slug }}.jpg",
+        "fileContent": "={{ $json.base64_image }}",
+        "commitMessage": "=- Upload cover image for project {{ $json.project_id }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        592
+      ],
+      "id": "4caa56ff-a369-483a-8c58-9f1528801453",
+      "name": "Upload image1",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $json.message.reply_to_message?.text?.match(/Project ID:\\s*(\\d+)/)?.[1] || \"Error_No_ID\" }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        592
+      ],
+      "id": "fe1a7561-fec0-4e27-a80b-0eef32ad773d",
+      "name": "Get Project for photo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/projects.json",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        592
+      ],
+      "id": "352079bb-7efb-48c4-b086-97ffd0a82b00",
+      "name": "Get projects.json",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — نام پیشنهادی: Merge projects JSON\n// ورودی: خروجی node «Get projects.json» (GitHub)\n// فقط از Prepare HTML for GitHub برای entry استفاده می‌کند\n\nconst entry = $('Prepare HTML for GitHub').first().json.projects_json_entry;\n\nif (!entry || !entry.slug) {\n  throw new Error('projects_json_entry not found. Run Prepare HTML for GitHub first.');\n}\n\nlet existing = [];\nconst item = $input.first().json;\n\ntry {\n  if (item.content) {\n    const b64 = String(item.content).replace(/\\s/g, '');\n    existing = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));\n  } else if (typeof item.data === 'string') {\n    existing = JSON.parse(item.data);\n  }\n} catch (e) {\n  existing = [];\n}\n\nif (!Array.isArray(existing)) existing = [];\n\nconst filtered = existing.filter((p) => p.slug !== entry.slug);\nfiltered.unshift(entry);\n\nconst jsonText = JSON.stringify(filtered, null, 2) + '\\n';\n\nreturn {\n  slug: entry.slug,\n  project_id: $('Prepare HTML for GitHub').first().json.project_id,\n  project_link: entry.url ? `https://alecasgari.com${entry.url}` : '',\n  base64_projects_json: Buffer.from(jsonText, 'utf8').toString('base64'),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        592
+      ],
+      "id": "8d796206-7e3e-459b-bdf6-668a9f5c2e94",
+      "name": "Merge projects JSON"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/projects.json",
+        "fileContent": "={{ $json.base64_projects_json }}",
+        "commitMessage": "=Update projects.json for {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2032,
+        592
+      ],
+      "id": "df0419d9-845b-4e10-8be6-a14f17d59aea",
+      "name": "Upload projects.json",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Upload HTML": [
+      {
+        "json": {
+          "content": {
+            "name": "Automated-Webinar-Registration-and-Lead-Management-System.html",
+            "path": "projects/Automated-Webinar-Registration-and-Lead-Management-System.html",
+            "sha": "ab95f955766f3bf0cfc5b40ab10b64b6e947b5ec",
+            "size": 3744,
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/projects/Automated-Webinar-Registration-and-Lead-Management-System.html?ref=main",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/blob/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.html",
+            "git_url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/ab95f955766f3bf0cfc5b40ab10b64b6e947b5ec",
+            "download_url": "https://raw.githubusercontent.com/alecasgari/alecasgari-website/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.html",
+            "type": "file",
+            "_links": {
+              "self": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/projects/Automated-Webinar-Registration-and-Lead-Management-System.html?ref=main",
+              "git": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/ab95f955766f3bf0cfc5b40ab10b64b6e947b5ec",
+              "html": "https://github.com/alecasgari/alecasgari-website/blob/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.html"
+            }
+          },
+          "commit": {
+            "sha": "41ca54aa89e95fe1bccd2939b66b43455133667e",
+            "node_id": "C_kwDOS2pwQtoAKDQxY2E1NGFhODllOTVmZTFiY2NkMjkzOWI2NmI0MzQ1NTEzMzY2N2U",
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/41ca54aa89e95fe1bccd2939b66b43455133667e",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/commit/41ca54aa89e95fe1bccd2939b66b43455133667e",
+            "author": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:36:11Z"
+            },
+            "committer": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:36:11Z"
+            },
+            "tree": {
+              "sha": "fd78b0e786db1427bf5e1ae43408b8a017dd93cf",
+              "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/trees/fd78b0e786db1427bf5e1ae43408b8a017dd93cf"
+            },
+            "message": "Auto-publish new project 6626064 from Telegram",
+            "parents": [
+              {
+                "sha": "58cfcc0c4587bccc977a6c9fd085d4d41a68cdd2",
+                "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/58cfcc0c4587bccc977a6c9fd085d4d41a68cdd2",
+                "html_url": "https://github.com/alecasgari/alecasgari-website/commit/58cfcc0c4587bccc977a6c9fd085d4d41a68cdd2"
+              }
+            ],
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get projects.json": [
+      {
+        "json": {
+          "name": "projects.json",
+          "path": "data/projects.json",
+          "sha": "8fd20c3b9936cb2d386c4b6c811e1ca28404a9e9",
+          "size": 8821,
+          "url": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/data/projects.json?ref=main",
+          "html_url": "https://github.com/alecasgari/alecasgari-website/blob/main/data/projects.json",
+          "git_url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/8fd20c3b9936cb2d386c4b6c811e1ca28404a9e9",
+          "download_url": "https://raw.githubusercontent.com/alecasgari/alecasgari-website/main/data/projects.json",
+          "type": "file",
+          "content": "WwogIHsKICAgICJzbHVnIjogIkF1dG9tYXRlZC1XZWJpbmFyLVJlZ2lzdHJh\ndGlvbi1hbmQtTGVhZC1NYW5hZ2VtZW50LVN5c3RlbSIsCiAgICAidGl0bGUi\nOiAiQXV0b21hdGVkIFdlYmluYXIgUmVnaXN0cmF0aW9uIGFuZCBMZWFkIE1h\nbmFnZW1lbnQgU3lzdGVtIiwKICAgICJleGNlcnB0IjogIkEgY29tcHJlaGVu\nc2l2ZSBlbmQtdG8tZW5kIGF1dG9tYXRpb24gc3lzdGVtIGZvciBtYW5hZ2lu\nZyB3ZWJpbmFyIHJlZ2lzdHJhdGlvbnMsIGxlYWQgY2F0ZWdvcml6YXRpb24s\nIGFuZCBhdXRvbWF0ZWQgY2VydGlmaWNhdGUgaXNzdWFuY2UuIiwKICAgICJp\nbWFnZSI6ICIvcHJvamVjdHMvQXV0b21hdGVkLVdlYmluYXItUmVnaXN0cmF0\naW9uLWFuZC1MZWFkLU1hbmFnZW1lbnQtU3lzdGVtLmpwZyIsCiAgICAiY2F0\nZWdvcnkiOiAiQUkgQXV0b21hdGlvbiIsCiAgICAidGFncyI6IFsKICAgICAg\nIldlYmluYXIgYXV0b21hdGlvbiIsCiAgICAgICJMZWFkIG1hbmFnZW1lbnQi\nLAogICAgICAibjhuIGF1dG9tYXRpb24iLAogICAgICAiVGVsZWdyYW0gYm90\nIiwKICAgICAgIkNlcnRpZmljYXRlIGF1dG9tYXRpb24iCiAgICBdLAogICAg\nInRlY2hub2xvZ2llcyI6IFsKICAgICAgIm44biIsCiAgICAgICJUZWxlZ3Jh\nbSBCb3QgQVBJIiwKICAgICAgIkdvb2dsZSBTaGVldHMiLAogICAgICAiR29v\nZ2xlIERyaXZlIiwKICAgICAgIkdvb2dsZSBTbGlkZXMiCiAgICBdLAogICAg\nImRhdGUiOiAiMjAyNi0wNi0wOCIsCiAgICAiY2xpZW50TmFtZSI6ICJDb25m\naWRlbnRpYWwgQ2xpZW50IiwKICAgICJjbGllbnRDb21wYW55IjogIkNvbmZp\nZGVudGlhbCBDbGllbnQiLAogICAgImR1cmF0aW9uIjogIjQgd2Vla3MiLAog\nICAgInN0YXR1cyI6ICJDb21wbGV0ZWQiLAogICAgImZlYXR1cmVkIjogdHJ1\nZSwKICAgICJwcm9qZWN0TGluayI6ICJodHRwczovL2FsZWNhc2dhcmkuY29t\nL3Byb2plY3RzL0F1dG9tYXRlZC1XZWJpbmFyLVJlZ2lzdHJhdGlvbi1hbmQt\nTGVhZC1NYW5hZ2VtZW50LVN5c3RlbS5odG1sIiwKICAgICJ1cmwiOiAiL3By\nb2plY3RzL0F1dG9tYXRlZC1XZWJpbmFyLVJlZ2lzdHJhdGlvbi1hbmQtTGVh\nZC1NYW5hZ2VtZW50LVN5c3RlbS5odG1sIgogIH0sCiAgewogICAgInNsdWci\nOiAiRVJQLVN5c3RlbS1JbXBsZW1lbnRhdGlvbiIsCiAgICAidGl0bGUiOiAi\nQ29tcGxldGUgRVJQIFN5c3RlbSBJbXBsZW1lbnRhdGlvbiBmb3IgUGhhcm1h\nIFRlY2ggUGhhcm1hY2V1dGljYWwgQ29tcGFueSIsCiAgICAiZXhjZXJwdCI6\nICJJbXBsZW1lbnRlZCBhIGNvbXByZWhlbnNpdmUgRVJQIHN5c3RlbSB0YWls\nb3JlZCBmb3IgUGhhcm1hIFRlY2gsIGNvdmVyaW5nIGFsbCBlc3NlbnRpYWwg\nbW9kdWxlcyBmcm9tIHByb2N1cmVtZW50IHRvIGxvZ2lzdGljcy4gVGhlIHBy\nb2plY3QgZW5oYW5jZWQgd29ya2Zsb3cgYXV0b21hdGlvbiBhbmQgaW5jcmVh\nc2VkIHNhbGVzIGJ5IDQwJS4iLAogICAgImltYWdlIjogIi9pbWFnZXMvcHJv\namVjdHMvaW1hZ2UgKDIpLndlYnAiLAogICAgImNhdGVnb3J5IjogIlN5c3Rl\nbSBJbnRlZ3JhdGlvbiIsCiAgICAidGFncyI6IFsKICAgICAgIkVSUCBJbXBs\nZW1lbnRhdGlvbiIsCiAgICAgICJQaGFybWFjZXV0aWNhbCBFUlAiLAogICAg\nICAiV29ya2Zsb3cgQXV0b21hdGlvbiIsCiAgICAgICJOOE4gQXV0b21hdGlv\nbiIsCiAgICAgICJCdXNpbmVzcyBQcm9jZXNzIE1hbmFnZW1lbnQiCiAgICBd\nLAogICAgInRlY2hub2xvZ2llcyI6IFsKICAgICAgIkVSUCBOZXh0IiwKICAg\nICAgIk44TiIKICAgIF0sCiAgICAiZGF0ZSI6ICIyMDI2LTA0LTMwIiwKICAg\nICJjbGllbnROYW1lIjogIkRyLiBIZXJmYW4gUGFrY2hpYW4iLAogICAgImNs\naWVudENvbXBhbnkiOiAiUGhhcm1hVGVjaCBGb3IgTWVkaWNhbCBMTEMgfCBE\ndWJhaSIsCiAgICAiZHVyYXRpb24iOiAiNiBNb250aCIsCiAgICAic3RhdHVz\nIjogIkluIFByb2dyZXNzIiwKICAgICJmZWF0dXJlZCI6IHRydWUsCiAgICAi\ncHJvamVjdExpbmsiOiAiaHR0cHM6Ly9waGFybWF0ZWNoLmFlLyIsCiAgICAi\ndXJsIjogIi9wcm9qZWN0cy9FUlAtU3lzdGVtLUltcGxlbWVudGF0aW9uLmh0\nbWwiCiAgfSwKICB7CiAgICAic2x1ZyI6ICJJbnRlbGxpZ2VudC1NdWx0aS1T\ndGVwLU1pZ3JhdGlvbi1Gb3JtLUF1dG9tYXRpb24tZm9yLVJhaGthci1HYXNo\ndCIsCiAgICAidGl0bGUiOiAiSW50ZWxsaWdlbnQgTXVsdGktU3RlcCBNaWdy\nYXRpb24gRm9ybSBBdXRvbWF0aW9uIGZvciBSYWhrYXIgR2FzaHQiLAogICAg\nImV4Y2VycHQiOiAiRGV2ZWxvcGVkIGEgc21hcnQsIG11bHRpLXN0ZXAgbWln\ncmF0aW9uIGZvcm0gZm9yIFJhaGthciBHYXNodCBpbW1pZ3JhdGlvbiBhZ2Vu\nY3kgdXNpbmcgTm9kZS5qcyBhbmQgTjhOIGF1dG9tYXRpb24uIFRoaXMgc3lz\ndGVtIHBlcnNvbmFsaXplcyBtaWdyYXRpb24gc3VnZ2VzdGlvbnMsIGhhbmRs\nZXMgT1RQIGF1dGhlbnRpY2F0aW9uIHZpYSBTTVMgYW5kIFdoYXRzQXBwLCBh\nbmQgaW50ZWdyYXRlcyB3aXRoIENSTSBhbmQgU2xhY2sgZm9yIHNlYW1sZXNz\nIGxlYWQgbWFuYWdlbWVudC4iLAogICAgImltYWdlIjogIi9pbWFnZXMvcHJv\namVjdHMvSW50ZWxsaWdlbnQgTXVsdGktU3RlcCBNaWdyYXRpb24gRm9ybSBB\ndXRvbWF0aW9uIGZvciBSYWhrYXIgR2FzaHQud2VicCIsCiAgICAiY2F0ZWdv\ncnkiOiAiQUkgQXV0b21hdGlvbiIsCiAgICAidGFncyI6IFsKICAgICAgIm1p\nZ3JhdGlvbiBhdXRvbWF0aW9uIiwKICAgICAgIm11bHRpLXN0ZXAgZm9ybSIs\nCiAgICAgICJOOE4gd29ya2Zsb3ciLAogICAgICAiQ1JNIGludGVncmF0aW9u\nIiwKICAgICAgIk9UUCB2ZXJpZmljYXRpb24iCiAgICBdLAogICAgInRlY2hu\nb2xvZ2llcyI6IFsKICAgICAgIk5vZGUuanMiLAogICAgICAiTjhOIiwKICAg\nICAgIkdvb2dsZSBTaGVldHMiLAogICAgICAiUGF5YW1nb3N0YXIgQ1JNIiwK\nICAgICAgIlNsYWNrIiwKICAgICAgIlRlbGVncmFtIgogICAgXSwKICAgICJk\nYXRlIjogIjIwMjUtMTEtMTEiLAogICAgImNsaWVudE5hbWUiOiAiRHIuIE5h\nc2ltIiwKICAgICJjbGllbnRDb21wYW55IjogIlJhaGthciBHYXNodCIsCiAg\nICAiZHVyYXRpb24iOiAiMyBtb250aHMiLAogICAgInN0YXR1cyI6ICJDb21w\nbGV0ZWQiLAogICAgImZlYXR1cmVkIjogdHJ1ZSwKICAgICJwcm9qZWN0TGlu\nayI6ICJodHRwczovL2dpdGh1Yi5jb20vYWxlY2FzZ2FyaS9yYWhrYXItZWxp\nZ2liaWxpdHktdGVzdC1hcHAiLAogICAgInVybCI6ICIvcHJvamVjdHMvSW50\nZWxsaWdlbnQtTXVsdGktU3RlcC1NaWdyYXRpb24tRm9ybS1BdXRvbWF0aW9u\nLWZvci1SYWhrYXItR2FzaHQuaHRtbCIKICB9LAogIHsKICAgICJzbHVnIjog\nIkFJLVBvd2VyZWQtVGVsZWdyYW0tLU44Ti1Xb3JrZmxvdy1mb3ItQXV0b21h\ndGVkLVZvaWNlLXRvLVByZXNlbnRhdGlvbiIsCiAgICAidGl0bGUiOiAiQUkt\nUG93ZXJlZCBUZWxlZ3JhbSAmIE44TiBXb3JrZmxvdyBmb3IgQXV0b21hdGVk\nIFZvaWNlLXRvLVByZXNlbnRhdGlvbiIsCiAgICAiZXhjZXJwdCI6ICJEZXZl\nbG9wZWQgYSBzbWFydCBhc3Npc3RhbnQgaW50ZWdyYXRpbmcgVGVsZWdyYW0g\nYW5kIE44TiB0byBhdXRvbWF0ZSB0cmFuc2Zvcm1pbmcgdm9pY2UgbWVzc2Fn\nZXMgaW50byBzdHJ1Y3R1cmVkIFBvd2VyUG9pbnQgcHJlc2VudGF0aW9ucy4g\nVGhlIHByb2plY3QgZmVhdHVyZXMgQUkgdHJhbnNjcmlwdGlvbiwgZGF0YSBl\neHRyYWN0aW9uLCBHb29nbGUgRHJpdmUgaW50ZWdyYXRpb24sIGFuZCBhdXRv\nbWF0ZWQgZmlsZSBzaGFyaW5nIHZpYSBUZWxlZ3JhbS4iLAogICAgImltYWdl\nIjogIi9pbWFnZXMvcHJvamVjdHMvSU1HXzIwMjUxMDEyXzEzMjgyNl84MjMu\nanBnIiwKICAgICJjYXRlZ29yeSI6ICJBSSBBdXRvbWF0aW9uIiwKICAgICJ0\nYWdzIjogWwogICAgICAiR29vZ2xlIERyaXZlIGF1dG9tYXRpb24iLAogICAg\nICAiVm9pY2UgdHJhbnNjcmlwdGlvbiIsCiAgICAgICJOOE4gd29ya2Zsb3dz\nIiwKICAgICAgIlRlbGVncmFtIGJvdCIsCiAgICAgICJBSSBhc3Npc3RhbnQi\nCiAgICBdLAogICAgInRlY2hub2xvZ2llcyI6IFsKICAgICAgIkphdmFTY3Jp\ncHQiLAogICAgICAiR29vZ2xlIFNoZWV0cyBBUEkiLAogICAgICAiR29vZ2xl\nIERyaXZlIEFQSSIsCiAgICAgICJPcGVuQUkgQVBJIiwKICAgICAgIk44TiIs\nCiAgICAgICJUZWxlZ3JhbSBCb3QgQVBJIgogICAgXSwKICAgICJkYXRlIjog\nIjIwMjUtMTAtMTIiLAogICAgImNsaWVudE5hbWUiOiAiUHJvZiBHdWl2ZSBT\naGFyaWZpICIsCiAgICAiY2xpZW50Q29tcGFueSI6ICJQcm9mIEd1aXZlIFNo\nYXJpZmkiLAogICAgImR1cmF0aW9uIjogIjIgd2Vla3MiLAogICAgInN0YXR1\ncyI6ICJDb21wbGV0ZWQiLAogICAgImZlYXR1cmVkIjogdHJ1ZSwKICAgICJw\ncm9qZWN0TGluayI6ICJodHRwczovL2dpdnNoYXJpZmkuY29tIiwKICAgICJ1\ncmwiOiAiL3Byb2plY3RzL0FJLVBvd2VyZWQtVGVsZWdyYW0tLU44Ti1Xb3Jr\nZmxvdy1mb3ItQXV0b21hdGVkLVZvaWNlLXRvLVByZXNlbnRhdGlvbi5odG1s\nIgogIH0sCiAgewogICAgInNsdWciOiAiQUktUG93ZXJlZC1DaGF0Ym90IiwK\nICAgICJ0aXRsZSI6ICJBSS1Qb3dlcmVkIDI0LzcgU2FsZXMgQXNzaXN0YW50\nIENoYXRib3Qgd2l0aCBBdXRvbWF0ZWQgTGVhZCBRdWFsaWZpY2F0aW9uIGFu\nZCBNZWV0aW5nIFNjaGVkdWxpbmciLAogICAgImV4Y2VycHQiOiAiRGV2ZWxv\ncGVkIGFuZCBkZXBsb3llZCBhIGN1c3RvbSBBSSBjaGF0Ym90IHRoYXQgZnVu\nY3Rpb25zIGFzIGEgY29tcGxldGUgMjQvNyBzYWxlcyBhc3Npc3RhbnQuIFRo\nZSBzb2x1dGlvbiBhdXRvbWF0ZXMgdGhlIGxlYWQgcXVhbGlmaWNhdGlvbiBw\ncm9jZXNzIHRocm91Z2ggY29udmVyc2F0aW9uYWwgQUkgYW5kIHNjaGVkdWxl\ncyBtZWV0aW5ncyBkaXJlY3RseSBpbnRvIHRoZSBjYWxlbmRhciBmb3IgcXVh\nbGlmaWVkIHByb3NwZWN0cywgc2VhbWxlc3NseSBoYW5kaW5nIG9mZiB0byBh\nIGh1bWFuIGFnZW50IHdoZW4gcmVxdWVzdGVkLiAgIiwKICAgICJpbWFnZSI6\nICIvaW1hZ2VzL3Byb2plY3RzL2FpLWNoYXRib3QtYnktYWxlY2FzZ2FyaS53\nZWJwIiwKICAgICJjYXRlZ29yeSI6ICJBSSBBdXRvbWF0aW9uIiwKICAgICJ0\nYWdzIjogWwogICAgICAiQUkgQ2hhdGJvdCIsCiAgICAgICJMZWFkIFF1YWxp\nZmljYXRpb24iLAogICAgICAibjhuIEF1dG9tYXRpb24iLAogICAgICAiU2Fs\nZXMgQXV0b21hdGlvbiIsCiAgICAgICJDYWxlbmRhciBJbnRlZ3JhdGlvbiIK\nICAgIF0sCiAgICAidGVjaG5vbG9naWVzIjogWwogICAgICAibjhuIiwKICAg\nICAgIkZpZ21hIiwKICAgICAgIkN1cnNvciBJREUiLAogICAgICAiV2ViU29j\na2V0cyIsCiAgICAgICJUZWxlZ3JhbSBCb3QgQVBJIiwKICAgICAgIlZlY3Rv\nciBEYXRhYmFzZSIsCiAgICAgICJHb29nbGUgQ2FsZW5kYXIgQVBJIgogICAg\nXSwKICAgICJkYXRlIjogIjIwMjUtMTAtMDkiLAogICAgImNsaWVudE5hbWUi\nOiAiQmFzYW50IE1vaGFtbWVkIiwKICAgICJjbGllbnRDb21wYW55IjogIkJh\nc2FudCBBY2NvdW50aW5nIiwKICAgICJkdXJhdGlvbiI6ICIzIFdlZWtzIiwK\nICAgICJzdGF0dXMiOiAiSW4gUHJvZ3Jlc3MiLAogICAgImZlYXR1cmVkIjog\ndHJ1ZSwKICAgICJwcm9qZWN0TGluayI6ICJodHRwczovL2FsZWNhc2dhcmku\nY29tLyIsCiAgICAidXJsIjogIi9wcm9qZWN0cy9BSS1Qb3dlcmVkLUNoYXRi\nb3QuaHRtbCIKICB9LAogIHsKICAgICJzbHVnIjogImFtYmVyLWJvdHRsZSIs\nCiAgICAidGl0bGUiOiAiQmxvY2tjaGFpbiBMZWdhbHMgUG9ydGFsIiwKICAg\nICJleGNlcnB0IjogIlRIRSBGSVJTVCBDUllQVE8gTkFUSVZFIElOVEVSTkFU\nSU9OQUwgTEFXIEFHRU5DWSIsCiAgICAiaW1hZ2UiOiAiL2ltYWdlcy9wcm9q\nZWN0cy9TY3JlZW5zaG90IDIwMjUtMDktMjggMTQzMjMyLnBuZyIsCiAgICAi\nY2F0ZWdvcnkiOiAiV2ViIERldmVsb3BtZW50IiwKICAgICJ0YWdzIjogWwog\nICAgICAiV2ViIGRldmVsb3BtZW50IiwKICAgICAgIkRpZ2l0YWwgZGVzaWdu\nIgogICAgXSwKICAgICJ0ZWNobm9sb2dpZXMiOiBbCiAgICAgICJXb3JkcHJl\nc3MiLAogICAgICAiV29vLUNvbW1lcmNlIiwKICAgICAgIk9ubGluZSBzaG9w\nIiwKICAgICAgIlBheW1lbnQgR2F0ZXdheSIKICAgIF0sCiAgICAiZGF0ZSI6\nICIyMDI1LTA5LTAzIiwKICAgICJjbGllbnROYW1lIjogIk1yLiBPbWFyIiwK\nICAgICJjbGllbnRDb21wYW55IjogIkJsb2NrY2hhaW4gTGVnYWxzIiwKICAg\nICJkdXJhdGlvbiI6ICIxMCBNb250aCIsCiAgICAic3RhdHVzIjogIkluIFBy\nb2dyZXNzIiwKICAgICJmZWF0dXJlZCI6IGZhbHNlLAogICAgInByb2plY3RM\naW5rIjogImh0dHBzOi8vYmxvY2tjaGFpbmxlZ2Fscy5jb20vIiwKICAgICJ1\ncmwiOiAiL3Byb2plY3RzL2FtYmVyLWJvdHRsZS5odG1sIgogIH0sCiAgewog\nICAgInNsdWciOiAiRGV2ZWxvcG1lbnQtb2YtYW4tQWR2YW5jZWQtQ2FyLVJl\nbnRhbC0tQm9va2luZy1Qb3J0YWwtZm9yLXRoZS1EdWJhaS1NYXJrZXQiLAog\nICAgInRpdGxlIjogIkRldmVsb3BtZW50IG9mIGFuIEFkdmFuY2VkIENhciBS\nZW50YWwgJiBCb29raW5nIFBvcnRhbCBmb3IgdGhlIER1YmFpIE1hcmtldCIs\nCiAgICAiZXhjZXJwdCI6ICJUaGlzIHByb2plY3QgaW52b2x2ZWQgdGhlIGVu\nZC10by1lbmQgZGV2ZWxvcG1lbnQgb2YgYSBjb21wcmVoZW5zaXZlIHdlYiBw\nb3J0YWwgZm9yIGEgRHViYWktYmFzZWQgY2FyIHJlbnRhbCBjb21wYW55LiBU\naGUgc29sdXRpb24gZmVhdHVyZXMgYSBjdXN0b20sIGFkdmFuY2VkIGJvb2tp\nbmcgc3lzdGVtLCBCMkIgaW50ZWdyYXRpb24gY2FwYWJpbGl0aWVzLCBhbmQg\naXMgZnVsbHkgaW50ZWdyYXRlZCB3aXRoIG1ham9yIGFkdmVydGlzaW5nIGFu\nZCBtYXJrZXRpbmcgYXV0b21hdGlvbiBwbGF0Zm9ybXMuIiwKICAgICJpbWFn\nZSI6ICIvaW1hZ2VzL3Byb2plY3RzL3Byb2plY3QtYnktYWxlYy1hc2dhcmkt\nbmstcmVudC1jYXJzLndlYnAiLAogICAgImNhdGVnb3J5IjogIldlYiBEZXZl\nbG9wbWVudCIsCiAgICAidGFncyI6IFsKICAgICAgIkNhciBSZW50YWwgUG9y\ndGFsIiwKICAgICAgIldvcmRQcmVzcyBEZXZlbG9wbWVudCIsCiAgICAgICJE\ndWJhaSIKICAgIF0sCiAgICAidGVjaG5vbG9naWVzIjogWwogICAgICAiSmV0\nRW5naW5lIiwKICAgICAgIkJvb2tpbmcgU3lzdGVtIiwKICAgICAgIk1ldGEg\nQWRzIiwKICAgICAgIk44TiBBdXRvbWF0aW9uIgogICAgXSwKICAgICJkYXRl\nIjogIjIwMjUtMDQtMDEiLAogICAgImNsaWVudE5hbWUiOiAiTXIuIE5pa2to\nYWgiLAogICAgImNsaWVudENvbXBhbnkiOiAiTksgUmVudCBDYXJzIiwKICAg\nICJkdXJhdGlvbiI6ICJBcHByb3hpbWF0ZWx5IDIgeWVhcnMiLAogICAgInN0\nYXR1cyI6ICJDb21wbGV0ZWQiLAogICAgImZlYXR1cmVkIjogZmFsc2UsCiAg\nICAicHJvamVjdExpbmsiOiAiaHR0cHM6Ly9kcmliYmJsZS5jb20vc2hvdHMv\nMjQzMzE4NjktTG9nby1EZXNpZ24tZm9yLUNhci1SZW50YWwtQ29tcGFueS1p\nbi1EdWJhaSIsCiAgICAidXJsIjogIi9wcm9qZWN0cy9EZXZlbG9wbWVudC1v\nZi1hbi1BZHZhbmNlZC1DYXItUmVudGFsLS1Cb29raW5nLVBvcnRhbC1mb3It\ndGhlLUR1YmFpLU1hcmtldC5odG1sIgogIH0sCiAgewogICAgInNsdWciOiAi\nRnVsbC1idXNpbmVzcy1hdXRvbWF0aW9uLWltcGxlbWVudGF0aW9uIiwKICAg\nICJ0aXRsZSI6ICJFbmQtdG8tRW5kIElUIEluZnJhc3RydWN0dXJlIGFuZCBB\nSS1Qb3dlcmVkIEF1dG9tYXRpb24gZm9yIEZ1dHVyZSBJbm5vdmF0aW9uIFN1\nbW1pdCAoREZJU1gpIiwKICAgICJleGNlcnB0IjogIkRldmVsb3BlZCBhbmQg\nbWFuYWdlZCB0aGUgY29tcGxldGUgZGlnaXRhbCBpbmZyYXN0cnVjdHVyZSBm\nb3IgYSBtYWpvciB0ZWNoIHN1bW1pdCBpbiBEdWJhaSwgZnJvbSBpbml0aWFs\nIHdlYnNpdGUgZGV2ZWxvcG1lbnQgYW5kIEFJLWRyaXZlbiBjb250ZW50IGdl\nbmVyYXRpb24gdG8gYSBjb21wcmVoZW5zaXZlIGV2ZW50IG1hbmFnZW1lbnQg\nc3lzdGVtIHdpdGggaW50ZWdyYXRlZCBlLWNvbW1lcmNlIGFuZCBwZXJzb25h\nbGl6ZWQgZW1haWwgbWFya2V0aW5nLiBUaGUgcHJvamVjdCBzdWNjZXNzZnVs\nbHkgc3VwcG9ydGVkIG92ZXIgMTUwIHNwZWFrZXJzIGFuZCBudW1lcm91cyBh\ndHRlbmRlZXMgZm9yIGEgaGlnaC1wcm9maWxlIGV2ZW50LiIsCiAgICAiaW1h\nZ2UiOiAiL2hlcm8tc2xpZGVyL2hlcm8tNC5qcGciLAogICAgImNhdGVnb3J5\nIjogIlN5c3RlbSBJbnRlZ3JhdGlvbiIsCiAgICAidGFncyI6IFsKICAgICAg\nIkFJIEF1dG9tYXRpb24iLAogICAgICAiSVQgSW5mcmFzdHJ1Y3R1cmUiLAog\nICAgICAiU3lzdGVtIEludGVncmF0aW9uIgogICAgXSwKICAgICJ0ZWNobm9s\nb2dpZXMiOiBbCiAgICAgICJOb2RlLmpzIiwKICAgICAgIuKAi0NoYXRHUFQg\nQVBJIiwKICAgICAgIkFJLXBvd2VyZWQgSW1hZ2UgUHJvY2Vzc2luZyIsCiAg\nICAgICJRUiBDb2RlIEdlbmVyYXRpb24gU3lzdGVtcyIKICAgIF0sCiAgICAi\nZGF0ZSI6ICIyMDI0LTEwLTIzIiwKICAgICJjbGllbnROYW1lIjogIkFkbmFu\nIEFsIE5vb3JhbmkiLAogICAgImNsaWVudENvbXBhbnkiOiAiRnV0dXJlIElu\nbm92YXRpb24gU3VtbWl0IiwKICAgICJkdXJhdGlvbiI6ICI2IG1vbnRocyAo\nTWF5IDIwMjMgLSBPY3RvYmVyIDIwMjMpLCBwbHVzIDEgeWVhciBvZiBwb3N0\nLWV2ZW50IHN1cHBvcnQuIiwKICAgICJzdGF0dXMiOiAiQ29tcGxldGVkIiwK\nICAgICJmZWF0dXJlZCI6IHRydWUsCiAgICAicHJvamVjdExpbmsiOiAiaHR0\ncHM6Ly9kZmlzeC5jb20vIiwKICAgICJ1cmwiOiAiL3Byb2plY3RzL0Z1bGwt\nYnVzaW5lc3MtYXV0b21hdGlvbi1pbXBsZW1lbnRhdGlvbi5odG1sIgogIH0K\nXQ==\n",
+          "encoding": "base64",
+          "_links": {
+            "self": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/data/projects.json?ref=main",
+            "git": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/8fd20c3b9936cb2d386c4b6c811e1ca28404a9e9",
+            "html": "https://github.com/alecasgari/alecasgari-website/blob/main/data/projects.json"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Upload projects.json": [
+      {
+        "json": {
+          "content": {
+            "name": "projects.json",
+            "path": "data/projects.json",
+            "sha": "555b788e5a7a40c3218dab492e9693c1ced9207e",
+            "size": 8812,
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/data/projects.json?ref=main",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/blob/main/data/projects.json",
+            "git_url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/555b788e5a7a40c3218dab492e9693c1ced9207e",
+            "download_url": "https://raw.githubusercontent.com/alecasgari/alecasgari-website/main/data/projects.json",
+            "type": "file",
+            "_links": {
+              "self": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/data/projects.json?ref=main",
+              "git": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/555b788e5a7a40c3218dab492e9693c1ced9207e",
+              "html": "https://github.com/alecasgari/alecasgari-website/blob/main/data/projects.json"
+            }
+          },
+          "commit": {
+            "sha": "cea1936ddebbd57596b976efed6688ba9e7249bd",
+            "node_id": "C_kwDOS2pwQtoAKGNlYTE5MzZkZGViYmQ1NzU5NmI5NzZlZmVkNjY4OGJhOWU3MjQ5YmQ",
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/cea1936ddebbd57596b976efed6688ba9e7249bd",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/commit/cea1936ddebbd57596b976efed6688ba9e7249bd",
+            "author": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:40:14Z"
+            },
+            "committer": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:40:14Z"
+            },
+            "tree": {
+              "sha": "bd3d7060aa59a280c140c10d29fa4feae5cd96ea",
+              "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/trees/bd3d7060aa59a280c140c10d29fa4feae5cd96ea"
+            },
+            "message": "Update projects.json for Automated-Webinar-Registration-and-Lead-Management-System",
+            "parents": [
+              {
+                "sha": "41ca54aa89e95fe1bccd2939b66b43455133667e",
+                "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/41ca54aa89e95fe1bccd2939b66b43455133667e",
+                "html_url": "https://github.com/alecasgari/alecasgari-website/commit/41ca54aa89e95fe1bccd2939b66b43455133667e"
+              }
+            ],
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Upload image1": [
+      {
+        "json": {
+          "content": {
+            "name": "Automated-Webinar-Registration-and-Lead-Management-System.jpg",
+            "path": "projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg",
+            "sha": "5ba924e61418efb73be8711da97d25d56c3bb040",
+            "size": 371298,
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg?ref=main",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/blob/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg",
+            "git_url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/5ba924e61418efb73be8711da97d25d56c3bb040",
+            "download_url": "https://raw.githubusercontent.com/alecasgari/alecasgari-website/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg",
+            "type": "file",
+            "_links": {
+              "self": "https://api.github.com/repos/alecasgari/alecasgari-website/contents/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg?ref=main",
+              "git": "https://api.github.com/repos/alecasgari/alecasgari-website/git/blobs/5ba924e61418efb73be8711da97d25d56c3bb040",
+              "html": "https://github.com/alecasgari/alecasgari-website/blob/main/projects/Automated-Webinar-Registration-and-Lead-Management-System.jpg"
+            }
+          },
+          "commit": {
+            "sha": "1ad4d9235bfe92480407c0e1a614f55da30a99a4",
+            "node_id": "C_kwDOS2pwQtoAKDFhZDRkOTIzNWJmZTkyNDgwNDA3YzBlMWE2MTRmNTVkYTMwYTk5YTQ",
+            "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/1ad4d9235bfe92480407c0e1a614f55da30a99a4",
+            "html_url": "https://github.com/alecasgari/alecasgari-website/commit/1ad4d9235bfe92480407c0e1a614f55da30a99a4",
+            "author": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:20:35Z"
+            },
+            "committer": {
+              "name": "Alec Asgari",
+              "email": "161822574+alecasgari@users.noreply.github.com",
+              "date": "2026-06-11T16:20:35Z"
+            },
+            "tree": {
+              "sha": "2dc9311be9f6641f10505c331f92a0d1db87fa9e",
+              "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/trees/2dc9311be9f6641f10505c331f92a0d1db87fa9e"
+            },
+            "message": "- Upload cover image for project 6626064",
+            "parents": [
+              {
+                "sha": "1cb27b29d28c5485cb789272f3a5cdf8d2031499",
+                "url": "https://api.github.com/repos/alecasgari/alecasgari-website/git/commits/1cb27b29d28c5485cb789272f3a5cdf8d2031499",
+                "html_url": "https://github.com/alecasgari/alecasgari-website/commit/1cb27b29d28c5485cb789272f3a5cdf8d2031499"
+              }
+            ],
+            "verification": {
+              "verified": false,
+              "reason": "unsigned",
+              "signature": null,
+              "payload": null,
+              "verified_at": null
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Prepare HTML for GitHub": {
+      "main": [
+        [
+          {
+            "node": "Upload HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload HTML": {
+      "main": [
+        [
+          {
+            "node": "Get projects.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file2": {
+      "main": [
+        [
+          {
+            "node": "Convert Voice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a video1": {
+      "main": [
+        [
+          {
+            "node": "Youtube Text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Pexels Video": {
+      "main": [
+        [
+          {
+            "node": "Upload a video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video text": {
+      "main": [
+        [
+          {
+            "node": "Download Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Text1": {
+      "main": [
+        [
+          {
+            "node": "Youtube Link1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze audio": {
+      "main": [
+        [
+          {
+            "node": "Code - Text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Text1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Alec Project Writer Serch in PEXELS1": {
+      "main": [
+        [
+          {
+            "node": "Call Alec Project Writer Send Images and Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Call Alec Project Writer Serch in PEXELS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Video text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome1": {
+      "main": [
+        [
+          {
+            "node": "Call AlecProject Writer send gif1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call AlecProject Writer send gif1": {
+      "main": [
+        [
+          {
+            "node": "Get a file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Welcome1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Answer Query a callback1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send Project Preview1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append image link1": {
+      "main": [
+        [
+          {
+            "node": "Send Ask Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Voice1": {
+      "main": [
+        [
+          {
+            "node": "Analyze audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project1": {
+      "main": [
+        [
+          {
+            "node": "Append image link1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file3": {
+      "main": [
+        [
+          {
+            "node": "Prepare image for GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare image for GitHub1": {
+      "main": [
+        [
+          {
+            "node": "Upload image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload image1": {
+      "main": [
+        [
+          {
+            "node": "Prepare HTML for GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for photo": {
+      "main": [
+        [
+          {
+            "node": "Get a file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get projects.json": {
+      "main": [
+        [
+          {
+            "node": "Merge projects JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload projects.json": {
+      "main": [
+        []
+      ]
+    },
+    "Merge projects JSON": {
+      "main": [
+        [
+          {
+            "node": "Upload projects.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Dubai",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "65716a51-84c0-4cd7-a27d-61fe7a8c896f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a55157a0954f95a04f20b1e0e82243dda61031940e83e11c00d94baf8c58fe50"
+  },
+  "id": "DqUzrDCU06TGnUYe",
+  "tags": []
+}

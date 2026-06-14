@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enterprise ERP Migration &amp; Global Logistics — Pharmatech Case Study</title>
+  <meta name="description" content="How I migrated Pharmatech to ERPNext, automated international trade documents, and built a paperless supply chain across South Korea and the UAE.">
+  <link rel="canonical" href="https://alecasgari.com/case-studies/erp-migration-pharmatech.html">
+  <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
+  <link rel="stylesheet" href="/assets/css/site.css?v=3">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="site-logo">
+        <img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="140" height="36">
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu"><iconify-icon icon="lucide:menu"></iconify-icon></button>
+      <nav>
+        <ul class="site-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About Me</a></li>
+          <li><a href="/case-studies.html" class="active">Case Studies</a></li>
+          <li><a href="/projects.html">Projects</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-detail-hero" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1400&amp;q=80')">
+      <div class="case-detail-hero-overlay"></div>
+      <div class="container">
+        <p class="eyebrow hero-in">
+          <iconify-icon icon="lucide:briefcase"></iconify-icon>
+          <a href="/case-studies.html">Case Studies</a> / ERP &amp; Logistics
+        </p>
+        <h1 class="hero-in hero-in-d1">Enterprise ERP Migration &amp; Global Logistics</h1>
+        <p class="case-detail-client hero-in hero-in-d2">
+          <iconify-icon icon="lucide:building-2"></iconify-icon>
+          Pharmatech Company — South Korea &amp; UAE
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container case-detail-layout">
+        <article class="case-detail-content reveal">
+          <h2><iconify-icon icon="lucide:file-text"></iconify-icon> Overview</h2>
+          <p>Pharmatech is a pharmaceutical trading company operating between South Korea and the United Arab Emirates. Their teams managed inventory, customs paperwork, and customer orders through separate spreadsheets, email threads, and printed forms. As shipment volume grew, small data gaps turned into real supply chain delays — and finance could not trust the numbers coming from operations.</p>
+          <p>I was brought in to unify the business on a single ERP platform and remove the manual steps that slowed down every international shipment. The goal was not just software installation. It was a full operational redesign: one source of truth, instant trade documents, and zero paper on the warehouse floor.</p>
+
+          <h2><iconify-icon icon="lucide:alert-circle"></iconify-icon> Challenge</h2>
+          <p>Product data lived in disconnected files. Warehouse staff retyped lot numbers into packing lists. Sales teams created proforma invoices by hand in Word, often with outdated prices or missing HS codes. When a customs broker asked for corrections, the whole shipment waited while someone hunted through emails.</p>
+          <p>The company also needed custom fields for pharmaceutical compliance — batch tracking, expiry dates, and country-specific labeling rules — that standard ERP templates did not cover out of the box. Any solution had to work for both the Korean head office and the Dubai distribution hub without duplicating records.</p>
+
+          <h2><iconify-icon icon="lucide:route"></iconify-icon> Approach</h2>
+          <p>I started by mapping the order-to-shipment workflow with operations and finance leads. We identified six document types that were recreated manually every week. I then deployed ERPNext as the core system and extended it with custom DocTypes for pharmaceutical line items, landed cost allocation, and multi-currency pricing.</p>
+          <p>For trade documents, I built automated HTML print formats tied directly to Sales Orders and Delivery Notes. When a shipment was confirmed, packing lists and proforma invoices generated in one click — with correct weights, carton counts, and buyer details pulled from live data. I trained both offices on the same workflow so Korea could enter production data and UAE could release goods without re-entry.</p>
+
+          <h2><iconify-icon icon="lucide:layers"></iconify-icon> Technical Stack</h2>
+          <ul>
+            <li>ERPNext (Frappe framework) — inventory, sales, purchase, and accounting</li>
+            <li>Custom DocTypes and server scripts for pharma-specific fields</li>
+            <li>Jinja HTML print formats for packing lists and proforma invoices</li>
+            <li>Role-based permissions separating Korea HQ and UAE warehouse teams</li>
+            <li>Barcode-ready item masters for faster goods receipt and dispatch</li>
+          </ul>
+
+          <h2><iconify-icon icon="lucide:target"></iconify-icon> Results</h2>
+          <p>Within the first quarter after go-live, the operations team stopped printing internal forms entirely. Document preparation time per shipment dropped from hours to minutes. Finance began closing months with reconciled stock valuations because warehouse movements posted automatically to the ledger.</p>
+          <p>More importantly, the supply chain felt calmer. Staff were not chasing PDFs or fixing copy-paste errors at the last minute. Customs brokers received consistent, complete packages on the first send — and that alone removed most of the administrative delays that had frustrated the business for years.</p>
+
+          <h2><iconify-icon icon="lucide:lightbulb"></iconify-icon> Key Takeaways</h2>
+          <p>International trade businesses do not fail on software choice — they fail on document friction. Connecting ERP records directly to print-ready trade templates eliminates an entire class of errors. Custom DocTypes are worth the investment when your industry has compliance fields that generic ERP modules ignore. And when you operate across countries, design one workflow with two roles, not two parallel systems.</p>
+
+          <div class="case-grid">
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:alert-circle"></iconify-icon> Problem</h3>
+              <p>Data was separated, and international trade documents were handled manually, causing supply chain delays.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:lightbulb"></iconify-icon> Solution</h3>
+              <p>Deployed an ERPNext ecosystem with custom DocTypes and built automated HTML templates for instant packing lists and proforma invoices.</p>
+            </div>
+            <div class="case-block">
+              <h3><iconify-icon icon="lucide:target"></iconify-icon> Impact</h3>
+              <div class="impact-box"><p><iconify-icon icon="lucide:check-circle"></iconify-icon> Created a 100% paperless operation and removed all administrative delays.</p></div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="sidebar-panel case-meta card-lift reveal">
+          <h3><iconify-icon icon="lucide:clipboard-list"></iconify-icon> Project at a Glance</h3>
+          <ul>
+            <li><iconify-icon icon="lucide:building-2"></iconify-icon><div><strong>Client</strong>Pharmatech Company</div></li>
+            <li><iconify-icon icon="lucide:globe"></iconify-icon><div><strong>Region</strong>South Korea &amp; UAE</div></li>
+            <li><iconify-icon icon="lucide:package"></iconify-icon><div><strong>Industry</strong>Pharmaceutical trading &amp; logistics</div></li>
+            <li><iconify-icon icon="lucide:cpu"></iconify-icon><div><strong>Platform</strong>ERPNext + custom DocTypes</div></li>
+            <li><iconify-icon icon="lucide:leaf"></iconify-icon><div><strong>Outcome</strong>100% paperless operations</div></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-alt section-tight">
+      <div class="container case-detail-cta reveal">
+        <a href="/case-studies.html" class="btn btn-outline">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+          All Case Studies
+        </a>
+        <a href="/contact.html" class="btn btn-primary">
+          <iconify-icon icon="lucide:mail"></iconify-icon>
+          Discuss Your Project
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <a href="/" class="footer-logo"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="120" height="32"></a>
+      <p class="footer-copy">© 2025 Alec Asgari</p>
+      <ul class="footer-links">
+        <li><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener"><iconify-icon icon="lucide:linkedin"></iconify-icon> LinkedIn</a></li>
+        <li><a href="https://github.com/alecasgari" target="_blank" rel="noopener"><iconify-icon icon="lucide:github"></iconify-icon> GitHub</a></li>
+        <li><a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> Email</a></li>
+      </ul>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-reveal.js"></script>
+</body>
+</html>
