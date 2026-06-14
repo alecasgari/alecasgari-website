@@ -1,0 +1,880 @@
+{
+  "name": "Alecasgrai-website-news",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f92e53a2-355d-4a22-a08f-86a57c56a690",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "PoTjAci6tutyz60e",
+          "mode": "list",
+          "cachedResultName": "Alec LinkedIn Automation",
+          "cachedResultUrl": "/projects/b5aZbTLpIJQPOBLU/datatables/PoTjAci6tutyz60e"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "StatusWebsite",
+              "keyValue": "Pending"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3ebdd87e-8932-4c67-9f84-aa2df91b3e50",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is a LinkedIn post idea and content to expand into a full SEO blog article.\n\nIdea:\n{{ $json.idea }}\n\nLinkedIn post:\n{{ $json.postContent }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a professional English SEO content writer. Expand the LinkedIn post into a complete, original blog article in Markdown. Use ## for main sections and ### for subsections. Include bullet lists where helpful. Do NOT invent a featured image path — images are handled separately. Output slug (URL-safe, no .html), title, excerpt (1-2 sentences), category (Business, Marketing, Leadership, or Technology), date (YYYY-MM-DD, use today if unsure), tags (5-7 SEO keyword phrases as array), and content (full article markdown starting with ## not #). Write in Alec Asgari's voice: practical, leadership and automation focused."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "400952ef-9184-42cb-8e75-cedb070c962e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"slug\": \"ai-vision-leadership-strategy\",\n  \"title\": \"AI Can Answer Questions — Leaders Must Find What Is Missing\",\n  \"excerpt\": \"AI is efficient at solving known problems, but true leadership means identifying strategic gaps machines cannot see.\",\n  \"category\": \"Leadership\",\n  \"date\": \"2026-06-14\",\n  \"tags\": [\"AI leadership\", \"business strategy\", \"future of work\"],\n  \"authorName\": \"Alec Asgari\",\n  \"content\": \"## Why Answers Are Not Enough\\n\\n...\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        208
+      ],
+      "id": "edebfa04-01a7-4fa4-8db2-9723c9166536",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-lite-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        208
+      ],
+      "id": "78899849-341b-4d14-8b4b-7f3fc1e9fdcd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0TqKEZFBkZpqUH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Normalize Blog Data\"\n// Runs after AI Agent. Combines AI output with LinkedIn row (imageLink).\n\nconst ai = $('AI Agent').first().json.output || {};\nconst linkedin = $('Get row(s)').first().json;\n\nfunction slugify(title) {\n  return String(title || '')\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .slice(0, 80);\n}\n\nfunction parseTags(val) {\n  if (Array.isArray(val)) return val.map((t) => String(t).trim()).filter(Boolean);\n  if (typeof val === 'string') {\n    const s = val.trim();\n    if (!s) return [];\n    if (s.startsWith('[')) {\n      try {\n        const parsed = JSON.parse(s);\n        if (Array.isArray(parsed)) return parsed.map((t) => String(t).trim()).filter(Boolean);\n      } catch (e) {\n        /* fall through */\n      }\n    }\n    return s.split(',').map((t) => t.trim()).filter(Boolean);\n  }\n  return [];\n}\n\nconst slug = (ai.slug || slugify(ai.title) || 'blog-post').replace(/\\.html$/i, '');\nconst tags = parseTags(ai.tags);\nconst date = String(ai.date || new Date().toISOString().slice(0, 10)).slice(0, 10);\nconst featured_image = `/images/blog/${slug}.jpg`;\nconst url = `/blog/${slug}.html`;\nconst author = ai.authorName || 'Alec Asgari';\nconst author_image = '/assets/images/team/alec-asgari-author.webp';\n\nconst output = {\n  slug,\n  title: ai.title || 'Untitled',\n  excerpt: ai.excerpt || '',\n  category: ai.category || 'Business',\n  date,\n  featured_image,\n  image: featured_image,\n  url,\n  content: ai.content || '',\n  tags,\n  authorName: author,\n  meta_description: ai.excerpt || '',\n};\n\nreturn {\n  output,\n  slug,\n  title: output.title,\n  excerpt: output.excerpt,\n  category: output.category,\n  date,\n  content: output.content,\n  imageLink: linkedin.imageLink || '',\n  linkedin_row_id: linkedin.id,\n  tags,\n  tags_json: JSON.stringify(tags),\n  featured_image,\n  url,\n  author,\n  author_image,\n  status: 'pending',\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Normalize Blog Data"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "omroE3fdUwu4SW1t",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website-blog-posts",
+          "cachedResultUrl": "/projects/b5aZbTLpIJQPOBLU/datatables/omroE3fdUwu4SW1t"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $('Normalize Blog Data').item.json.output.title }}",
+            "slug": "={{ $('Normalize Blog Data').item.json.output.slug }}",
+            "excerpt": "={{ $('Normalize Blog Data').item.json.output.excerpt }}",
+            "category": "={{ $('Normalize Blog Data').item.json.output.category }}",
+            "date": "={{ $('Normalize Blog Data').item.json.output.date }}",
+            "featured_image": "={{ $('Normalize Blog Data').item.json.featured_image }}",
+            "content": "={{ $('Normalize Blog Data').item.json.output.content }}",
+            "tags": "={{ $('Normalize Blog Data').item.json.tags_json }}",
+            "meta_description": "={{ $('Normalize Blog Data').item.json.output.excerpt }}",
+            "status": "pending",
+            "linkedin_row_id": "={{ $('Normalize Blog Data').item.json.linkedin_row_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "excerpt",
+              "displayName": "excerpt",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "type": "dateTime",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "featured_image",
+              "displayName": "featured_image",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "meta_description",
+              "displayName": "meta_description",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "linkedin_row_id",
+              "displayName": "linkedin_row_id",
+              "type": "number",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "7ac6b9b5-5150-49f3-8243-7cfad2c4d421",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Normalize Blog Data').item.json.imageLink }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Download Featured Image"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Prepare Blog Image for GitHub\"\n// Input: HTTP Request binary (downloaded imageLink)\n\nconst norm = $('Normalize Blog Data').first().json;\nconst slug = norm.slug;\nconst binaryData = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst base64String = binaryData.toString('base64');\n\nreturn {\n  slug,\n  image_path: `/images/blog/${slug}.jpg`,\n  github_image_path: `images/blog/${slug}.jpg`,\n  base64_image: base64String,\n  linkedin_row_id: norm.linkedin_row_id,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "Prepare Blog Image for GitHub"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=images/blog/{{ $json.slug }}.jpg",
+        "fileContent": "={{ $json.base64_image }}",
+        "commitMessage": "=Upload blog featured image {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1456,
+        0
+      ],
+      "id": "d4e5f6a7-b8c9-0123-def0-234567890123",
+      "name": "Upload Blog Image",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Prepare Blog HTML for GitHub\"\n// Keep in sync with scripts/regenerate-blog-pages.js buildPage() — paste this whole file into n8n.\n\nconst norm = $('Normalize Blog Data').first().json;\nconst post = norm.output || {};\nconst slug = norm.slug || post.slug;\nconst tags = Array.isArray(post.tags)\n  ? post.tags\n  : JSON.parse(norm.tags_json || '[]');\nconst image = norm.featured_image || `/images/blog/${slug}.jpg`;\nconst url = norm.url || `/blog/${slug}.html`;\nconst author = norm.author || post.authorName || 'Alec Asgari';\nconst author_image = norm.author_image || '/assets/images/team/alec-asgari-author.webp';\nconst content = post.content || $('AI Agent').first().json.output?.content || '';\n\nfunction esc(s) {\n  return String(s || '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n}\n\nfunction inlineMd(text) {\n  return esc(text)\n    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/`(.+?)`/g, '<code>$1</code>');\n}\n\nfunction mdToHtml(md) {\n  const lines = String(md || '').split('\\n');\n  const out = [];\n  let inUl = false;\n  let inOl = false;\n\n  function closeUl() {\n    if (inUl) {\n      out.push('</ul>');\n      inUl = false;\n    }\n  }\n\n  function closeOl() {\n    if (inOl) {\n      out.push('</ol>');\n      inOl = false;\n    }\n  }\n\n  function closeLists() {\n    closeUl();\n    closeOl();\n  }\n\n  for (const line of lines) {\n    const t = line.trim();\n    if (!t) {\n      closeLists();\n      continue;\n    }\n    if (t.startsWith('## ')) {\n      closeLists();\n      out.push(`<h2>${inlineMd(t.slice(3))}</h2>`);\n      continue;\n    }\n    if (t.startsWith('### ')) {\n      closeLists();\n      out.push(`<h3>${inlineMd(t.slice(4))}</h3>`);\n      continue;\n    }\n    if (t.startsWith('- ')) {\n      closeOl();\n      if (!inUl) {\n        out.push('<ul>');\n        inUl = true;\n      }\n      out.push(`<li>${inlineMd(t.slice(2))}</li>`);\n      continue;\n    }\n    const olMatch = t.match(/^\\d+\\.\\s+(.*)$/);\n    if (olMatch) {\n      closeUl();\n      if (!inOl) {\n        out.push('<ol>');\n        inOl = true;\n      }\n      out.push(`<li>${inlineMd(olMatch[1])}</li>`);\n      continue;\n    }\n    closeLists();\n    out.push(`<p>${inlineMd(t)}</p>`);\n  }\n  closeLists();\n  return out.join('\\n');\n}\n\nfunction formatDate(iso) {\n  if (!iso) return '';\n  const d = new Date(iso.includes('T') ? iso : iso + 'T00:00:00');\n  return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US');\n}\n\nfunction buildBlogHtml(data, bodyHtml, tagList) {\n  const title = data.title || 'Untitled';\n  const excerpt = data.excerpt || '';\n  const category = data.category || 'Business';\n  const date = String(data.date || '').slice(0, 10);\n  const pageUrl = `https://alecasgari.com${url}`;\n\n  const tagsHtml = tagList.length\n    ? `<div class=\"blog-tags\"><h3 style=\"width:100%;margin:0 0 0.5rem;font-size:0.9rem\">Tags</h3>${tagList\n        .map((t) => `<span class=\"blog-tag\">${esc(t)}</span>`)\n        .join('')}</div>`\n    : '';\n\n  return `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>${esc(title)} — Alec Asgari</title>\n  <meta name=\"description\" content=\"${esc(excerpt)}\">\n  <link rel=\"canonical\" href=\"${pageUrl}\">\n  <meta property=\"og:type\" content=\"article\">\n  <meta property=\"og:title\" content=\"${esc(title)}\">\n  <meta property=\"og:description\" content=\"${esc(excerpt)}\">\n  <meta property=\"og:image\" content=\"https://alecasgari.com${esc(image)}\">\n  <link rel=\"shortcut icon\" href=\"/assets/images/logos/favicon.svg\">\n  <link rel=\"stylesheet\" href=\"/assets/css/site.css?v=4\">\n  <link rel=\"stylesheet\" href=\"/assets/css/blog-detail.css?v=1\">\n  <script async src=\"https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ\"></script>\n  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>\n</head>\n<body>\n  <header class=\"site-header\">\n    <div class=\"container inner\">\n      <a href=\"/\" class=\"site-logo\">\n        <img src=\"/assets/images/logos/logo-dark.svg\" alt=\"Alec Asgari\" width=\"140\" height=\"36\">\n      </a>\n      <button class=\"nav-toggle\" type=\"button\" aria-label=\"Menu\"><iconify-icon icon=\"lucide:menu\"></iconify-icon></button>\n      <nav>\n        <ul class=\"site-nav\">\n          <li><a href=\"/\">Home</a></li>\n          <li><a href=\"/about.html\">About Me</a></li>\n          <li><a href=\"/case-studies.html\">Case Studies</a></li>\n          <li><a href=\"/projects.html\">Projects</a></li>\n          <li><a href=\"/blog.html\" class=\"active\">Blog</a></li>\n          <li><a href=\"/contact.html\">Contact</a></li>\n        </ul>\n      </nav>\n    </div>\n  </header>\n\n  <main>\n    <section class=\"blog-detail-hero\" style=\"background-image:url('${esc(image)}')\">\n      <div class=\"blog-detail-hero-overlay\"></div>\n      <div class=\"blog-detail-hero-mesh\" aria-hidden=\"true\"></div>\n      <div class=\"container\">\n        <p class=\"eyebrow hero-in\">\n          <iconify-icon icon=\"lucide:newspaper\"></iconify-icon>\n          <a href=\"/blog.html\">Blog</a> / ${esc(category)}\n        </p>\n        <div class=\"blog-detail-badges hero-in hero-in-d1\">\n          <span class=\"blog-badge blog-badge--category\">${esc(category)}</span>\n        </div>\n        <h1 class=\"hero-in hero-in-d1\">${esc(title)}</h1>\n        <p class=\"blog-detail-excerpt hero-in hero-in-d2\">${esc(excerpt)}</p>\n        <div class=\"blog-detail-meta-row hero-in hero-in-d3\">\n          <div class=\"blog-detail-meta-item\">\n            <img src=\"${esc(author_image)}\" alt=\"${esc(author)}\" width=\"36\" height=\"36\">\n            <span>${esc(author)}</span>\n          </div>\n          <div class=\"blog-detail-meta-item\">\n            <iconify-icon icon=\"lucide:calendar\"></iconify-icon>\n            <span>${esc(formatDate(date))}</span>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"section\">\n      <div class=\"container blog-detail-layout\">\n        <article class=\"blog-detail-content reveal\">\n          <div class=\"blog-prose\">${bodyHtml}</div>\n          ${tagsHtml}\n          <div class=\"blog-author-box\">\n            <img src=\"${esc(author_image)}\" alt=\"${esc(author)}\" width=\"56\" height=\"56\">\n            <div>\n              <h3>${esc(author)}</h3>\n              <p class=\"role\">Author &amp; Content Creator</p>\n              <p>Passionate about creating valuable content and sharing insights from real automation and CRM projects.</p>\n            </div>\n          </div>\n        </article>\n\n        <aside class=\"sidebar-panel blog-sidebar card-lift reveal\">\n          <h3><iconify-icon icon=\"lucide:info\"></iconify-icon> Article Info</h3>\n          <ul>\n            <li><iconify-icon icon=\"lucide:folder\"></iconify-icon><div><strong>Category</strong>${esc(category)}</div></li>\n            <li><iconify-icon icon=\"lucide:calendar\"></iconify-icon><div><strong>Published</strong>${esc(formatDate(date))}</div></li>\n            <li><iconify-icon icon=\"lucide:user\"></iconify-icon><div><strong>Author</strong>${esc(author)}</div></li>\n          </ul>\n          <a href=\"/blog.html\" class=\"btn btn-outline btn-block\" style=\"margin-top:1rem\">\n            <iconify-icon icon=\"lucide:arrow-left\"></iconify-icon>\n            All Articles\n          </a>\n          <a href=\"/contact.html\" class=\"btn btn-primary btn-block\" style=\"margin-top:0.5rem\">\n            <iconify-icon icon=\"lucide:mail\"></iconify-icon>\n            Get in Touch\n          </a>\n        </aside>\n      </div>\n    </section>\n\n    <section class=\"section section-alt section-tight\">\n      <div class=\"container blog-detail-cta reveal\">\n        <a href=\"/blog.html\" class=\"btn btn-outline\">\n          <iconify-icon icon=\"lucide:arrow-left\"></iconify-icon>\n          Back to Blog\n        </a>\n        <a href=\"/projects.html\" class=\"btn btn-primary\">\n          <iconify-icon icon=\"lucide:folder-kanban\"></iconify-icon>\n          View Projects\n        </a>\n      </div>\n    </section>\n  </main>\n\n  <footer class=\"site-footer\">\n    <div class=\"container inner\">\n      <a href=\"/\" class=\"footer-logo\"><img src=\"/assets/images/logos/logo-dark.svg\" alt=\"Alec Asgari\" width=\"120\" height=\"32\"></a>\n      <p class=\"footer-copy\">© 2025 Alec Asgari</p>\n      <ul class=\"footer-links\">\n        <li><a href=\"https://www.linkedin.com/in/alecasgari/\" target=\"_blank\" rel=\"noopener\"><iconify-icon icon=\"lucide:linkedin\"></iconify-icon> LinkedIn</a></li>\n        <li><a href=\"https://github.com/alecasgari\" target=\"_blank\" rel=\"noopener\"><iconify-icon icon=\"lucide:github\"></iconify-icon> GitHub</a></li>\n        <li><a href=\"mailto:hello@alecasgari.com\"><iconify-icon icon=\"lucide:mail\"></iconify-icon> Email</a></li>\n      </ul>\n    </div>\n  </footer>\n  <script src=\"https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js\"></script>\n  <script src=\"/assets/js/site-nav.js\"></script>\n  <script src=\"/assets/js/site-reveal.js\"></script>\n</body>\n</html>`;\n}\n\nconst bodyHtml = mdToHtml(content);\nconst html = buildBlogHtml(post, bodyHtml, tags);\n\nconst blog_json_entry = {\n  slug,\n  title: post.title || 'Untitled',\n  excerpt: post.excerpt || '',\n  category: post.category || 'Business',\n  date: String(post.date || '').slice(0, 10),\n  image,\n  url,\n  author,\n  author_image,\n};\n\nconst blog_content_entry = {\n  slug,\n  body: bodyHtml,\n  tags,\n};\n\nreturn {\n  slug,\n  linkedin_row_id: norm.linkedin_row_id,\n  image_path: image,\n  blog_url: `https://alecasgari.com${url}`,\n  base64_html: Buffer.from(html, 'utf8').toString('base64'),\n  blog_json_entry,\n  blog_content_entry,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        0
+      ],
+      "id": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+      "name": "Prepare Blog HTML for GitHub"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=blog/{{ $json.slug }}.html",
+        "fileContent": "={{ $json.base64_html }}",
+        "commitMessage": "=Auto-publish blog post {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1872,
+        0
+      ],
+      "id": "f6a7b8c9-d0e1-2345-f012-456789012345",
+      "name": "Upload Blog HTML",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/blog.json",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2080,
+        0
+      ],
+      "id": "a7b8c9d0-e1f2-3456-0123-567890123456",
+      "name": "Get blog.json",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Merge blog JSON\"\n// Input: GitHub Get blog.json\n\nconst entry = $('Prepare Blog HTML for GitHub').first().json.blog_json_entry;\n\nif (!entry || !entry.slug) {\n  throw new Error('blog_json_entry not found. Run Prepare Blog HTML for GitHub first.');\n}\n\nlet existing = [];\nconst item = $input.first().json;\n\ntry {\n  if (item.content) {\n    const b64 = String(item.content).replace(/\\s/g, '');\n    existing = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));\n  } else if (typeof item.data === 'string') {\n    existing = JSON.parse(item.data);\n  }\n} catch (e) {\n  existing = [];\n}\n\nif (!Array.isArray(existing)) existing = [];\n\nconst filtered = existing.filter((p) => p.slug !== entry.slug);\nfiltered.unshift(entry);\n\nconst jsonText = JSON.stringify(filtered, null, 2) + '\\n';\n\nreturn {\n  slug: entry.slug,\n  blog_url: `https://alecasgari.com${entry.url}`,\n  base64_blog_json: Buffer.from(jsonText, 'utf8').toString('base64'),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        0
+      ],
+      "id": "b8c9d0e1-f2a3-4567-1234-678901234567",
+      "name": "Merge blog JSON"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/blog.json",
+        "fileContent": "={{ $json.base64_blog_json }}",
+        "commitMessage": "=Update blog.json for {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        0
+      ],
+      "id": "c9d0e1f2-a3b4-5678-2345-789012345678",
+      "name": "Upload blog.json",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/blog-content.json",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2704,
+        0
+      ],
+      "id": "d0e1f2a3-b4c5-6789-3456-890123456789",
+      "name": "Get blog-content.json",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Merge blog content JSON\"\n// Input: GitHub Get blog-content.json\n\nconst prepared = $('Prepare Blog HTML for GitHub').first().json;\nconst entry = prepared.blog_content_entry;\n\nif (!entry || !entry.slug) {\n  throw new Error('blog_content_entry not found. Run Prepare Blog HTML for GitHub first.');\n}\n\nlet existing = {};\nconst item = $input.first().json;\n\ntry {\n  if (item.content) {\n    const b64 = String(item.content).replace(/\\s/g, '');\n    existing = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));\n  } else if (typeof item.data === 'string') {\n    existing = JSON.parse(item.data);\n  }\n} catch (e) {\n  existing = {};\n}\n\nif (!existing || typeof existing !== 'object' || Array.isArray(existing)) existing = {};\n\nexisting[entry.slug] = {\n  body: entry.body,\n  tags: entry.tags || [],\n};\n\nconst jsonText = JSON.stringify(existing, null, 2) + '\\n';\n\nreturn {\n  slug: entry.slug,\n  base64_blog_content_json: Buffer.from(jsonText, 'utf8').toString('base64'),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        0
+      ],
+      "id": "e1f2a3b4-c5d6-7890-4567-901234567890",
+      "name": "Merge blog content JSON"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/blog-content.json",
+        "fileContent": "={{ $json.base64_blog_content_json }}",
+        "commitMessage": "=Update blog-content.json for {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        3120,
+        0
+      ],
+      "id": "f2a3b4c5-d6e7-8901-5678-012345678901",
+      "name": "Upload blog-content.json",
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "PoTjAci6tutyz60e",
+          "mode": "list",
+          "cachedResultName": "Alec LinkedIn Automation",
+          "cachedResultUrl": "/projects/b5aZbTLpIJQPOBLU/datatables/PoTjAci6tutyz60e"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Get row(s)').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "StatusWebsite": "Published"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "StatusWebsite",
+              "displayName": "StatusWebsite",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3328,
+        0
+      ],
+      "id": "a3b4c5d6-e7f8-9012-6789-123456789012",
+      "name": "Update LinkedIn Status"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "omroE3fdUwu4SW1t",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website-blog-posts",
+          "cachedResultUrl": "/projects/b5aZbTLpIJQPOBLU/datatables/omroE3fdUwu4SW1t"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Insert row').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "published"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3536,
+        0
+      ],
+      "id": "b4c5d6e7-f8a9-0123-7890-234567890123",
+      "name": "Update Blog Status"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Normalize Blog Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Blog Data": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Download Featured Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Featured Image": {
+      "main": [
+        [
+          {
+            "node": "Prepare Blog Image for GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Blog Image for GitHub": {
+      "main": [
+        [
+          {
+            "node": "Upload Blog Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Blog Image": {
+      "main": [
+        [
+          {
+            "node": "Prepare Blog HTML for GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Blog HTML for GitHub": {
+      "main": [
+        [
+          {
+            "node": "Upload Blog HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Blog HTML": {
+      "main": [
+        [
+          {
+            "node": "Get blog.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get blog.json": {
+      "main": [
+        [
+          {
+            "node": "Merge blog JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge blog JSON": {
+      "main": [
+        [
+          {
+            "node": "Upload blog.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload blog.json": {
+      "main": [
+        [
+          {
+            "node": "Get blog-content.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get blog-content.json": {
+      "main": [
+        [
+          {
+            "node": "Merge blog content JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge blog content JSON": {
+      "main": [
+        [
+          {
+            "node": "Upload blog-content.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload blog-content.json": {
+      "main": [
+        [
+          {
+            "node": "Update LinkedIn Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update LinkedIn Status": {
+      "main": [
+        [
+          {
+            "node": "Update Blog Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f2600b5c-5d2e-4c25-b0fe-489635820751",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a55157a0954f95a04f20b1e0e82243dda61031940e83e11c00d94baf8c58fe50"
+  },
+  "id": "oURBW02ng40sp6Dd",
+  "tags": []
+}

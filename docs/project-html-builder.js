@@ -244,6 +244,7 @@ function buildProjectHtml(data, allProjects = []) {
           <li><a href="/about.html">About Me</a></li>
           <li><a href="/case-studies.html">Case Studies</a></li>
           <li><a href="/projects.html" class="active">Projects</a></li>
+          <li><a href="/blog.html">Blog</a></li>
           <li><a href="/contact.html">Contact</a></li>
         </ul>
       </nav>
