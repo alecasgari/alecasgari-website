@@ -13,6 +13,18 @@ function slugify(title) {
     .slice(0, 80);
 }
 
+function extractUrls(text) {
+  return [...String(text || '').matchAll(/https?:\/\/[^\s\])>"']+/g)].map((m) => m[0]);
+}
+
+function pickSourceArticleUrl(aiUrl, postContent, idea) {
+  if (aiUrl) return aiUrl;
+  const fromPost = extractUrls(postContent);
+  if (fromPost.length) return fromPost[fromPost.length - 1];
+  const fromIdea = extractUrls(idea);
+  return fromIdea[0] || '';
+}
+
 function parseTags(val) {
   if (Array.isArray(val)) return val.map((t) => String(t).trim()).filter(Boolean);
   if (typeof val === 'string') {
@@ -39,6 +51,13 @@ const url = `/blog/${slug}.html`;
 const author = ai.authorName || 'Alec Asgari';
 const author_image = '/assets/images/team/alec-asgari-author.webp';
 
+const sourceArticleUrl = pickSourceArticleUrl(
+  ai.sourceArticleUrl,
+  linkedin.postContent,
+  linkedin.idea
+);
+const linkedinPostUrl = ai.linkedinPostUrl || linkedin.LinkedInURL || '';
+
 const output = {
   slug,
   title: ai.title || 'Untitled',
@@ -52,23 +71,27 @@ const output = {
   tags,
   authorName: author,
   meta_description: ai.excerpt || '',
+  sourceArticleUrl,
+  linkedinPostUrl,
 };
 
-return {
-  output,
-  slug,
-  title: output.title,
-  excerpt: output.excerpt,
-  category: output.category,
-  date,
-  content: output.content,
-  imageLink: linkedin.imageLink || '',
-  linkedin_row_id: linkedin.id,
-  tags,
-  tags_json: JSON.stringify(tags),
-  featured_image,
-  url,
-  author,
-  author_image,
-  status: 'pending',
-};
+return [{
+  json: {
+    output,
+    slug,
+    title: output.title,
+    excerpt: output.excerpt,
+    category: output.category,
+    date,
+    content: output.content,
+    imageLink: linkedin.imageLink || '',
+    linkedin_row_id: linkedin.id,
+    tags,
+    tags_json: JSON.stringify(tags),
+    featured_image,
+    url,
+    author,
+    author_image,
+    status: 'pending',
+  },
+}];

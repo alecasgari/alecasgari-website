@@ -22,9 +22,47 @@ function codeNode(id, name, position, filename) {
   };
 }
 
+const AI_USER_PROMPT = `=Expand this LinkedIn post into a full SEO blog article in English.
+
+Idea (includes reference article URLs):
+{{ $json.idea }}
+
+LinkedIn post text:
+{{ $json.postContent }}
+
+LinkedIn post URL (MUST appear in References section):
+{{ $json.LinkedInURL }}
+
+Primary source article URL (the article this post expands — use the main https link from postContent, or the first relevant article URL from idea):
+{{ ($json.postContent.match(/https?:\\/\\/[^\\s]+/) || [])[0] || ($json.idea.match(/https?:\\/\\/[^\\s]+/) || [])[0] }}`;
+
+const AI_SYSTEM_MESSAGE =
+  'You are a professional English SEO content writer for Alec Asgari. Expand the LinkedIn post into an original, complete blog article in Markdown. Use ## for main sections and ### for subsections. Use bullet lists where helpful. Do NOT invent a featured image path. REQUIRED OUTPUT RULES: 1) slug — URL-safe, no .html. 2) title, excerpt (1-2 sentences), category (Business, Marketing, Leadership, or Technology), date (YYYY-MM-DD). 3) tags — 5-7 SEO phrases as array. 4) sourceArticleUrl — exact URL of the external source article from the input. 5) linkedinPostUrl — exact LinkedInURL from input, unchanged. 6) content — full article markdown starting with ## (never #). The article MUST end with a ## References section containing markdown links to BOTH sourceArticleUrl and linkedinPostUrl. Write in Alec\'s voice: practical, leadership and automation focused.';
+
+const AI_SCHEMA_EXAMPLE = `{
+  "slug": "ai-vision-leadership-strategy",
+  "title": "AI Can Answer Questions — Leaders Must Find What Is Missing",
+  "excerpt": "AI is efficient at solving known problems, but true leadership means identifying strategic gaps machines cannot see.",
+  "category": "Leadership",
+  "date": "2026-06-14",
+  "tags": ["AI leadership", "business strategy", "future of work"],
+  "authorName": "Alec Asgari",
+  "sourceArticleUrl": "https://www.europeanbusinessreview.com/ai-is-good-at-finding-answers-leaders-must-find-whats-missing/",
+  "linkedinPostUrl": "https://www.linkedin.com/feed/update/urn:li:activity:1234567890/",
+  "content": "## Why Answers Are Not Enough\\n\\n...\\n\\n## References\\n\\n- [AI Is Good at Finding Answers — Leaders Must Find What's Missing](https://www.europeanbusinessreview.com/ai-is-good-at-finding-answers-leaders-must-find-whats-missing/)\\n- [Original LinkedIn post by Alec Asgari](https://www.linkedin.com/feed/update/urn:li:activity:1234567890/)"
+}`;
+
 const workflow = {
   name: 'Alecasgrai-website-news',
   nodes: [
+    {
+      parameters: {},
+      type: 'n8n-nodes-base.executeWorkflowTrigger',
+      typeVersion: 1.1,
+      position: [0, 160],
+      id: 'e92e53a2-355d-4a22-a08f-86a57c56a691',
+      name: 'When Called by LinkedIn Workflow',
+    },
     {
       parameters: {
         rule: { interval: [{ triggerAtHour: 15 }] },
@@ -58,12 +96,33 @@ const workflow = {
     },
     {
       parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose' },
+          conditions: [
+            {
+              id: 'has-pending-row',
+              leftValue: '={{ $json.id }}',
+              rightValue: '',
+              operator: { type: 'number', operation: 'exists', singleValue: true },
+            },
+          ],
+          combinator: 'and',
+        },
+        options: {},
+      },
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.2,
+      position: [320, 0],
+      id: 'c1d2e3f4-a5b6-7890-cdef-111122223333',
+      name: 'Has Pending Row?',
+    },
+    {
+      parameters: {
         promptType: 'define',
-        text: '=This is a LinkedIn post idea and content to expand into a full SEO blog article.\n\nIdea:\n{{ $json.idea }}\n\nLinkedIn post:\n{{ $json.postContent }}',
+        text: AI_USER_PROMPT,
         hasOutputParser: true,
         options: {
-          systemMessage:
-            'You are a professional English SEO content writer. Expand the LinkedIn post into a complete, original blog article in Markdown. Use ## for main sections and ### for subsections. Include bullet lists where helpful. Do NOT invent a featured image path — images are handled separately. Output slug (URL-safe, no .html), title, excerpt (1-2 sentences), category (Business, Marketing, Leadership, or Technology), date (YYYY-MM-DD, use today if unsure), tags (5-7 SEO keyword phrases as array), and content (full article markdown starting with ## not #). Write in Alec Asgari\'s voice: practical, leadership and automation focused.',
+          systemMessage: AI_SYSTEM_MESSAGE,
         },
       },
       type: '@n8n/n8n-nodes-langchain.agent',
@@ -74,8 +133,7 @@ const workflow = {
     },
     {
       parameters: {
-        jsonSchemaExample:
-          '{\n  "slug": "ai-vision-leadership-strategy",\n  "title": "AI Can Answer Questions — Leaders Must Find What Is Missing",\n  "excerpt": "AI is efficient at solving known problems, but true leadership means identifying strategic gaps machines cannot see.",\n  "category": "Leadership",\n  "date": "2026-06-14",\n  "tags": ["AI leadership", "business strategy", "future of work"],\n  "authorName": "Alec Asgari",\n  "content": "## Why Answers Are Not Enough\\n\\n..."\n}',
+        jsonSchemaExample: AI_SCHEMA_EXAMPLE,
       },
       type: '@n8n/n8n-nodes-langchain.outputParserStructured',
       typeVersion: 1.3,
@@ -162,8 +220,8 @@ const workflow = {
         owner: { __rl: true, value: 'alecasgari', mode: 'list', cachedResultName: 'alecasgari', cachedResultUrl: 'https://github.com/alecasgari' },
         repository: { __rl: true, value: 'alecasgari-website', mode: 'list', cachedResultName: 'alecasgari-website', cachedResultUrl: 'https://github.com/alecasgari/alecasgari-website' },
         filePath: '=images/blog/{{ $json.slug }}.jpg',
-        fileContent: '={{ $json.base64_image }}',
-        commitMessage: '=Upload blog featured image {{ $json.slug }}',
+        fileContent: "={{ $('Prepare Blog Image for GitHub').first().json.base64_image }}",
+        commitMessage: "=Upload blog featured image {{ $('Prepare Blog Image for GitHub').first().json.slug }}",
       },
       type: 'n8n-nodes-base.github',
       typeVersion: 1.1,
@@ -178,9 +236,9 @@ const workflow = {
         resource: 'file',
         owner: { __rl: true, value: 'alecasgari', mode: 'list', cachedResultName: 'alecasgari', cachedResultUrl: 'https://github.com/alecasgari' },
         repository: { __rl: true, value: 'alecasgari-website', mode: 'list', cachedResultName: 'alecasgari-website', cachedResultUrl: 'https://github.com/alecasgari/alecasgari-website' },
-        filePath: '=blog/{{ $json.slug }}.html',
-        fileContent: '={{ $json.base64_html }}',
-        commitMessage: '=Auto-publish blog post {{ $json.slug }}',
+        filePath: "=blog/{{ $('Prepare Blog HTML for GitHub').first().json.slug }}.html",
+        fileContent: "={{ $('Prepare Blog HTML for GitHub').first().json.base64_html }}",
+        commitMessage: "=Auto-publish blog post {{ $('Prepare Blog HTML for GitHub').first().json.slug }}",
       },
       type: 'n8n-nodes-base.github',
       typeVersion: 1.1,
@@ -214,8 +272,8 @@ const workflow = {
         owner: { __rl: true, value: 'alecasgari', mode: 'list', cachedResultName: 'alecasgari', cachedResultUrl: 'https://github.com/alecasgari' },
         repository: { __rl: true, value: 'alecasgari-website', mode: 'list', cachedResultName: 'alecasgari-website', cachedResultUrl: 'https://github.com/alecasgari/alecasgari-website' },
         filePath: '=data/blog.json',
-        fileContent: '={{ $json.base64_blog_json }}',
-        commitMessage: '=Update blog.json for {{ $json.slug }}',
+        fileContent: "={{ $('Merge blog JSON').first().json.base64_blog_json }}",
+        commitMessage: "=Update blog.json for {{ $('Merge blog JSON').first().json.slug }}",
       },
       type: 'n8n-nodes-base.github',
       typeVersion: 1.1,
@@ -249,8 +307,8 @@ const workflow = {
         owner: { __rl: true, value: 'alecasgari', mode: 'list', cachedResultName: 'alecasgari', cachedResultUrl: 'https://github.com/alecasgari' },
         repository: { __rl: true, value: 'alecasgari-website', mode: 'list', cachedResultName: 'alecasgari-website', cachedResultUrl: 'https://github.com/alecasgari/alecasgari-website' },
         filePath: '=data/blog-content.json',
-        fileContent: '={{ $json.base64_blog_content_json }}',
-        commitMessage: '=Update blog-content.json for {{ $json.slug }}',
+        fileContent: "={{ $('Merge blog content JSON').first().json.base64_blog_content_json }}",
+        commitMessage: "=Update blog-content.json for {{ $('Merge blog content JSON').first().json.slug }}",
       },
       type: 'n8n-nodes-base.github',
       typeVersion: 1.1,
@@ -270,7 +328,7 @@ const workflow = {
           cachedResultUrl: '/projects/b5aZbTLpIJQPOBLU/datatables/PoTjAci6tutyz60e',
         },
         filters: {
-          conditions: [{ keyName: 'id', keyValue: "={{ $('Get row(s)').item.json.id }}" }],
+          conditions: [{ keyName: 'id', keyValue: "={{ $('Get row(s)').first().json.id }}" }],
         },
         columns: {
           mappingMode: 'defineBelow',
@@ -299,7 +357,7 @@ const workflow = {
           cachedResultUrl: '/projects/b5aZbTLpIJQPOBLU/datatables/omroE3fdUwu4SW1t',
         },
         filters: {
-          conditions: [{ keyName: 'id', keyValue: "={{ $('Insert row').item.json.id }}" }],
+          conditions: [{ keyName: 'id', keyValue: "={{ $('Insert row').first().json.id }}" }],
         },
         columns: {
           mappingMode: 'defineBelow',
@@ -319,8 +377,10 @@ const workflow = {
     },
   ],
   connections: {
+    'When Called by LinkedIn Workflow': { main: [[{ node: 'Get row(s)', type: 'main', index: 0 }]] },
     'Schedule Trigger': { main: [[{ node: 'Get row(s)', type: 'main', index: 0 }]] },
-    'Get row(s)': { main: [[{ node: 'AI Agent', type: 'main', index: 0 }]] },
+    'Get row(s)': { main: [[{ node: 'Has Pending Row?', type: 'main', index: 0 }]] },
+    'Has Pending Row?': { main: [[{ node: 'AI Agent', type: 'main', index: 0 }], []] },
     'Structured Output Parser': { ai_outputParser: [[{ node: 'AI Agent', type: 'ai_outputParser', index: 0 }]] },
     'Google Gemini Chat Model': { ai_languageModel: [[{ node: 'AI Agent', type: 'ai_languageModel', index: 0 }]] },
     'AI Agent': { main: [[{ node: 'Normalize Blog Data', type: 'main', index: 0 }]] },

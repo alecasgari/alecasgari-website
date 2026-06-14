@@ -22,9 +22,36 @@ function esc(s) {
 }
 
 function inlineMd(text) {
-  return esc(text)
+  let s = String(text || '');
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (_, label, href) => {
+    return `%%LINK%%${href}%%LABEL%%${label}%%ENDLINK%%`;
+  });
+  s = esc(s)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`(.+?)`/g, '<code>$1</code>');
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(
+      /%%LINK%%([^%]+)%%LABEL%%([^%]+)%%ENDLINK%%/g,
+      '<a href="$1" target="_blank" rel="noopener">$2</a>'
+    );
+  return s;
+}
+
+function buildReferencesHtml(data) {
+  const source = data.sourceArticleUrl || '';
+  const linkedin = data.linkedinPostUrl || '';
+  if (!source && !linkedin) return '';
+
+  if (/references/i.test(data.content || '')) return '';
+
+  let html = '<h2>References</h2><ul>';
+  if (source) {
+    html += `<li><a href="${esc(source)}" target="_blank" rel="noopener">Source article</a></li>`;
+  }
+  if (linkedin) {
+    html += `<li><a href="${esc(linkedin)}" target="_blank" rel="noopener">Original LinkedIn post by Alec Asgari</a></li>`;
+  }
+  html += '</ul>';
+  return html;
 }
 
 function mdToHtml(md) {
@@ -244,7 +271,8 @@ function buildBlogHtml(data, bodyHtml, tagList) {
 </html>`;
 }
 
-const bodyHtml = mdToHtml(content);
+const referencesHtml = buildReferencesHtml(post);
+const bodyHtml = mdToHtml(content) + referencesHtml;
 const html = buildBlogHtml(post, bodyHtml, tags);
 
 const blog_json_entry = {
@@ -265,12 +293,14 @@ const blog_content_entry = {
   tags,
 };
 
-return {
-  slug,
-  linkedin_row_id: norm.linkedin_row_id,
-  image_path: image,
-  blog_url: `https://alecasgari.com${url}`,
-  base64_html: Buffer.from(html, 'utf8').toString('base64'),
-  blog_json_entry,
-  blog_content_entry,
-};
+return [{
+  json: {
+    slug,
+    linkedin_row_id: norm.linkedin_row_id,
+    image_path: image,
+    blog_url: `https://alecasgari.com${url}`,
+    base64_html: Buffer.from(html, 'utf8').toString('base64'),
+    blog_json_entry,
+    blog_content_entry,
+  },
+}];

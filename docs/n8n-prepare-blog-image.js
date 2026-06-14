@@ -6,10 +6,12 @@ const slug = norm.slug;
 const binaryData = await this.helpers.getBinaryDataBuffer(0, 'data');
 const base64String = binaryData.toString('base64');
 
-return {
-  slug,
-  image_path: `/images/blog/${slug}.jpg`,
-  github_path: `images/blog/${slug}.jpg`,
-  base64_image: base64String,
-  linkedin_row_id: norm.linkedin_row_id,
-};
+return [{
+  json: {
+    slug,
+    image_path: `/images/blog/${slug}.jpg`,
+    github_path: `images/blog/${slug}.jpg`,
+    base64_image: base64String,
+    linkedin_row_id: norm.linkedin_row_id,
+  },
+}];
