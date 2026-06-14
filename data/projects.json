@@ -1,5 +1,32 @@
 [
   {
+    "slug": "Comprehensive-BPMS-Implementation-for-Mashoon-Consulting",
+    "title": "Comprehensive BPMS Implementation for Mashoon Consulting",
+    "excerpt": "Designed and implemented a full-scale Business Process Management System (BPMS) to digitize workflows and automate operational processes for Mashoon Consulting.",
+    "image": "/projects/Comprehensive-BPMS-Implementation-for-Mashoon-Consulting.jpg",
+    "category": "System Integration",
+    "tags": [
+      "BPMS",
+      "Workflow Automation",
+      "Process Digitization",
+      "System Integration",
+      "Operations Management"
+    ],
+    "technologies": [
+      "BPMS Platform",
+      "Custom Workflow Automation",
+      "Cloud Infrastructure"
+    ],
+    "date": "2026-05-26",
+    "clientName": "Confidential Client",
+    "clientCompany": "Mashoon Consulting",
+    "duration": "1 year",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Comprehensive-BPMS-Implementation-for-Mashoon-Consulting.html",
+    "url": "/projects/Comprehensive-BPMS-Implementation-for-Mashoon-Consulting.html"
+  },
+  {
     "slug": "Automated-Blood-Glucose-Monitoring-and-Health-Tracking-Web-Platform",
     "title": "Automated Blood Glucose Monitoring and Health Tracking Web Platform",
     "excerpt": "A comprehensive web-based application designed to monitor and store user blood glucose data, offering real-time AI-driven insights and historical health analysis.",
