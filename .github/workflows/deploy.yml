@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+# Only one deploy at a time; extra pushes wait in queue (no parallel git pull on VPS).
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
