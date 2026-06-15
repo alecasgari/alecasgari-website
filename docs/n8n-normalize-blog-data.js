@@ -43,9 +43,19 @@ function parseTags(val) {
   return [];
 }
 
+function publishDateFromLinkedIn(row) {
+  const raw = row.updatedAt || row.createdAt || '';
+  if (raw) {
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  }
+  return new Date().toISOString().slice(0, 10);
+}
+
 const slug = (ai.slug || slugify(ai.title) || 'blog-post').replace(/\.html$/i, '');
 const tags = parseTags(ai.tags);
-const date = String(ai.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
+// Never trust AI for publish date — use LinkedIn row timestamp (when post was created/published).
+const date = publishDateFromLinkedIn(linkedin);
 const featured_image = `/images/blog/${slug}.jpg`;
 const url = `/blog/${slug}.html`;
 const author = ai.authorName || 'Alec Asgari';

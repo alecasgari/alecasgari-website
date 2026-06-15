@@ -37,14 +37,13 @@ Primary source article URL (the article this post expands — use the main https
 {{ ($json.postContent.match(/https?:\\/\\/[^\\s]+/) || [])[0] || ($json.idea.match(/https?:\\/\\/[^\\s]+/) || [])[0] }}`;
 
 const AI_SYSTEM_MESSAGE =
-  'You are a professional English SEO content writer for Alec Asgari. Expand the LinkedIn post into an original, complete blog article in Markdown. Use ## for main sections and ### for subsections. Use bullet lists where helpful. Do NOT invent a featured image path. REQUIRED OUTPUT RULES: 1) slug — URL-safe, no .html. 2) title, excerpt (1-2 sentences), category (Business, Marketing, Leadership, or Technology), date (YYYY-MM-DD). 3) tags — 5-7 SEO phrases as array. 4) sourceArticleUrl — exact URL of the external source article from the input. 5) linkedinPostUrl — exact LinkedInURL from input, unchanged. 6) content — full article markdown starting with ## (never #). The article MUST end with a ## References section containing markdown links to BOTH sourceArticleUrl and linkedinPostUrl. Write in Alec\'s voice: practical, leadership and automation focused.';
+  'You are a professional English SEO content writer for Alec Asgari. Expand the LinkedIn post into an original, complete blog article in Markdown. Use ## for main sections and ### for subsections. Use bullet lists where helpful. Do NOT invent a featured image path. Do NOT output a publish date — the website sets that automatically from the LinkedIn post timestamp. REQUIRED OUTPUT RULES: 1) slug — URL-safe, no .html. 2) title, excerpt (1-2 sentences), category (Business, Marketing, Leadership, or Technology). 3) tags — 5-7 SEO phrases as array. 4) sourceArticleUrl — exact URL of the external source article from the input. 5) linkedinPostUrl — exact LinkedInURL from input, unchanged. 6) content — full article markdown starting with ## (never #). The article MUST end with a ## References section containing markdown links to BOTH sourceArticleUrl and linkedinPostUrl. Write in Alec\'s voice: practical, leadership and automation focused.';
 
 const AI_SCHEMA_EXAMPLE = `{
   "slug": "ai-vision-leadership-strategy",
   "title": "AI Can Answer Questions — Leaders Must Find What Is Missing",
   "excerpt": "AI is efficient at solving known problems, but true leadership means identifying strategic gaps machines cannot see.",
   "category": "Leadership",
-  "date": "2026-06-14",
   "tags": ["AI leadership", "business strategy", "future of work"],
   "authorName": "Alec Asgari",
   "sourceArticleUrl": "https://www.europeanbusinessreview.com/ai-is-good-at-finding-answers-leaders-must-find-whats-missing/",
