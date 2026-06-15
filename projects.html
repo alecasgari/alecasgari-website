@@ -7,7 +7,7 @@
   <meta name="description" content="Technical project portfolio — automation, integrations, and web development.">
   <link rel="canonical" href="https://alecasgari.com/projects.html">
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
-  <link rel="stylesheet" href="/assets/css/site.css?v=2">
+  <link rel="stylesheet" href="/assets/css/site.css?v=5">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
 </head>
@@ -49,6 +49,15 @@
           <iconify-icon icon="lucide:loader-2" style="font-size:1.5rem;color:var(--accent);animation:spin 1s linear infinite"></iconify-icon>
           <span style="display:block;margin-top:0.5rem;color:var(--muted)">Loading projects…</span>
         </div>
+        <div id="project-filters" class="project-filters hidden">
+          <div class="project-filters-search">
+            <label for="project-search" class="visually-hidden">Search projects</label>
+            <iconify-icon icon="lucide:search" aria-hidden="true"></iconify-icon>
+            <input type="search" id="project-search" placeholder="Search projects…" autocomplete="off" enterkeyhint="search">
+          </div>
+          <div id="project-filters-categories" class="project-filters-categories" role="group" aria-label="Filter by category"></div>
+          <p id="projects-filter-count" class="projects-filter-count" aria-live="polite"></p>
+        </div>
         <div id="projects-grid" class="stagger"></div>
       </div>
     </section>
@@ -68,6 +77,6 @@
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   <script src="/assets/js/site-nav.js"></script>
   <script src="/assets/js/site-reveal.js"></script>
-  <script src="/assets/js/projects-list.js?v=4"></script>
+  <script src="/assets/js/projects-list.js?v=5"></script>
 </body>
 </html>

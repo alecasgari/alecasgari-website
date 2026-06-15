@@ -1,8 +1,20 @@
 /**
- * Simple project cards from data/projects.json
+ * Project cards from data/projects.json — category filter + search, sorted by project date.
  */
 (function () {
   var PLACEHOLDER = '/assets/images/hero-slider/hero-1.jpg';
+  var CATEGORIES = [
+    'All',
+    'AI Automation',
+    'System Integration',
+    'Web Development',
+    'Marketing',
+    'Graphic Design',
+  ];
+
+  var allProjects = [];
+  var activeCategory = 'All';
+  var searchQuery = '';
 
   function esc(s) {
     return String(s || '')
@@ -18,6 +30,32 @@
     return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US');
   }
 
+  function sortByDate(projects) {
+    return projects.slice().sort(function (a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
+  }
+
+  function matchesCategory(project, category) {
+    if (category === 'All') return true;
+    return String(project.category || '') === category;
+  }
+
+  function matchesSearch(project, query) {
+    if (!query) return true;
+    var haystack = (project.title + ' ' + project.excerpt).toLowerCase();
+    return haystack.indexOf(query) !== -1;
+  }
+
+  function getFilteredProjects() {
+    var query = searchQuery.trim().toLowerCase();
+    return sortByDate(
+      allProjects.filter(function (project) {
+        return matchesCategory(project, activeCategory) && matchesSearch(project, query);
+      })
+    );
+  }
+
   function renderCard(p) {
     return (
       '<article class="project-card-item">' +
@@ -28,14 +66,90 @@
       '<span class="project-tag">' + esc(p.category) + '</span>' +
       '<h3>' + esc(p.title) + '</h3>' +
       '<p>' + esc(p.excerpt) + '</p>' +
-      '<time>' + esc(formatDate(p.date)) + '</time>' +
+      '<time datetime="' + esc(p.date) + '">' + esc(formatDate(p.date)) + '</time>' +
       '</div></div></a></article>'
     );
+  }
+
+  function updateCount(filteredCount) {
+    var countEl = document.getElementById('projects-filter-count');
+    if (!countEl) return;
+
+    var total = allProjects.length;
+    var hasFilter = activeCategory !== 'All' || searchQuery.trim();
+
+    if (!hasFilter) {
+      countEl.textContent = total + ' project' + (total === 1 ? '' : 's');
+      return;
+    }
+
+    countEl.textContent =
+      'Showing ' + filteredCount + ' of ' + total + ' project' + (total === 1 ? '' : 's');
+  }
+
+  function renderGrid() {
+    var grid = document.getElementById('projects-grid');
+    if (!grid) return;
+
+    var filtered = getFilteredProjects();
+    updateCount(filtered.length);
+
+    if (!filtered.length) {
+      grid.innerHTML =
+        '<p class="projects-empty">No projects match your filters. Try another category or search term.</p>';
+    } else {
+      grid.innerHTML = filtered.map(renderCard).join('');
+    }
+
+    grid.classList.add('is-visible');
+  }
+
+  function renderCategoryChips() {
+    var wrap = document.getElementById('project-filters-categories');
+    if (!wrap) return;
+
+    wrap.innerHTML = CATEGORIES.map(function (category) {
+      var isActive = category === activeCategory;
+      return (
+        '<button type="button" class="project-filter-chip' +
+        (isActive ? ' is-active' : '') +
+        '" data-category="' +
+        esc(category) +
+        '"' +
+        (isActive ? ' aria-pressed="true"' : ' aria-pressed="false"') +
+        '>' +
+        esc(category) +
+        '</button>'
+      );
+    }).join('');
+
+    wrap.querySelectorAll('.project-filter-chip').forEach(function (button) {
+      button.addEventListener('click', function () {
+        activeCategory = button.getAttribute('data-category') || 'All';
+        wrap.querySelectorAll('.project-filter-chip').forEach(function (chip) {
+          var selected = chip === button;
+          chip.classList.toggle('is-active', selected);
+          chip.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
+        renderGrid();
+      });
+    });
+  }
+
+  function bindSearch() {
+    var input = document.getElementById('project-search');
+    if (!input) return;
+
+    input.addEventListener('input', function () {
+      searchQuery = input.value;
+      renderGrid();
+    });
   }
 
   async function init() {
     var grid = document.getElementById('projects-grid');
     var loading = document.getElementById('results-loading');
+    var filters = document.getElementById('project-filters');
     if (!grid) return;
 
     if (loading) loading.classList.remove('hidden');
@@ -43,18 +157,19 @@
     try {
       var res = await fetch('/data/projects.json?v=' + Date.now());
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      var projects = await res.json();
+      allProjects = await res.json();
+      if (!Array.isArray(allProjects)) allProjects = [];
 
-      projects.sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
-      });
+      allProjects = sortByDate(allProjects);
+      renderCategoryChips();
+      bindSearch();
+      renderGrid();
 
-      grid.innerHTML = projects.map(renderCard).join('');
-      grid.classList.add('is-visible');
+      if (filters) filters.classList.remove('hidden');
     } catch (e) {
       console.error('Failed to load projects', e);
       grid.innerHTML =
-        '<p style="color:var(--muted)">Could not load projects. Please refresh.</p>';
+        '<p class="projects-empty">Could not load projects. Please refresh.</p>';
     } finally {
       if (loading) loading.classList.add('hidden');
     }

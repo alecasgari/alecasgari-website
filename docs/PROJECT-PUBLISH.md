@@ -63,6 +63,24 @@ Repo: **`alecasgari/alecasgari-website`** (نه gullible-giant)
 }
 ```
 
+## دسته‌بندی پروژه (`category`)
+
+مقدار `category` باید **دقیقاً** یکی از این ۵ مقدار باشد (همان فیلترهای `projects.html`):
+
+| Category | کاربرد |
+|----------|--------|
+| AI Automation | n8n، چت‌بات، اتوماسیون، AI workflow |
+| System Integration | ERP، CRM، BPMS، migration، API بین سیستم‌ها |
+| Web Development | وب‌سایت، وب‌اپ، پورتال |
+| Marketing | کمپین، ایمیل مارکتینگ، لید، سئو محتوا |
+| Graphic Design | برندینگ، لوگو، UI، Figma |
+
+**n8n — حتماً آپدیت کن:**
+1. Node **Analyze audio** → پرامپت کامل در [`docs/n8n-analyze-audio-prompt.txt`](./n8n-analyze-audio-prompt.txt)
+2. Node **Code - Text1** → کد کامل در [`docs/n8n-code-text1.js`](./n8n-code-text1.js) (نرمال‌سازی category + alias دسته‌های قدیمی)
+
+**نیاز به تغییر ندارند:** Prepare HTML for GitHub، Merge projects JSON، آپلود GitHub — `category` را همان‌طور که از Sheet می‌آید ذخیره می‌کنند.
+
 ## slug
 
 از `project_title` ساخته می‌شود: حروف و عدد و `-`، حداکثر ۸۰ کاراکتر.
