@@ -1,5 +1,32 @@
 [
   {
+    "slug": "Medical-Clinic-Web-Portal-Development-for-Dr-Fatemeh-Alibabayi",
+    "title": "Medical Clinic Web Portal Development for Dr. Fatemeh Alibabayi",
+    "excerpt": "I designed and developed a comprehensive medical web portal to streamline patient communication and appointment management.",
+    "image": "/projects/Medical-Clinic-Web-Portal-Development-for-Dr-Fatemeh-Alibabayi.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Development",
+      "Healthcare",
+      "Patient Portal",
+      "WordPress",
+      "Medical Clinic"
+    ],
+    "technologies": [
+      "WordPress",
+      "JetEngine",
+      "Elementor Pro"
+    ],
+    "date": "2022-07-31",
+    "clientName": "Dr. Fatemeh Alibabayi",
+    "clientCompany": "Dr. Fatemeh Alibabayi Medical Clinic",
+    "duration": "1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Medical-Clinic-Web-Portal-Development-for-Dr-Fatemeh-Alibabayi.html",
+    "url": "/projects/Medical-Clinic-Web-Portal-Development-for-Dr-Fatemeh-Alibabayi.html"
+  },
+  {
     "slug": "Visual-Identity-and-Branding-for-Dr-Fatemeh-Alibabayi",
     "title": "Visual Identity and Branding for Dr. Fatemeh Alibabayi",
     "excerpt": "I designed a professional visual identity for a specialist obstetrician-gynecologist, including a custom logo, typography, and marketing assets.",
