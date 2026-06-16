@@ -1,5 +1,30 @@
 [
   {
+    "slug": "ERP-System-Integration-and-Workflow-Automation",
+    "title": "ERP System Integration and Workflow Automation",
+    "excerpt": "I implemented a full ERP and resource management system for a consulting firm. I integrated the system with their internal processes to improve efficiency.",
+    "image": "/projects/ERP-System-Integration-and-Workflow-Automation.jpg",
+    "category": "System Integration",
+    "tags": [
+      "ERP",
+      "System Integration",
+      "Workflow Automation",
+      "Process Optimization"
+    ],
+    "technologies": [
+      "ERP System",
+      "Custom Integration APIs"
+    ],
+    "date": "2026-06-20",
+    "clientName": "Mohannad Ebrahim",
+    "clientCompany": "Mohannad Ebrahim Consulting",
+    "duration": "4 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/ERP-System-Integration-and-Workflow-Automation.html",
+    "url": "/projects/ERP-System-Integration-and-Workflow-Automation.html"
+  },
+  {
     "slug": "Custom-Data-Integration-for-Stonix-Systems",
     "title": "Custom Data Integration for Stonix Systems",
     "excerpt": "I developed a custom data synchronization pipeline for Stonix to resolve their information management challenges. I ensured seamless data flow across their internal systems.",
