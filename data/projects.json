@@ -1,5 +1,29 @@
 [
   {
+    "slug": "Brand-Identity-Design-for-Golden-Chain-Company",
+    "title": "Brand Identity Design for Golden Chain Company",
+    "excerpt": "I designed a professional logo and visual identity for a food industry company. I helped them establish their brand presence through consistent design assets.",
+    "image": "/projects/Brand-Identity-Design-for-Golden-Chain-Company.jpg",
+    "category": "Graphic Design",
+    "tags": [
+      "Logo Design",
+      "Branding",
+      "Visual Identity",
+      "Adobe Illustrator"
+    ],
+    "technologies": [
+      "Adobe Illustrator"
+    ],
+    "date": "2024-06-15",
+    "clientName": "Mr. Hashemi",
+    "clientCompany": "Golden Chain Company",
+    "duration": "4 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Brand-Identity-Design-for-Golden-Chain-Company.html",
+    "url": "/projects/Brand-Identity-Design-for-Golden-Chain-Company.html"
+  },
+  {
     "slug": "Comprehensive-BPMS-Implementation-for-Mashoon-Consulting",
     "title": "Comprehensive BPMS Implementation for Mashoon Consulting",
     "excerpt": "Designed and implemented a full-scale Business Process Management System (BPMS) to digitize workflows and automate operational processes for Mashoon Consulting.",
