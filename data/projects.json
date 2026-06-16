@@ -1,5 +1,31 @@
 [
   {
+    "slug": "Custom-Data-Integration-for-Stonix-Systems",
+    "title": "Custom Data Integration for Stonix Systems",
+    "excerpt": "I developed a custom data synchronization pipeline for Stonix to resolve their information management challenges. I ensured seamless data flow across their internal systems.",
+    "image": "/projects/Custom-Data-Integration-for-Stonix-Systems.jpg",
+    "category": "System Integration",
+    "tags": [
+      "Data Integration",
+      "Systems Architecture",
+      "API Development",
+      "Workflow Automation"
+    ],
+    "technologies": [
+      "API",
+      "Data Sync",
+      "Integration Architecture"
+    ],
+    "date": "2026-01-26",
+    "clientName": "Confidential Client",
+    "clientCompany": "Stonix",
+    "duration": "4 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Custom-Data-Integration-for-Stonix-Systems.html",
+    "url": "/projects/Custom-Data-Integration-for-Stonix-Systems.html"
+  },
+  {
     "slug": "Brand-Identity-Design-for-Golden-Chain-Company",
     "title": "Brand Identity Design for Golden Chain Company",
     "excerpt": "I designed a professional logo and visual identity for a food industry company. I helped them establish their brand presence through consistent design assets.",
