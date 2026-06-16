@@ -1,0 +1,32 @@
+# Telegram node: Send Image Source Menu
+# Place AFTER Append image link1 (replaces direct link to Send Ask Image1)
+
+Chat ID:
+={{ $if($("Telegram Trigger1").isExecuted, $("Telegram Trigger1").item.json.message?.from?.id || $("Telegram Trigger1").item.json.callback_query?.from?.id, "") }}
+
+Text:
+=Project ID: {{ $json.project_id }}
+
+*{{ $json.project_title }}*
+
+Tags (for Pexels):
+{{ $json.tags }}
+
+Choose a cover image:
+
+Reply markup: Inline Keyboard
+
+Row 1:
+- Text: Upload my photo
+  callback_data: =img-manual_{{ $json.project_id }}
+
+Row 2:
+- Text: Pexels stock
+  callback_data: =image-pexels-yes_{{ $json.project_id }}
+
+Row 3:
+- Text: AI generate
+  callback_data: =img-openai_{{ $json.project_id }}
+
+Additional fields:
+- appendAttribution: false

@@ -1,0 +1,24 @@
+# Telegram node: Send Pexels pick hint
+# After Prepare Pexels tags, BEFORE Call Pexels subworkflow
+
+Chat ID:
+={{ $('Telegram Trigger1').item.json.callback_query.from.id }}
+
+Text:
+=Project ID: {{ $json.project_id }}
+
+Searching Pexels for:
+{{ Array.isArray($json.tags) ? $json.tags.join(', ') : $json.tags }}
+
+When you receive image options, pick one and *reply to this message* with that photo.
+
+Reply markup: force_reply
+
+Force reply: true
+
+Additional fields:
+- appendAttribution: false
+
+---
+
+After user sends PHOTO as reply → existing **Switch3 → PHOTO → Get Project for photo → Get a file3 → Prepare image for GitHub1** (unchanged).

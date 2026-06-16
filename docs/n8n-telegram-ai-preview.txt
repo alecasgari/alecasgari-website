@@ -1,0 +1,29 @@
+# Telegram node: Send AI image preview
+# After Update sheet AI image URL
+
+Chat ID:
+={{ $('Telegram Trigger1').item.json.callback_query.from.id }}
+
+Operation: Send Photo
+
+Photo: ={{ $json.image_link }}
+
+Caption:
+=AI cover preview for *{{ $json.project_title }}*
+
+Project ID: {{ $json.project_id }}
+
+Use this image or regenerate?
+
+Reply markup: Inline Keyboard
+
+Row 1:
+- Text: Use this image
+  callback_data: =img-openai-use_{{ $json.project_id }}
+
+Row 2:
+- Text: Regenerate
+  callback_data: =img-openai_{{ $json.project_id }}
+
+Additional fields:
+- appendAttribution: false

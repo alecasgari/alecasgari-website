@@ -77,6 +77,8 @@ Repo: **`alecasgari/alecasgari-website`** (نه gullible-giant)
 
 **n8n — حتماً آپدیت کن:**
 1. Node **Analyze audio** → پرامپت کامل در [`docs/n8n-analyze-audio-prompt.txt`](./n8n-analyze-audio-prompt.txt)
+   - ساختار `project_description`: Overview · The Problem · My Approach · The Solution · Technical Stack · Results & Impact · Key Takeaways
+   - زبان ساده، اول شخص **I** (نه we) — سایت شخصی Alec
 2. Node **Code - Text1** → کد کامل در [`docs/n8n-code-text1.js`](./n8n-code-text1.js) (نرمال‌سازی category + alias دسته‌های قدیمی)
 
 **نیاز به تغییر ندارند:** Prepare HTML for GitHub، Merge projects JSON، آپلود GitHub — `category` را همان‌طور که از Sheet می‌آید ذخیره می‌کنند.
