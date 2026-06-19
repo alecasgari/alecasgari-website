@@ -1,5 +1,33 @@
 [
   {
+    "slug": "Web-Portal-Revamp-and-E-commerce-System-for-Sahba-Kenitex",
+    "title": "Web Portal Revamp and E-commerce System for Sahba Kenitex",
+    "excerpt": "I revamped a long-neglected web portal for Sahba Kenitex, designing a new visual identity and building a modern, automated online store.",
+    "image": "/projects/Web-Portal-Revamp-and-E-commerce-System-for-Sahba-Kenitex.jpg",
+    "category": "Web Development",
+    "tags": [
+      "WordPress",
+      "Web Development",
+      "E-commerce",
+      "CRM Integration",
+      "Digital Transformation"
+    ],
+    "technologies": [
+      "WordPress",
+      "JetEngine",
+      "Elementor Pro",
+      "CRM"
+    ],
+    "date": "2022-07-23",
+    "clientName": "Farbod Karbalaei",
+    "clientCompany": "Sahba Kenitex",
+    "duration": "1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Web-Portal-Revamp-and-E-commerce-System-for-Sahba-Kenitex.html",
+    "url": "/projects/Web-Portal-Revamp-and-E-commerce-System-for-Sahba-Kenitex.html"
+  },
+  {
     "slug": "Medical-Clinic-Web-Portal-Development-for-Dr-Fatemeh-Alibabayi",
     "title": "Medical Clinic Web Portal Development for Dr. Fatemeh Alibabayi",
     "excerpt": "I designed and developed a comprehensive medical web portal to streamline patient communication and appointment management.",
