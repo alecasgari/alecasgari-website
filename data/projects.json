@@ -1,5 +1,33 @@
 [
   {
+    "slug": "Marketing-Automation-and-Lead-Nurturing-for-FirstSecure",
+    "title": "Marketing Automation and Lead Nurturing for FirstSecure",
+    "excerpt": "I designed and implemented a marketing automation pipeline for FirstSecure. By connecting Google Ads to a sophisticated email nurture flow, I increased conversion rates significantly.",
+    "image": "/projects/Marketing-Automation-and-Lead-Nurturing-for-FirstSecure.jpg",
+    "category": "Marketing",
+    "tags": [
+      "Marketing Automation",
+      "Google Ads",
+      "Email Marketing",
+      "Lead Generation",
+      "Lead Nurturing"
+    ],
+    "technologies": [
+      "Google Ads",
+      "MailerLite",
+      "Mailchimp",
+      "ActiveCampaign"
+    ],
+    "date": "2026-03-15",
+    "clientName": "Sharif Mohammad",
+    "clientCompany": "FirstSecure",
+    "duration": "2 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Marketing-Automation-and-Lead-Nurturing-for-FirstSecure.html",
+    "url": "/projects/Marketing-Automation-and-Lead-Nurturing-for-FirstSecure.html"
+  },
+  {
     "slug": "First-Secure-Branding-and-Visual-Identity-Design",
     "title": "First Secure Branding and Visual Identity Design",
     "excerpt": "I created a comprehensive visual identity for First Secure, including logo, marketing materials, and corporate stationery. I also developed a professional company profile to help them showcase their services to clients.",
