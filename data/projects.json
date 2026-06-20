@@ -1,5 +1,32 @@
 [
   {
+    "slug": "Patient-Management-Portal-for-MGN-Neurosurgery-Clinic",
+    "title": "Patient Management Portal for MGN Neurosurgery Clinic",
+    "excerpt": "I designed and developed a secure online portal for a neurosurgery clinic. This platform enables patients to manage appointments and access services remotely.",
+    "image": "/projects/Patient-Management-Portal-for-MGN-Neurosurgery-Clinic.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Portal",
+      "Patient Management",
+      "UI/UX Design",
+      "Clinic Automation"
+    ],
+    "technologies": [
+      "Adobe XD",
+      "Make.com",
+      "JetEngine",
+      "Elementor Pro"
+    ],
+    "date": "2022-07-07",
+    "clientName": "Professor Giv Sharifi",
+    "clientCompany": "MGN Neurosurgery Clinic",
+    "duration": "6 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Patient-Management-Portal-for-MGN-Neurosurgery-Clinic.html",
+    "url": "/projects/Patient-Management-Portal-for-MGN-Neurosurgery-Clinic.html"
+  },
+  {
     "slug": "Web-Portal-Revamp-and-E-commerce-System-for-Sahba-Kenitex",
     "title": "Web Portal Revamp and E-commerce System for Sahba Kenitex",
     "excerpt": "I revamped a long-neglected web portal for Sahba Kenitex, designing a new visual identity and building a modern, automated online store.",
