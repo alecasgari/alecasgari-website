@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Omnichannel-Marketing-and-Lead-Automation-for-Mahnega-Clinic",
+    "title": "Omnichannel Marketing and Lead Automation for Mahnega Clinic",
+    "excerpt": "I implemented a comprehensive marketing automation system for Mahnega Clinic, integrating Google and Instagram campaigns to streamline lead capture and clinic intake.",
+    "image": "/projects/Omnichannel-Marketing-and-Lead-Automation-for-Mahnega-Clinic.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "Lead Automation",
+      "Google Ads",
+      "Instagram Marketing",
+      "CRM Integration",
+      "Clinic Management"
+    ],
+    "technologies": [
+      "Google Ads",
+      "Instagram Ads",
+      "CRM",
+      "API Integrations",
+      "Lead Generation Automation"
+    ],
+    "date": "2022-02-15",
+    "clientName": "Mahnega Clinic Management",
+    "clientCompany": "Mahnega Clinic",
+    "duration": "2 years",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Omnichannel-Marketing-and-Lead-Automation-for-Mahnega-Clinic.html",
+    "url": "/projects/Omnichannel-Marketing-and-Lead-Automation-for-Mahnega-Clinic.html"
+  },
+  {
     "slug": "Online-Portal-Development-for-First-Secure-Cybersecurity-Services",
     "title": "Online Portal Development for First Secure Cybersecurity Services",
     "excerpt": "I designed and developed a comprehensive online portal for First Secure. This project streamlined their digital presence and integrated automated marketing workflows.",
