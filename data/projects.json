@@ -1,5 +1,35 @@
 [
   {
+    "slug": "Online-Content-Portal-and-Automation-for-Professional-Photographer",
+    "title": "Online Content Portal and Automation for Professional Photographer",
+    "excerpt": "I built a professional online portfolio and automated content management system for a photographer, streamlining their client engagement and file delivery workflows.",
+    "image": "/projects/Online-Content-Portal-and-Automation-for-Professional-Photographer.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Development",
+      "Automation",
+      "PHP",
+      "Content Management",
+      "Client Portal"
+    ],
+    "technologies": [
+      "PHP",
+      "HTML",
+      "CSS3",
+      "Zapier",
+      "Python",
+      "Adobe Creative Suite"
+    ],
+    "date": "2022-10-15",
+    "clientName": "Antony Malouf",
+    "clientCompany": "Antony Malouf Photography",
+    "duration": "3 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Online-Content-Portal-and-Automation-for-Professional-Photographer.html",
+    "url": "/projects/Online-Content-Portal-and-Automation-for-Professional-Photographer.html"
+  },
+  {
     "slug": "Corporate-Identity-and-Branding-Package-for-CN1-Real-Estate",
     "title": "Corporate Identity and Branding Package for CN1 Real Estate",
     "excerpt": "I developed a comprehensive corporate identity package for CN1 Real Estate, encompassing branding, business materials, and digital assets. This project streamlined their professional image across all media channels.",
