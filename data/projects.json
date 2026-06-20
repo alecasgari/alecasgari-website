@@ -1,5 +1,33 @@
 [
   {
+    "slug": "First-Secure-Branding-and-Visual-Identity-Design",
+    "title": "First Secure Branding and Visual Identity Design",
+    "excerpt": "I created a comprehensive visual identity for First Secure, including logo, marketing materials, and corporate stationery. I also developed a professional company profile to help them showcase their services to clients.",
+    "image": "/projects/First-Secure-Branding-and-Visual-Identity-Design.jpg",
+    "category": "Graphic Design",
+    "tags": [
+      "Branding",
+      "Logo Design",
+      "Corporate Identity",
+      "Graphic Design",
+      "Marketing Assets"
+    ],
+    "technologies": [
+      "Adobe Illustrator",
+      "Adobe InDesign",
+      "Adobe Photoshop",
+      "Figma"
+    ],
+    "date": "2022-08-15",
+    "clientName": "Sharif Mohammed",
+    "clientCompany": "First Secure",
+    "duration": "1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/First-Secure-Branding-and-Visual-Identity-Design.html",
+    "url": "/projects/First-Secure-Branding-and-Visual-Identity-Design.html"
+  },
+  {
     "slug": "Real-Estate-Directory-and-Listing-Portal-for-KBA-Real-Estate",
     "title": "Real Estate Directory and Listing Portal for KBA Real Estate",
     "excerpt": "I built a professional real estate directory and listing portal for KBA Real Estate. This system allowed the client to manage property inventory and client inquiries effectively.",
