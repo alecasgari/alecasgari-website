@@ -1,5 +1,35 @@
 [
   {
+    "slug": "Web-Portal-Development-for-Mahnega-Beauty-Clinic",
+    "title": "Web Portal Development for Mahnega Beauty Clinic",
+    "excerpt": "I built a professional web portal for Mahnega Beauty Clinic to improve their online presence. This platform automated client registration and integrated directly with their marketing system.",
+    "image": "/projects/Web-Portal-Development-for-Mahnega-Beauty-Clinic.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Development",
+      "WordPress",
+      "Elementor",
+      "Landing Pages",
+      "Lead Generation"
+    ],
+    "technologies": [
+      "WordPress",
+      "Elementor",
+      "JetEngine",
+      "SMS API",
+      "WhatsApp API",
+      "Email Marketing"
+    ],
+    "date": "2022-08-01",
+    "clientName": "Mahnega Beauty Clinic",
+    "clientCompany": "Mahnega Beauty Clinic",
+    "duration": "4 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Web-Portal-Development-for-Mahnega-Beauty-Clinic.html",
+    "url": "/projects/Web-Portal-Development-for-Mahnega-Beauty-Clinic.html"
+  },
+  {
     "slug": "Omnichannel-Marketing-and-Lead-Automation-for-Mahnega-Clinic",
     "title": "Omnichannel Marketing and Lead Automation for Mahnega Clinic",
     "excerpt": "I implemented a comprehensive marketing automation system for Mahnega Clinic, integrating Google and Instagram campaigns to streamline lead capture and clinic intake.",
