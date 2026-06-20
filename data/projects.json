@@ -1,5 +1,32 @@
 [
   {
+    "slug": "Luxury-Jewelry-Event-Branding-and-Digital-Marketing-Campaign",
+    "title": "Luxury Jewelry Event Branding and Digital Marketing Campaign",
+    "excerpt": "I designed the visual identity and promotional posters for a luxury jewelry event. I also set up a full digital marketing pipeline to manage leads and event sign-ups.",
+    "image": "/projects/Luxury-Jewelry-Event-Branding-and-Digital-Marketing-Campaign.jpg",
+    "category": "Marketing",
+    "tags": [
+      "Graphic Design",
+      "Event Marketing",
+      "Lead Generation",
+      "Digital Campaigns"
+    ],
+    "technologies": [
+      "Mailchimp",
+      "MailerLite",
+      "ActiveCampaign",
+      "Make.com"
+    ],
+    "date": "2022-09-21",
+    "clientName": "Parivar",
+    "clientCompany": "Parivar Holding",
+    "duration": "1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Luxury-Jewelry-Event-Branding-and-Digital-Marketing-Campaign.html",
+    "url": "/projects/Luxury-Jewelry-Event-Branding-and-Digital-Marketing-Campaign.html"
+  },
+  {
     "slug": "Web-Portal-Development-for-Mahnega-Beauty-Clinic",
     "title": "Web Portal Development for Mahnega Beauty Clinic",
     "excerpt": "I built a professional web portal for Mahnega Beauty Clinic to improve their online presence. This platform automated client registration and integrated directly with their marketing system.",
