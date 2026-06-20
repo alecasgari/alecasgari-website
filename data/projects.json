@@ -1,5 +1,33 @@
 [
   {
+    "slug": "Online-Portal-Development-for-First-Secure-Cybersecurity-Services",
+    "title": "Online Portal Development for First Secure Cybersecurity Services",
+    "excerpt": "I designed and developed a comprehensive online portal for First Secure. This project streamlined their digital presence and integrated automated marketing workflows.",
+    "image": "/projects/Online-Portal-Development-for-First-Secure-Cybersecurity-Services.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Development",
+      "WordPress",
+      "Marketing Automation",
+      "UI/UX Design",
+      "Email Marketing"
+    ],
+    "technologies": [
+      "WordPress",
+      "JetEngine",
+      "Elementor Pro",
+      "Email Marketing APIs"
+    ],
+    "date": "2022-08-15",
+    "clientName": "Sharif Mohammad",
+    "clientCompany": "First Secure",
+    "duration": "3 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Online-Portal-Development-for-First-Secure-Cybersecurity-Services.html",
+    "url": "/projects/Online-Portal-Development-for-First-Secure-Cybersecurity-Services.html"
+  },
+  {
     "slug": "Marketing-Automation-and-Lead-Nurturing-for-FirstSecure",
     "title": "Marketing Automation and Lead Nurturing for FirstSecure",
     "excerpt": "I designed and implemented a marketing automation pipeline for FirstSecure. By connecting Google Ads to a sophisticated email nurture flow, I increased conversion rates significantly.",
