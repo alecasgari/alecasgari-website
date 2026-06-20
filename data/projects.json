@@ -1,5 +1,35 @@
 [
   {
+    "slug": "Real-Estate-Directory-and-Listing-Portal-for-KBA-Real-Estate",
+    "title": "Real Estate Directory and Listing Portal for KBA Real Estate",
+    "excerpt": "I built a professional real estate directory and listing portal for KBA Real Estate. This system allowed the client to manage property inventory and client inquiries effectively.",
+    "image": "/projects/Real-Estate-Directory-and-Listing-Portal-for-KBA-Real-Estate.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Real Estate",
+      "Web Portal",
+      "Directory System",
+      "Lead Management",
+      "Property Listing"
+    ],
+    "technologies": [
+      "Python",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "VPS",
+      "CRM Integration"
+    ],
+    "date": "2025-10-15",
+    "clientName": "Aram Dorsche",
+    "clientCompany": "KBA Real Estate",
+    "duration": "3 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Real-Estate-Directory-and-Listing-Portal-for-KBA-Real-Estate.html",
+    "url": "/projects/Real-Estate-Directory-and-Listing-Portal-for-KBA-Real-Estate.html"
+  },
+  {
     "slug": "Full-Brand-Identity-and-Design-Suite-for-KBA-Real-Estate",
     "title": "Full Brand Identity and Design Suite for KBA Real Estate",
     "excerpt": "I designed a complete branding and visual system for KBA Real Estate, including logo, business stationery, and social media assets for their Dubai and Paris offices.",
