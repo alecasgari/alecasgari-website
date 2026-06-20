@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Corporate-Compliance-and-Business-Setup-Portal-for-Brilliance-Solutions",
+    "title": "Corporate Compliance and Business Setup Portal for Brilliance Solutions",
+    "excerpt": "I designed and developed a comprehensive client portal to streamline company registration and legal documentation for businesses in Dubai and Abu Dhabi.",
+    "image": "/projects/Corporate-Compliance-and-Business-Setup-Portal-for-Brilliance-Solutions.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Corporate Services",
+      "Web Portal",
+      "Automation",
+      "Legal Tech",
+      "Client Experience"
+    ],
+    "technologies": [
+      "JavaScript",
+      "HTML/CSS",
+      "Chatbot Automation",
+      "CRM Integration",
+      "Web Portal Framework"
+    ],
+    "date": "2022-08-20",
+    "clientName": "Yamen",
+    "clientCompany": "Brilliance Solutions",
+    "duration": "3 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Corporate-Compliance-and-Business-Setup-Portal-for-Brilliance-Solutions.html",
+    "url": "/projects/Corporate-Compliance-and-Business-Setup-Portal-for-Brilliance-Solutions.html"
+  },
+  {
     "slug": "Branding-and-Visual-Identity-Design-for-Brilliant-Solutions",
     "title": "Branding and Visual Identity Design for Brilliant Solutions",
     "excerpt": "I developed a comprehensive visual identity and branding system for Brilliant Solutions. This included logo design, print collateral, and social media assets to elevate their professional presence.",
