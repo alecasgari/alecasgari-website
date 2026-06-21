@@ -48,8 +48,12 @@ fi
 
 if [[ -d "$DEPLOY_DIR/saas-calculator" ]]; then
   log "Syncing SaaS calculator to $CALCULATOR_DIR"
-  mkdir -p "$CALCULATOR_DIR"
-  rsync -a --delete "$DEPLOY_DIR/saas-calculator/" "$CALCULATOR_DIR/"
+  mkdir -p "$CALCULATOR_DIR" || log "WARN: could not create $CALCULATOR_DIR"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete "$DEPLOY_DIR/saas-calculator/" "$CALCULATOR_DIR/" || log "WARN: calculator rsync failed (check CALCULATOR_DIR mount)"
+  else
+    cp -a "$DEPLOY_DIR/saas-calculator/." "$CALCULATOR_DIR/" || log "WARN: calculator copy failed"
+  fi
   if docker ps --format '{{.Names}}' | grep -qx "$CALCULATOR_CONTAINER"; then
     log "Calculator container $CALCULATOR_CONTAINER is running (files updated via mount)."
   else
