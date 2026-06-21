@@ -2,8 +2,9 @@
 
 | فیلد | مقدار |
 |------|-------|
-| **نسخه** | 1.0.0 |
+| **نسخه** | 1.1.0 |
 | **تاریخ تهیه** | 2026-06-21 |
+| **آخرین sync** | 2026-06-21 — merge با `origin/main` (commit `592410a`) |
 | **مبنا** | [گزارش اولیه v1.0.0](./gozaresh-avalieh-v1.md) |
 | **دامنه** | alecasgari.com + calculator.alecasgari.com |
 
@@ -15,6 +16,30 @@
 - **اولویت:** 🔴 فوری · 🟡 کوتاه‌مدت · 🟢 میان‌مدت
 - **مسئول:** Alec (مالک سایت) — مگر خلافش نوشته شده باشد.
 - بعد از هر فاز، در GSC دکمه **Validate Fix** را بزن.
+
+---
+
+## ✅ انجام‌شده (2026-06-20 تا 2026-06-21)
+
+| # | اقدام | تاریخ |
+|---|--------|-------|
+| ✅ | ساخت sitemap-index + pages/projects/blog | 2026-06-20 |
+| ✅ | OG/Twitter meta — ۲۰ صفحه پروژه live | 2026-06-20 |
+| ✅ | اسکрипт `scripts/patch-project-og-and-sitemap.js` | 2026-06-20 |
+| ✅ | n8n template — OG tags برای پروژه‌های جدید | 2026-06-21 |
+| ✅ | GSC: حذف `sitemap-0.xml` (۴۰۴) | 2026-06-21 |
+| ✅ | GSC: re-submit `sitemap-index.xml` | 2026-06-21 |
+| ✅ | Merge سرور — NK Rent Cars + بلاگ جدید | 2026-06-21 |
+| ✅ | sitemap به‌روز: ۴۱ URL (10+20+11) | 2026-06-21 |
+
+**یادآوری:** Google sitemap ping (`google.com/ping?...`) از 2023 **منسوخ** است. فقط GSC submit + `lastmod` در sitemap.
+
+**بعد از هر publish جدید (n8n):**
+```bash
+node scripts/patch-project-og-and-sitemap.js
+git add sitemap-*.xml projects/*.html
+git commit && git push
+```
 
 ---
 
@@ -454,7 +479,7 @@ Sitemap: https://alecasgari.com/sitemap-index.xml
 
 | KPI | مقدار فعلی | هدف ۳ ماهه (2026-09-21) |
 |-----|------------|-------------------------|
-| صفحات indexed | 14 / 39 (36%) | > 30 / 39 (75%) |
+| صفحات indexed | 14 / ~41 (34%) | > 32 / 41 (78%) |
 | Organic sessions / ماه | ~۴ | > ۲۰ |
 | CTR کوئری saas cost calculator | 0% | > 5% |
 | 404 errors در GSC | 1 | 0 |
@@ -466,4 +491,5 @@ Sitemap: https://alecasgari.com/sitemap-index.xml
 
 | نسخه | تاریخ | تغییرات |
 |------|-------|---------|
+| 1.1.0 | 2026-06-21 | بخش انجام‌شده، sync سرور، sitemap ۴۱ URL، یادآوری ping منسوخ |
 | 1.0.0 | 2026-06-21 | چک‌لیست اولیه — ۴ فاز، ۱۶ اقدام |

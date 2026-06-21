@@ -2,8 +2,9 @@
 
 | فیلد | مقدار |
 |------|-------|
-| **نسخه** | 1.0.0 |
+| **نسخه** | 1.1.0 |
 | **تاریخ** | 2026-06-21 |
+| **آخرین sync با سرور** | 2026-06-21 — commit `592410a` (11 commit جلوتر از `aaabd94`) |
 | **دامنه اصلی** | [alecasgari.com](https://alecasgari.com) |
 | **ساب‌دامین Calculator** | [calculator.alecasgari.com](https://calculator.alecasgari.com) |
 | **منبع داده** | Google Analytics 4، Google Search Console، بررسی کد و تست زنده سرور |
@@ -22,6 +23,24 @@
 | یکپارچگی داده | Analytics یکجا؛ URLها پراکنده | 5/10 |
 
 **تشخیص اصلی:** سایت از Astro به HTML استاتیک ساده شده، ولی **بقایای URL قدیمی** هنوز در گوگل وجود دارد و **۱۵ پروژه مهم** به redirect تبدیل شده‌اند. گوگل گیج شده — ۲۵ صفحه از ۳۹ صفحه ایندکس نمی‌شوند.
+
+### کارهای انجام‌شده از 2026-06-20 (بعد از گزارش اولیه)
+
+| اقدام | وضعیت |
+|-------|--------|
+| ساخت `sitemap-index.xml` + sitemap-pages/projects/blog | ✅ deploy شده |
+| OG/Twitter meta روی صفحات پروژه فعال | ✅ ۲۰ صفحه live |
+| اسکрипт نگهداری `scripts/patch-project-og-and-sitemap.js` | ✅ در repo |
+| حذف `sitemap-0.xml` از GSC | ✅ توسط Alec |
+| Re-submit `sitemap-index.xml` در GSC | ✅ توسط Alec |
+| Google sitemap ping | ❌ منسوخ (از 2023) — دیگر کار نمی‌کند |
+
+**وضعیت sitemap فعلی (بعد از sync):** ۱۰ صفحه + ۲۰ پروژه + ۱۱ بلاگ = **۴۱ URL**
+
+**محتوای جدید از سرور (merge):**
+- ۲ پروژه NK Rent Cars
+- ۱ پست بلاگ: `why-digital-transformation-fails-people-vs-tech`
+- پروژه‌های جدید از n8n template به‌روز — OG tags دارند
 
 ---
 
@@ -134,9 +153,9 @@ Not indexed: 25 صفحه  ██████████████████
 
 **مشکل:** redirect نرم (meta refresh) نه 301. گوگل محتوای قدیمی را از دست داده و جایگزین قوی نگرفته.
 
-### ج) `data/projects.json` فقط ۱۸ پروژه branding/web دارد
+### ج) `data/projects.json` — ۲۰ پروژه فعال (به‌روز 2026-06-21)
 
-پروژه‌های tech-heavy (AI، ERP، automation) در JSON نیستند → صفحه regenerate نمی‌شوند.
+شامل branding/web/marketing و ۲ پروژه جدید NK Rent Cars. پروژه‌های tech-heavy (AI، ERP، automation) هنوز در JSON نیستند → صفحه regenerate نمی‌شوند.
 
 ### د) Calculator جدا از ecosystem
 
@@ -250,8 +269,8 @@ Calculator **ارزشمندترین asset SEO** فعلی است، ولی جدا 
 |------|-----|
 | `sitemap-index.xml` | sitemap اصلی |
 | `robots.txt` | قوانین crawl |
-| `data/projects.json` | فهرست ۱۸ پروژه فعال |
-| `docs/project-html-builder.js` | قالب صفحات پروژه |
+| `data/projects.json` | فهرست ۲۰ پروژه فعال |
+| `scripts/patch-project-og-and-sitemap.js` | OG + sitemap regenerate |
 | `services.html` / `docs.html` | redirect به home |
 
 ---
@@ -260,4 +279,5 @@ Calculator **ارزشمندترین asset SEO** فعلی است، ولی جدا 
 
 | نسخه | تاریخ | تغییرات |
 |------|-------|---------|
+| 1.1.0 | 2026-06-21 | sync با سرور (`592410a`)، sitemap ۴۱ URL، OG tags، کارهای GSC انجام‌شده |
 | 1.0.0 | 2026-06-21 | گزارش اولیه — تحلیل GA4، GSC، کد و سرور |
