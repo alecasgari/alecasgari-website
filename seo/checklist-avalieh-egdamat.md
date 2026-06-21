@@ -249,7 +249,7 @@ location = /projects/AI-Powered-Chatbot.html {
 |---|---|
 | **هدف** | تبدیل impression به click برای کوئری‌های saas calculator |
 | **مهلت پیشنهادی** | 2026-07-10 |
-| **وضعیت** | `[ ]` انجام نشده |
+| **وضعیت** | `[x]` انجام شد (2026-06-21) — `saas-calculator/index.html` |
 
 **نحوه اجرا:**
 
@@ -324,7 +324,7 @@ Free SaaS spend calculator for 5–20 person teams. Compare GSuite, HubSpot & Ma
 |---|---|
 | **هدف** | حذف قوانین WordPress قدیمی |
 | **مهلت پیشنهادی** | 2026-07-05 |
-| **وضعیت** | `[ ]` انجام نشده |
+| **وضعیت** | `[x]` انجام شد (2026-06-21) — `robots.txt` |
 
 **نحوه اجرا:**
 

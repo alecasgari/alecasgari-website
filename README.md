@@ -20,4 +20,5 @@ cd alecasgari-website && python -m http.server 8080
 - `blog/{slug}.html` — blog posts (n8n adds here)
 - `data/*.json` — indexes for n8n
 - `assets/` — CSS, JS, theme images
+- `saas-calculator/` — calculator.alecasgari.com (deployed to `/home/alecadmin/saas-calculator`)
 - `images/projects/`, `images/blog/` — content images

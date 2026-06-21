@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Cost Calculator — Compare vs Self-Hosted Stack | Alec Asgari</title>
+    <meta name="description" content="Free SaaS spend calculator for 5–20 person teams. Compare GSuite, HubSpot &amp; Mailchimp costs vs one-time self-hosted stack. See your savings in 30 seconds.">
+    <link rel="canonical" href="https://calculator.alecasgari.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculator.alecasgari.com/">
+    <meta property="og:title" content="SaaS Cost Calculator — Compare vs Self-Hosted Stack | Alec Asgari">
+    <meta property="og:description" content="Free SaaS spend calculator for 5–20 person teams. Compare GSuite, HubSpot &amp; Mailchimp costs vs one-time self-hosted stack. See your savings in 30 seconds.">
+    <meta property="og:image" content="https://calculator.alecasgari.com/img/alecasgari-1.webp">
+    <meta property="og:site_name" content="Alec Asgari">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SaaS Cost Calculator — Compare vs Self-Hosted Stack | Alec Asgari">
+    <meta name="twitter:description" content="Free SaaS spend calculator for 5–20 person teams. Compare GSuite, HubSpot &amp; Mailchimp costs vs one-time self-hosted stack. See your savings in 30 seconds.">
+    <meta name="twitter:image" content="https://calculator.alecasgari.com/img/alecasgari-1.webp">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WLLGGB4P');</script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- LinkedIn Insight Tag -->
+    <script type="text/javascript">
+    _linkedin_partner_id = "8745473";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+    </script>
+    <script type="text/javascript">
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0F172A; }
+        .hero-gradient { background: radial-gradient(circle at top, rgba(56, 189, 248, 0.1), transparent 40%); }
+        .highlight-gradient { background: linear-gradient(90deg, #38bdf8, #22c55e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .form-control { background-color: #1E293B; border: 1px solid #334155; color: #F8FAFC; }
+        input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:9999px;background:linear-gradient(90deg,#38bdf8,#22c55e)}
+        input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:24px; height:24px; border-radius:9999px; background:#fff; border:3px solid #22c55e; cursor:pointer; }
+        input[type=range]::-moz-range-thumb{ width:24px; height:24px; border-radius:9999px; background:#fff; border:3px solid #22c55e; cursor:pointer; }
+        .money-pit-badge{ position:absolute; top:12px; right:12px; background:rgba(239,68,68,.15); color:#fecaca; padding:.25rem .5rem; border-radius:.5rem; font-size:.75rem; }
+        .automation-bar{ font-size:.75rem; display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .5rem; border-radius:.375rem; }
+        .automation-bar.positive{ background:rgba(34,197,94,.12); color:#86efac; border:1px dashed rgba(34,197,94,.4) }
+        .automation-bar.negative{ background:rgba(239,68,68,.12); color:#fecaca; border:1px dashed rgba(239,68,68,.4) }
+        .fade-in{ opacity:0; transform:translateY(6px); animation:fadeIn .6s forwards; }
+        @keyframes fadeIn{ to { opacity:1; transform:none; } }
+        .loader-slide{ display:block; transition: opacity 0.5s ease-in-out; }
+        .loader-slide.hidden{ display:none; }
+        .result-card { transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden;}
+        .result-card:hover { transform: scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .currency-switcher button.active{background-color:#38bdf8;color:white}
+        .currency-switcher button{background-color:#1E293B;color:#94a3b8}
+        .info-icon{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-left:8px;color:#64748b;transition:color .2s}
+        .info-icon:hover{color:#38bdf8}
+        .action-btn { background-color: #1e293b; color: #cbd5e1; display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 600; transition: all 0.2s; border: 1px solid #334155; }
+        .action-btn:hover { background-color: #334155; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinner { border-top-color: #38bdf8; animation: spin 1s linear infinite; }
+        .feature-card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; overflow: hidden; position: relative; }
+        .feature-card:before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(56, 189, 248, 0.1), transparent 30%); transition: all 0.5s ease; opacity: 0; transform: scale(0); }
+        .feature-card:hover:before { opacity: 1; transform: scale(1); }
+        .feature-card:hover { border-color: #38bdf8; transform: translateY(-5px); }
+        .faq-item details > summary { list-style: none; cursor: pointer; }
+        .faq-item details > summary::-webkit-details-marker { display: none; }
+        .faq-item details[open] summary .icon-plus { display: none; }
+        .faq-item details:not([open]) summary .icon-minus { display: none; }
+        .loader-slide { transition: opacity 0.5s ease-in-out; }
+        .blur-overlay { position: relative; }
+        .blur-overlay::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(2px); z-index: 10; border-radius: 0.75rem; }
+        .blur-overlay .show-result-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 20; }
+    </style>
+</head>
+<body class="text-slate-200 overflow-x-hidden">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLLGGB4P"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- LinkedIn Insight Tag (noscript) -->
+    <noscript>
+    <img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=8745473&fmt=gif" />
+    </noscript>
+
+    <div id="app" class="relative">
+        <!-- Hero Section -->
+        <section class="hero-gradient min-h-screen flex items-center justify-center py-20 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-slate-50 tracking-tighter fade-in">
+                    SaaS Cost Calculator
+                    <span class="block highlight-gradient mt-2">Stop Overpaying — Own Your Stack</span>
+                </h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-400 fade-in" style="transition-delay: 200ms;">
+                  If your 5–20 person team pays per seat for email, CRM and marketing, this calculator shows your first‑year savings — and how a one‑time setup removes monthly fees.
+                </p>
+                <div class="mt-10 fade-in" style="transition-delay: 400ms;"><a href="#calculator" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/20">Calculate Your Savings Now</a></div>
+            </div>
+        </section>
+
+        <!-- Calculator Section -->
+        <section id="calculator" class="py-20 px-4">
+            <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-slate-700 shadow-2xl fade-in">
+                <h2 class="text-3xl font-bold text-center text-white">Subscription Bill SHOCK Calculator</h2>
+                <p class="text-slate-400 text-center mt-2 mb-8">Adjust the sliders to match your team size.</p>
+                <form id="calculator-form" class="space-y-8">
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><label for="email-accounts" class="font-semibold text-lg">Team Members (Email & Cloud)</label><span id="email-accounts-value" class="text-2xl font-bold text-sky-400 w-12 text-center">10</span></div>
+                        <input type="range" id="email-accounts" name="email_accounts" min="0" max="200" value="10" class="w-full">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><label for="sales-users" class="font-semibold text-lg">Sales Team (CRM Users)</label><span id="sales-users-value" class="text-2xl font-bold text-sky-400 w-12 text-center">5</span></div>
+                        <input type="range" id="sales-users" name="sales_users" min="0" max="100" value="5" class="w-full">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><label for="marketing-contacts" class="font-semibold text-lg">Marketing Contacts</label><span id="marketing-contacts-value" class="text-2xl font-bold text-sky-400 w-24 text-center">10k</span></div>
+                        <input type="range" id="marketing-contacts" name="marketing_contacts" min="0" max="100" value="20" class="w-full">
+                         <p class="text-xs text-slate-500 mt-1">Value in thousands (e.g., 20 = 20,000 contacts)</p>
+                    </div>
+                    <div class="pt-6"><button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-transform transform hover:scale-105 shadow-lg shadow-indigo-600/30">Reveal My Savings</button></div>
+                </form>
+            </div>
+        </section>
+        
+        <!-- HIDDEN CONTENT WRAPPER -->
+        <div id="main-content" class="hidden">
+            <!-- Results Section -->
+            <section id="results" class="py-20 px-4">
+                <div class="max-w-5xl mx-auto text-center">
+                    <div class="flex justify-center items-center mb-8 fade-in"><span class="text-slate-400 mr-4">Show prices in:</span><div class="currency-switcher bg-slate-800 rounded-full p-1 flex"><button id="btn-usd" class="px-4 py-1 rounded-full text-sm font-semibold transition active" data-currency="USD">USD</button><button id="btn-aed" class="px-4 py-1 rounded-full text-sm font-semibold transition" data-currency="AED">AED</button></div></div>
+                    <h2 class="text-4xl font-extrabold text-white fade-in">Here's Your Savings Report, <span id="user-name-placeholder-1" class="highlight-gradient">Friend</span>!</h2>
+                    <p class="mt-4 text-lg text-slate-400 fade-in" style="transition-delay: 150ms;">Based on your team size, here's the breakdown.</p>
+                    
+                    <div class="mt-10 bg-slate-900/50 border border-indigo-500/30 p-8 rounded-2xl fade-in" style="transition-delay: 200ms;">
+                        <p class="text-2xl text-slate-300">Total Savings in the First Year</p>
+                        <div id="total-savings" class="text-7xl font-extrabold highlight-gradient my-2" data-usd-value=""></div>
+                        <p class="text-xl text-slate-400">That's a <span id="savings-percentage" class="font-bold text-green-400"></span> reduction in cost, which grows every year!</p>
+                    </div>
+                    
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 text-left" id="results-cards-container">
+                        <div class="bg-slate-800 p-8 rounded-xl border border-slate-700 result-card fade-in blur-overlay" style="transition-delay: 300ms;" id="typical-costs-card">
+                            <div class="automation-bar negative"><i class="bi bi-x-circle-fill mr-2"></i>No Integrated Automation</div>
+                            <div class="money-pit-badge">Money Pit</div>
+                            <h3 class="text-2xl font-bold text-red-400">Your Typical Costs</h3>
+                            <p class="text-slate-400 mt-2">Estimated monthly bill for popular services.</p>
+                            <div class="mt-6 space-y-4">
+                                <div class="flex justify-between items-baseline"><span class="text-slate-300">Business Email (e.g., GSuite)</span><span id="saas-email" class="font-bold text-xl" data-usd-value=""></span></div>
+                                <div class="flex justify-between items-baseline"><span class="text-slate-300">Cloud Storage (e.g., Dropbox)</span><span id="saas-storage" class="font-bold text-xl" data-usd-value=""></span></div>
+                                <div class="flex justify-between items-baseline"><span class="text-slate-300">CRM (e.g., HubSpot)</span><span id="saas-crm" class="font-bold text-xl" data-usd-value=""></span></div>
+                                <div class="flex justify-between items-baseline"><span class="text-slate-300">Marketing (e.g., Mailchimp)</span><span id="saas-marketing" class="font-bold text-xl" data-usd-value=""></span></div>
+                            </div>
+                            <div class="border-t border-slate-600 mt-6 pt-6">
+                                <div class="flex justify-between items-center"><span class="text-lg font-semibold text-slate-200">Total Monthly Cost</span><span id="saas-total" class="text-4xl font-extrabold text-red-400 line-through" data-usd-value=""></span></div>
+                                <div class="flex justify-between items-center mt-2"><span class="text-md text-slate-400">Total Annual Cost</span><span id="saas-annual" class="text-2xl font-bold text-red-500 line-through" data-usd-value=""></span></div>
+                            </div>
+                            <button id="show-result-btn" class="show-result-btn bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/20">
+                                Show me the result
+                            </button>
+                        </div>
+                        <div class="bg-slate-800 p-8 rounded-xl border border-slate-700 result-card fade-in blur-overlay" style="transition-delay: 450ms;" id="unlimited-users-card">
+                            <div class="automation-bar positive"><i class="bi bi-robot mr-2"></i>Powerful Automation Included</div>
+                            <h3 class="text-2xl font-bold text-green-400">For UNLIMITED Users</h3>
+                            <p class="text-slate-400 mt-2">One-time fee. No hidden costs. Ever.</p>
+                            <div class="mt-6 space-y-4">
+                                <div class="flex items-center"><img src="img/mailcow.png" alt="Mailcow Logo" class="w-auto h-5 mr-3"><span class="flex-1">Unlimited Email (Mailcow)</span><span class="info-icon" data-info-id="mailcow"><i class="bi bi-info-circle-fill"></i></span></div>
+                                <div class="flex items-center"><img src="img/suitecrm.png" alt="SuiteCRM Logo" class="w-auto h-5 mr-3"><span class="flex-1">CRM (SuiteCRM)</span><span class="info-icon" data-info-id="crm"><i class="bi bi-info-circle-fill"></i></span></div>
+                                <div class="flex items-center"><img src="img/mautic.png" alt="Mautic Logo" class="w-auto h-5 mr-3"><span class="flex-1">Marketing (Mautic)</span><span class="info-icon" data-info-id="marketing"><i class="bi bi-info-circle-fill"></i></span></div>
+                                <div class="flex items-center"><img src="img/nextcloud.png" alt="Nextcloud Logo" class="w-auto h-5 mr-3"><span class="flex-1">Cloud Storage (Nextcloud)</span><span class="info-icon" data-info-id="storage"><i class="bi bi-info-circle-fill"></i></span></div>
+                                <div class="flex items-center"><img src="img/n8n.png" alt="n8n Logo" class="w-auto h-5 mr-3"><span class="flex-1">Automation (n8n)</span><span class="info-icon" data-info-id="automation"><i class="bi bi-info-circle-fill"></i></span></div>
+                            </div>
+                            <div class="border-t border-slate-600 mt-6 pt-6">
+                                <div class="flex justify-between items-center"><span class="text-lg font-semibold text-slate-200"><b class="text-green-300">FREE Dedicated Server</b></span><span class="info-icon text-lg" data-info-id="server"><i class="bi bi-info-circle-fill"></i></span></div>
+                                <div class="flex justify-between items-center mt-4"><span class="text-lg font-semibold text-slate-200">Total One-Time Fee</span><span id="self-total" class="text-4xl font-extrabold text-green-400" data-usd-value=""></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-16 pt-12 border-t border-slate-800 fade-in" style="transition-delay: 750ms;">
+                        <h3 class="text-3xl font-bold text-white">Ready to Own Your Stack, <span id="user-name-placeholder-2"></span>?</h3>
+                        <p class="text-slate-400 mt-3 max-w-2xl mx-auto">Let's connect and discuss how this solution can be tailored for your business. Or, share this calculator with your colleagues!</p>
+                        <div class="mt-8 flex flex-wrap justify-center gap-4"><a href="https://wa.me/971504302948?text=Hi!%20I%20just%20used%20your%20SaaS%20Cost%20Calculator%20and%20I'd%20like%20to%20get%20more%20information%20about%20your%20all-inclusive%20package." target="_blank" rel="noopener noreferrer" class="action-btn"><i class="bi bi-whatsapp text-xl"></i><span>Chat on WhatsApp</span></a><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener noreferrer" class="action-btn"><i class="bi bi-linkedin text-xl"></i><span>Connect on LinkedIn</span></a><a href="/cdn-cgi/l/email-protection#34574659745558515755475355465d1a575b59" class="action-btn"><i class="bi bi-envelope-fill text-xl"></i><span>Send an Email</span></a></div>
+                        <div class="mt-6 flex flex-wrap justify-center gap-4 pt-6 border-t border-slate-800"><a href="#calculator" id="recalculate-btn" class="action-btn"><i class="bi bi-arrow-counterclockwise text-xl"></i><span>Recalculate</span></a><button id="share-btn" class="action-btn"><i class="bi bi-share-fill text-xl"></i><span id="share-btn-text">Share Calculator</span></button></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="py-20 px-4 bg-slate-900/70">
+                <div class="max-w-6xl mx-auto"><div class="text-center mb-16"><h2 class="text-4xl font-extrabold text-white">What's Inside Your All-in-One Stack?</h2><p class="mt-4 text-lg text-slate-400 max-w-3xl mx-auto">A complete, integrated suite of powerful open-source tools to run your entire business, hosted on your own private server.</p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><div class="p-8 rounded-2xl feature-card fade-in"><img src="img/mailcow.png" alt="Mailcow Logo" class="h-10 mb-6"><h3 class="text-2xl font-bold text-white">Private Email Server</h3><p class="mt-2 text-sm font-semibold text-sky-400">Replaces: Google Workspace, Microsoft 365</p><p class="mt-4 text-slate-300">Stop paying per user per month. Get unlimited email accounts, calendars, and contacts on your own domain. Full control, maximum security, and no more surprise bills.</p></div><div class="p-8 rounded-2xl feature-card fade-in" style="transition-delay: 150ms;"><img src="img/suitecrm.png" alt="SuiteCRM Logo" class="h-8 mb-6"><h3 class="text-2xl font-bold text-white">Customer Relationship Mgt.</h3><p class="mt-2 text-sm font-semibold text-sky-400">Replaces: HubSpot, Salesforce, Zoho CRM</p><p class="mt-4 text-slate-300">A central hub for all your customer data. Track leads, manage your sales pipeline, and provide amazing customer support with unlimited users and endless customization.</p></div><div class="p-8 rounded-2xl feature-card fade-in" style="transition-delay: 300ms;"><img src="img/mautic.png" alt="Mautic Logo" class="h-8 mb-6"><h3 class="text-2xl font-bold text-white">Marketing Automation</h3><p class="mt-2 text-sm font-semibold text-sky-400">Replaces: Mailchimp, ActiveCampaign</p><p class="mt-4 text-slate-300">Nurture your leads automatically. Build complex email campaigns, create landing pages, and score leads based on their engagement, all without contact limits.</p></div><div class="p-8 rounded-2xl feature-card fade-in" style="transition-delay: 450ms;"><img src="img/nextcloud.png" alt="Nextcloud Logo" class="h-8 mb-6"><h3 class="text-2xl font-bold text-white">Private Cloud Storage</h3><p class="mt-2 text-sm font-semibold text-sky-400">Replaces: Dropbox, Google Drive</p><p class="mt-4 text-slate-300">Your secure, private cloud for file sharing, collaboration, and communication. Edit documents in real-time and keep your company data safe on your own server.</p></div><div class="p-8 rounded-2xl feature-card fade-in" style="transition-delay: 600ms;"><img src="img/n8n.png" alt="n8n Logo" class="h-8 mb-6"><h3 class="text-2xl font-bold text-white">Workflow Automation</h3><p class="mt-2 text-sm font-semibold text-sky-400">Replaces: Zapier, Make.com</p><p class="mt-4 text-slate-300">The glue that connects everything. Automate repetitive tasks between your apps and create powerful, complex workflows with a visual, node-based editor.</p></div><div class="p-8 rounded-2xl feature-card fade-in" style="transition-delay: 750ms;"><div class="h-10 mb-6 flex items-center"><i class="bi bi-hdd-stack-fill text-4xl text-sky-400"></i></div><h3 class="text-2xl font-bold text-white">Dedicated Server</h3><p class="mt-2 text-sm font-semibold text-sky-400">Included. No monthly fees.</p><p class="mt-4 text-slate-300">Your entire stack runs on a powerful, dedicated server included in your one-time fee. We handle the setup, optimization, and security so you can focus on your business.</p></div></div></div>
+            </section>
+
+            <section class="py-20 px-4"><div class="max-w-4xl mx-auto text-center bg-slate-800/50 p-12 rounded-2xl border border-slate-700"><h3 class="text-3xl font-bold text-white">Convinced? Let's Talk.</h3><p class="text-slate-400 mt-3 max-w-2xl mx-auto">Take the next step towards digital independence. Schedule a no-obligation call to discuss your specific needs.</p><div class="mt-8 flex flex-wrap justify-center gap-4"><a href="https://wa.me/971504302948?text=Hi!%20I%20just%20used%20your%20SaaS%20Cost%20Calculator%20and%20I'd%20like%20to%20get%20more%20information%20about%20your%20all-inclusive%20package." target="_blank" rel="noopener noreferrer" class="action-btn"><i class="bi bi-whatsapp text-xl"></i><span>Chat on WhatsApp</span></a><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener noreferrer" class="action-btn"><i class="bi bi-linkedin text-xl"></i><span>Connect on LinkedIn</span></a></div></div></section>
+
+            <section class="py-20 px-4"><div class="max-w-6xl mx-auto"><div class="text-center mb-16"><img src="img/n8n.png" alt="n8n Logo" class="h-12 mx-auto mb-6"><h2 class="text-4xl font-extrabold text-white">The Real Magic? <span class="highlight-gradient">Automation.</span></h2><p class="mt-4 text-lg text-slate-400 max-w-3xl mx-auto">Your tools are powerful on their own, but they become an unstoppable force when connected. Using n8n, we build custom workflows that automate your business processes, saving you hundreds of hours.</p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><div class="p-8 rounded-2xl feature-card text-center fade-in"><div class="text-5xl text-sky-400 mb-4"><i class="bi bi-person-plus-fill"></i></div><h3 class="text-xl font-bold text-white">Instant Lead Onboarding</h3><p class="mt-2 text-slate-300">When a new lead enters your CRM, a private folder is instantly created in Nextcloud, and a personalized welcome email is sent from your Mailcow server.</p></div><div class="p-8 rounded-2xl feature-card text-center fade-in" style="transition-delay: 150ms;"><div class="text-5xl text-sky-400 mb-4"><i class="bi bi-graph-up-arrow"></i></div><h3 class="text-xl font-bold text-white">Smart Lead Nurturing</h3><p class="mt-2 text-slate-300">When a lead's status changes to "Long-term" in SuiteCRM, they are automatically added to a specific nurturing campaign in Mautic.</p></div><div class="p-8 rounded-2xl feature-card text-center fade-in" style="transition-delay: 300ms;"><div class="text-5xl text-sky-400 mb-4"><i class="bi bi-file-earmark-zip-fill"></i></div><h3 class="text-xl font-bold text-white">Proposal & File Sync</h3><p class="mt-2 text-slate-300">When you move a deal to the "Proposal" stage in the CRM, the link to their private Nextcloud folder is automatically added to the deal record for easy access.</p></div></div></div></section>
+
+            <section class="py-20 px-4 bg-slate-900/70"><div class="max-w-4xl mx-auto"><div class="text-center mb-12"><h2 class="text-4xl font-extrabold text-white">Trusted by Founders & Innovators</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="bg-slate-800 p-8 rounded-xl fade-in"><div class="flex text-yellow-400 mb-4"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div><p class="text-slate-300 italic">"Switching to this all-in-one stack was a game-changer. Our SaaS bill dropped by 80%, and for the first time, we have full control over our customer data. The automation workflows they built for us are pure magic."</p><div class="mt-6"><p class="font-bold text-white">Sarah L., Founder</p><p class="text-sm text-slate-400">Tech Innovators Inc.</p></div></div><div class="bg-slate-800 p-8 rounded-xl fade-in" style="transition-delay: 150ms;"><div class="flex text-yellow-400 mb-4"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div><p class="text-slate-300 italic">"The biggest win for us was the private email server. No more per-user fees and worrying about privacy. The entire system is robust, and the one-time fee model is exactly what a growing business needs."</p><div class="mt-6"><p class="font-bold text-white">Mike R., CEO</p><p class="text-sm text-slate-400">E-commerce Exports</p></div></div></div></div></section>
+
+            <section class="py-20 px-4"><div class="max-w-3xl mx-auto"><div class="text-center mb-12"><h2 class="text-4xl font-extrabold text-white">Frequently Asked Questions</h2></div><div class="space-y-4"><div class="faq-item bg-slate-800 rounded-lg p-6 fade-in"><details><summary class="flex justify-between items-center font-semibold text-lg text-white"><span >Do I truly own my data?</span><span><i class="bi bi-plus-circle text-2xl icon-plus"></i><i class="bi bi-dash-circle text-2xl icon-minus"></i></span></summary><p class="mt-4 text-slate-400">Absolutely. 100%. The entire software stack is installed on your private, dedicated server. We have no access to your data unless you explicitly grant it for support purposes. You own everything.</p></details></div><div class="faq-item bg-slate-800 rounded-lg p-6 fade-in"><details><summary class="flex justify-between items-center font-semibold text-lg text-white"><span>What are the hidden costs?</span><span><i class="bi bi-plus-circle text-2xl icon-plus"></i><i class="bi bi-dash-circle text-2xl icon-minus"></i></span></summary><p class="mt-4 text-slate-400">There are none. The $1899 is a one-time fee for the software installation, configuration, server setup, and building initial automation workflows. The only recurring cost you'll ever have is the annual domain name renewal (around $15/year), which you pay directly to the registrar.</p></details></div><div class="faq-item bg-slate-800 rounded-lg p-6 fade-in"><details><summary class="flex justify-between items-center font-semibold text-lg text-white"><span>What if I need support or new features?</span><span><i class="bi bi-plus-circle text-2xl icon-plus"></i><i class="bi bi-dash-circle text-2xl icon-minus"></i></span></summary><p class="mt-4 text-slate-400">We offer optional monthly support and development retainers for businesses that need ongoing help, custom features, or new automation workflows. We can discuss these if and when you need them.</p></details></div><div class="faq-item bg-slate-800 rounded-lg p-6 fade-in"><details><summary class="flex justify-between items-center font-semibold text-lg text-white"><span>Can this system scale as my business grows?</span><span><i class="bi bi-plus-circle text-2xl icon-plus"></i><i class="bi bi-dash-circle text-2xl icon-minus"></i></span></summary><p class="mt-4 text-slate-400">Yes. We start you on a powerful server, and all the software is built to scale. If you outgrow your initial server, upgrading is a straightforward process with minimal downtime.</p></details></div></div></div></section>
+
+            <section class="py-20 px-4 bg-slate-900/70"><div class="max-w-4xl mx-auto text-center"><h2 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tighter">Ready to Take Control?</h2><p class="mt-6 max-w-2xl mx-auto text-lg text-slate-400">Stop renting your business infrastructure. It's time to own it. Let's build your permanent digital home.</p><div class="mt-10 flex flex-wrap justify-center gap-4"><a href="https://wa.me/971504302948?text=Hi!%20I'm%20ready%20to%20take%20control%20of%20my%20stack.%20Let's%20talk." target="_blank" rel="noopener noreferrer" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/20 inline-flex items-center gap-3"><i class="bi bi-whatsapp text-xl"></i> Schedule a Free Strategy Call</a></div></div></section>
+
+            <footer class="bg-slate-900 text-center py-8 px-4"><div class="text-slate-400 text-sm"><p>&copy; 2024 AlecAsgari. All Rights Reserved.</p><p class="mt-2">Dubai Business Bay, UAE | 24/7 Service Availability</p></div></footer>
+        </div>
+    </div>
+    <!-- Modals -->
+    <div id="email-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50"><div class="bg-slate-800 w-full max-w-md p-8 rounded-2xl border border-slate-700 shadow-2xl text-center relative transform transition-all scale-95 opacity-0" id="modal-content"><button id="close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button><h3 class="text-2xl font-bold text-white">One Last Step!</h3><p class="text-slate-400 mt-2">Enter your details to unlock your savings report and get a copy in your inbox.</p><form id="email-form" class="mt-6 space-y-4"><div id="form-error" class="hidden text-red-400 bg-red-900/50 p-3 rounded-md text-sm"></div><div><input type="text" id="name" name="name" placeholder="Your Name" class="w-full p-3 rounded-md form-control transition focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" required></div><div><input type="email" id="email" name="email" placeholder="Your Business Email" class="w-full p-3 rounded-md form-control transition focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" required></div><div class="flex items-start gap-2 text-left"><input id="consent" type="checkbox" required class="mt-1"><label for="consent" class="text-slate-300 text-sm">I agree to receive emails about my report and simple cost-saving tips. You can unsubscribe anytime.</label></div><div class="text-slate-400 text-xs">By submitting, you agree to our <a href="https://alecasgari.com/privacy-policy.html" class="underline" target="_blank" rel="noopener">Privacy Policy</a>.</div><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" id="honeypot" name="honeypot" tabindex="-1" value=""></div><button id="submit-lead" type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/20"><span id="btn-text">Unlock My Report</span><span id="btn-loader" class="hidden">Sending...</span></button></form></div></div>
+    <div id="info-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50"><div class="bg-slate-800 w-full max-w-lg p-8 rounded-2xl border border-slate-700 shadow-2xl relative transform transition-all scale-95 opacity-0" id="info-modal-content-box"><button id="info-close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">&times;</button><h3 id="info-modal-title" class="text-2xl font-bold text-white mb-4"></h3><div id="info-modal-body" class="text-slate-300 space-y-3"></div></div></div>
+    <div id="loader-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0">
+        <div id="loader-slider-container" class="w-full max-w-xs sm:max-w-sm mx-auto mb-4 relative">
+            <img src="img/alecasgari-1.webp" class="loader-slide w-full rounded-lg shadow-lg object-contain">
+            <img src="img/alecasgari-2.webp" class="loader-slide w-full rounded-lg shadow-lg object-contain hidden">
+            <img src="img/alecasgari-3.webp" class="loader-slide w-full rounded-lg shadow-lg object-contain hidden">
+        </div>
+        <p class="text-md text-slate-300 mt-2 text-center">☝️ Me proudly winning awards in the UAE 😊</p>
+        
+        <!-- Circular Progress Bar -->
+        <div class="relative w-24 h-24 mt-6">
+            <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="#334155" stroke-width="8" fill="none" class="opacity-30"></circle>
+                <circle id="progress-circle" cx="50" cy="50" r="40" stroke="#38bdf8" stroke-width="8" fill="none" 
+                        stroke-dasharray="251.2" stroke-dashoffset="251.2" 
+                        class="transition-all duration-100 ease-linear" 
+                        style="stroke-linecap: round;"></circle>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span id="progress-text" class="text-2xl font-bold text-sky-400">0%</span>
+            </div>
+        </div>
+        
+        <p id="loader-text" class="text-xl text-slate-300 mt-6 font-semibold"></p>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- CONFIGURATION ---
+        const N8N_WEBHOOK_URL = 'https://n8n.alecasgari.com/webhook/fd291b55-5428-4e89-9670-08be8a12265d';
+        const COST_PER_EMAIL_USER = 6;
+        const COST_PER_STORAGE_USER = 12;
+        const COST_PER_SALES_USER = 50;
+        const COST_PER_1K_CONTACTS = 10;
+        const ONE_TIME_FEE_USD = 1899;
+        const AED_CONVERSION_RATE = 3.67;
+        const infoContent = {
+            mailcow: { title: 'Mailcow: Your Private Email Server', body: `<p>Gain full control over your most critical business communication tool. Mailcow provides a complete, secure email server solution.</p><ul><li><strong>Unlimited Mailboxes:</strong> Create as many email accounts as you need (@yourdomain.com) without extra fees.</li><li><strong>Calendars & Contacts:</strong> Sync across all your devices with CalDAV and CardDAV support.</li><li><strong>Top-Tier Security:</strong> Advanced anti-spam, anti-virus, and encryption to protect your data.</li><li><strong>Full Ownership:</strong> Your emails are stored on your private server, not scanned by third-party providers.</li></ul>`},
+            crm: { title: 'SuiteCRM: Your Customer Hub', body: `<p>A powerful, open-source CRM. Track leads, manage sales pipelines, and handle customer support with unlimited users and full control over your data.</p>` },
+            marketing: { title: 'Mautic: Marketing Automation Powerhouse', body: `<p>Your all-in-one marketing automation platform. Build nurturing campaigns, create landing pages, and score leads without contact limits.</p>` },
+            storage: { title: 'Nextcloud: Your Private Cloud', body: `<p>Your private Google Drive or Dropbox. Securely share files, collaborate on documents in real-time, and host video calls, all on your own server.</p>` },
+            automation: { title: 'n8n: The Workflow Connector', body: `<p>The glue that connects everything. Automate repetitive tasks between your apps and create powerful, complex workflows with a visual, node-based editor.</p>` },
+            server: { title: 'Your Included Dedicated Server Specs', body: `<p>Your package includes a powerful, pre-configured server at no extra monthly cost. We handle the setup and management.</p><ul class="font-mono text-sky-300"><li><strong>Storage:</strong> 75 GB NVMe (Ultra-fast)</li><li><strong>CPU:</strong> 3 Cores</li><li><strong>RAM:</strong> 8 GB</li></ul><p>This server is optimized to run your entire business suite smoothly and efficiently.</p>` }
+        };
+
+        // --- DOM ELEMENTS & STATE ---
+        const emailAccountsSlider = document.getElementById('email-accounts');
+        const salesUsersSlider = document.getElementById('sales-users');
+        const marketingContactsSlider = document.getElementById('marketing-contacts');
+        const calculatorForm = document.getElementById('calculator-form');
+        const emailModal = document.getElementById('email-modal');
+        const infoModal = document.getElementById('info-modal');
+        const loaderModal = document.getElementById('loader-modal');
+        const resultsSection = document.getElementById('results');
+        const mainContent = document.getElementById('main-content');
+        
+        let isLeadCaptured = false, userName = '', formInputData = {}, calculatedCosts = {}, currentCurrency = 'USD';
+
+        // --- HELPER & UI FUNCTIONS ---
+        const getUtmParams=()=>new URLSearchParams(window.location.search).entries().reduce((u,[k,v])=>(k.startsWith("utm_")&&(u[k]=v),u),{});
+        const animateValue=(el,s,e,d,c)=>{let f=null;const g=h=>{f||(f=h);const i=Math.min((h-f)/d,1),j=Math.floor(i*(e-s)+s);el.dataset.usdValue=e;updateCurrencyForElement(el,c);if(i<1)window.requestAnimationFrame(g)};window.requestAnimationFrame(g)};
+        const updateSliderValues=()=>{ document.getElementById("email-accounts-value").textContent=emailAccountsSlider.value; document.getElementById("sales-users-value").textContent=salesUsersSlider.value; document.getElementById("marketing-contacts-value").textContent=`${marketingContactsSlider.value}k`; };
+        const showModal=(m,c)=>{m.classList.remove("hidden");setTimeout(()=>c.classList.remove("scale-95","opacity-0"),10)};
+        const hideModal=(m,c)=>{c.classList.add("scale-95","opacity-0");setTimeout(()=>m.classList.add("hidden"),300)};
+        
+        // --- CURRENCY LOGIC ---
+        const formatCurrency=(v,c)=>{const r=Math.round(v);return c==="AED"?`${r.toLocaleString()} AED`:`$${r.toLocaleString()}`};
+        const updateCurrencyForElement=(e,c)=>{const u=parseFloat(e.dataset.usdValue);if(isNaN(u))return;const v=c==="AED"?u*AED_CONVERSION_RATE:u;e.textContent=formatCurrency(v,c)};
+        const updateAllDisplayedCurrencies=c=>{currentCurrency=c;document.querySelectorAll("[data-usd-value]").forEach(e=>updateCurrencyForElement(e,c));document.querySelectorAll('.currency-switcher button').forEach(b=>b.classList.toggle("active",b.dataset.currency===c))};
+
+        // --- CALCULATION & DISPLAY LOGIC ---
+        const calculateCostsFunc=()=>{
+            const emailAccounts=parseInt(emailAccountsSlider.value),salesUsers=parseInt(salesUsersSlider.value),marketingContactsK=parseInt(marketingContactsSlider.value);
+            formInputData={email_accounts:emailAccounts,sales_users:salesUsers,marketing_contacts:marketingContactsK*1e3};
+            const saasEmailCost = emailAccounts * COST_PER_EMAIL_USER;
+            const saasStorageCost = emailAccounts * COST_PER_STORAGE_USER;
+            const saasCrmCost=salesUsers * COST_PER_SALES_USER;
+            const saasMarketingCost=marketingContactsK * COST_PER_1K_CONTACTS;
+            const saasTotalMonthly=saasEmailCost+saasCrmCost+saasMarketingCost+saasStorageCost;
+            const saasTotalAnnual=saasTotalMonthly*12;
+            const totalSavings=saasTotalAnnual-ONE_TIME_FEE_USD;
+            const savingsPercentage=saasTotalAnnual > 0 ? Math.round(totalSavings/saasTotalAnnual*100):100;
+            calculatedCosts={saas_email_monthly:saasEmailCost,saas_storage_monthly:saasStorageCost, saas_crm_monthly:saasCrmCost,saas_marketing_monthly:saasMarketingCost,saas_total_monthly:saasTotalMonthly,saas_total_annual:saasTotalAnnual,self_one_time_fee:ONE_TIME_FEE_USD,total_savings_first_year:totalSavings,savings_percentage:savingsPercentage}
+        };
+
+        const displayResults = () => {
+            const firstName = userName.split(' ')[0] || 'Friend';
+            document.getElementById('user-name-placeholder-1').textContent = firstName;
+            document.getElementById('user-name-placeholder-2').textContent = firstName;
+            
+            animateValue(document.getElementById('saas-email'), 0, calculatedCosts.saas_email_monthly, 1500, currentCurrency);
+            animateValue(document.getElementById('saas-storage'), 0, calculatedCosts.saas_storage_monthly, 1500, currentCurrency);
+            animateValue(document.getElementById('saas-crm'), 0, calculatedCosts.saas_crm_monthly, 1500, currentCurrency);
+            animateValue(document.getElementById('saas-marketing'), 0, calculatedCosts.saas_marketing_monthly, 1500, currentCurrency);
+
+            animateValue(document.getElementById('saas-total'), 0, calculatedCosts.saas_total_monthly, 2000, currentCurrency);
+            animateValue(document.getElementById('saas-annual'), 0, calculatedCosts.saas_total_annual, 2000, currentCurrency);
+            animateValue(document.getElementById('self-total'), 0, calculatedCosts.self_one_time_fee, 2000, currentCurrency);
+            animateValue(document.getElementById('total-savings'), 0, Math.max(0, calculatedCosts.total_savings_first_year), 2500, currentCurrency);
+            document.getElementById('savings-percentage').textContent = `${calculatedCosts.savings_percentage}%`;
+
+            mainContent.classList.remove('hidden');
+            mainContent.scrollIntoView({ behavior: 'smooth' });
+            mainContent.querySelectorAll('.fade-in').forEach(el => {el.classList.remove('visible');setTimeout(() => el.classList.add('visible'), 10)});
+            
+            // Keep cards blurred initially
+            document.getElementById('typical-costs-card').classList.add('blur-overlay');
+            document.getElementById('unlimited-users-card').classList.add('blur-overlay');
+        };
+
+        const showFakeLoader = () => {
+            const firstName = userName.split(' ')[0] || 'you';
+            document.getElementById('loader-text').textContent = `Calculating your personalized report, ${firstName}...`;
+            loaderModal.classList.remove('hidden');
+            setTimeout(() => loaderModal.classList.remove('opacity-0'), 10);
+            
+            // Initialize slideshow
+            const slides = document.querySelectorAll('.loader-slide');
+            let currentSlide = 0;
+            
+            // Show first slide, hide others
+            slides.forEach((slide, index) => {
+                if (index === 0) {
+                    slide.classList.remove('hidden');
+                } else {
+                    slide.classList.add('hidden');
+                }
+            });
+            
+            const sliderInterval = setInterval(() => {
+                slides[currentSlide].classList.add('hidden');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.remove('hidden');
+            }, 3300);
+
+            // Initialize circular progress
+            const progressCircle = document.getElementById('progress-circle');
+            const progressText = document.getElementById('progress-text');
+            const circumference = 2 * Math.PI * 40; // radius = 40
+            let progress = 0;
+            
+            progressCircle.style.strokeDasharray = circumference;
+            progressCircle.style.strokeDashoffset = circumference;
+            
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                const offset = circumference - (progress / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+                progressText.textContent = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 100); // Update every 100ms for smooth animation
+
+            setTimeout(() => {
+                clearInterval(sliderInterval);
+                clearInterval(progressInterval);
+                loaderModal.classList.add('opacity-0');
+                setTimeout(() => loaderModal.classList.add('hidden'), 300);
+                displayResults();
+            }, 10000); // 10 seconds
+        };
+        
+        const submitToWebhook = async (leadData) => {
+            const honeypot = document.getElementById('honeypot').value;
+            if (honeypot) { console.log("Bot detected!"); return; }
+
+            userName = leadData.name; 
+            isLeadCaptured = true;
+            const payload = {...leadData, form_inputs: formInputData, cost_calculations: calculatedCosts, utm_params: getUtmParams(), timestamp: new Date().toISOString(), page_url: window.location.href};
+            const formError = document.getElementById('form-error'), btnText = document.getElementById('btn-text'), btnLoader = document.getElementById('btn-loader'), submitLeadBtn = document.getElementById('submit-lead');
+            try {
+                formError.classList.add('hidden'); btnText.classList.add('hidden'); btnLoader.classList.remove('hidden'); submitLeadBtn.disabled = true;
+                const response = await fetch(N8N_WEBHOOK_URL, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+                if (!response.ok) throw new Error(`Webhook failed with status: ${response.status}`);
+                hideModal(document.getElementById('email-modal'), document.getElementById('modal-content'));
+                // Remove blur overlay from cards
+                document.getElementById('typical-costs-card').classList.remove('blur-overlay');
+                document.getElementById('unlimited-users-card').classList.remove('blur-overlay');
+            } catch (error) {
+                console.error("Error submitting to webhook:", error);
+                formError.textContent = "Sorry, there was an error. Please ensure the webhook is active and try again."; formError.classList.remove('hidden');
+            } finally {
+                btnText.classList.remove('hidden'); btnLoader.classList.add('hidden'); submitLeadBtn.disabled = false;
+            }
+        };
+
+        // --- EVENT LISTENERS ---
+        document.querySelectorAll('input[type=range]').forEach(s=>s.addEventListener('input',updateSliderValues));
+        calculatorForm.addEventListener('submit', (e)=>{ e.preventDefault(); calculateCostsFunc(); showFakeLoader(); });
+        document.getElementById('email-form').addEventListener('submit', (e)=>{e.preventDefault();const d={name:document.getElementById('name').value,email:document.getElementById('email').value,consent:document.getElementById('consent').checked};submitToWebhook(d)});
+        document.querySelectorAll('.currency-switcher button').forEach(btn => btn.addEventListener('click', () => updateAllDisplayedCurrencies(btn.dataset.currency)));
+        document.querySelectorAll('.info-icon').forEach(icon => { icon.addEventListener('click', () => { const id = icon.dataset.infoId; const content = infoContent[id]; if(content){document.getElementById('info-modal-title').textContent = content.title; document.getElementById('info-modal-body').innerHTML = content.body; showModal(document.getElementById('info-modal'), document.getElementById('info-modal-content-box'));}}); });
+        document.getElementById('share-btn').addEventListener('click', async () => { const d = { title: 'SaaS Cost Calculator', text: 'Find out how much you can save by owning your business software stack!', url: window.location.href }; const t = document.getElementById('share-btn-text'); if (navigator.share) { try { await navigator.share(d); } catch (e) { console.error("Share failed:", e); } } else { try { await navigator.clipboard.writeText(d.url); const o = t.textContent; t.textContent = 'Link Copied!'; t.parentElement.disabled = true; setTimeout(() => { t.textContent = o; t.parentElement.disabled = false; }, 2000); } catch (e) { console.error('Failed to copy: ', e); } } });
+        document.getElementById('recalculate-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' }); });
+        document.getElementById('show-result-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('show-result-btn').style.display = 'none'; showModal(document.getElementById('email-modal'), document.getElementById('modal-content')); });
+        ['close-modal', 'email-modal'].forEach(id => document.getElementById(id).addEventListener('click', e => (e.target === document.getElementById(id) || id === 'close-modal') && hideModal(document.getElementById('email-modal'), document.getElementById('modal-content'))));
+        ['info-close-modal', 'info-modal'].forEach(id => document.getElementById(id).addEventListener('click', e => (e.target === document.getElementById(id) || id === 'info-close-modal') && hideModal(document.getElementById('info-modal'), document.getElementById('info-modal-content-box'))));
+        
+        // --- ON PAGE LOAD ---
+        updateSliderValues();
+        const observer = new IntersectionObserver(e=>{e.forEach(f=>{if(f.isIntersecting){f.target.classList.add("visible");observer.unobserve(f.target)}})},{threshold:.1});
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    });
+    </script>
+</body>
+</html>

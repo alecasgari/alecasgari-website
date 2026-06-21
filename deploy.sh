@@ -9,6 +9,8 @@ DEPLOY_DIR="${DEPLOY_DIR:-/home/alecadmin/alecasgari-website}"
 REPO_URL="${REPO_URL:-https://github.com/alecasgari/alecasgari-website.git}"
 BRANCH="${BRANCH:-main}"
 STATIC_CONTAINER="${STATIC_CONTAINER:-alec-website-static}"
+CALCULATOR_DIR="${CALCULATOR_DIR:-/home/alecadmin/saas-calculator}"
+CALCULATOR_CONTAINER="${CALCULATOR_CONTAINER:-alec-calculator-static}"
 
 log() { echo "==> $*"; }
 
@@ -42,6 +44,17 @@ if docker ps --format '{{.Names}}' | grep -qx "$STATIC_CONTAINER"; then
   log "Static site container $STATIC_CONTAINER is running (files updated via mount)."
 else
   log "WARN: $STATIC_CONTAINER not running. Run server setup once (see README)."
+fi
+
+if [[ -d "$DEPLOY_DIR/saas-calculator" ]]; then
+  log "Syncing SaaS calculator to $CALCULATOR_DIR"
+  mkdir -p "$CALCULATOR_DIR"
+  rsync -a --delete "$DEPLOY_DIR/saas-calculator/" "$CALCULATOR_DIR/"
+  if docker ps --format '{{.Names}}' | grep -qx "$CALCULATOR_CONTAINER"; then
+    log "Calculator container $CALCULATOR_CONTAINER is running (files updated via mount)."
+  else
+    log "WARN: $CALCULATOR_CONTAINER not running — verify NPM mount for calculator.alecasgari.com"
+  fi
 fi
 
 log "Deploy finished."
