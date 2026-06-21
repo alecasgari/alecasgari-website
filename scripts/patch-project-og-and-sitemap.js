@@ -139,6 +139,7 @@ function generateSitemaps(projectsJson, htmlFiles, bySlug) {
     '/projects.html',
     '/blog.html',
     '/contact.html',
+    '/privacy-policy.html',
   ];
 
   const staticUrls = staticPages.map((p) => xmlUrl(`${SITE}${p === '/' ? '/' : p}`, now));
@@ -166,6 +167,7 @@ function generateSitemaps(projectsJson, htmlFiles, bySlug) {
   writeSitemap('sitemap-pages.xml', [...staticUrls, ...caseStudyUrls]);
   writeSitemap('sitemap-projects.xml', projectUrls);
   writeSitemap('sitemap-blog.xml', blogUrls);
+  writeSitemap('sitemap-calculator.xml', [xmlUrl('https://calculator.alecasgari.com/', now)]);
 
   const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -181,6 +183,10 @@ function generateSitemaps(projectsJson, htmlFiles, bySlug) {
     <loc>${SITE}/sitemap-blog.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${SITE}/sitemap-calculator.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
 </sitemapindex>
 `;
   fs.writeFileSync(path.join(ROOT, 'sitemap-index.xml'), indexXml, 'utf8');
@@ -189,6 +195,7 @@ function generateSitemaps(projectsJson, htmlFiles, bySlug) {
     pages: staticUrls.length + caseStudyUrls.length,
     projects: projectUrls.length,
     blog: blogUrls.length,
+    calculator: 1,
   };
 }
 
@@ -196,4 +203,4 @@ const { patched, skipped, projectsJson, htmlFiles, bySlug } = patchProjects();
 const counts = generateSitemaps(projectsJson, htmlFiles, bySlug);
 
 console.log(`Patched OG tags on ${patched} project HTML files (${skipped} redirect stubs skipped).`);
-console.log(`Sitemap: ${counts.pages} pages, ${counts.projects} projects, ${counts.blog} blog posts.`);
+console.log(`Sitemap: ${counts.pages} pages, ${counts.projects} projects, ${counts.blog} blog posts, ${counts.calculator} calculator URL.`);

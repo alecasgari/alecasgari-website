@@ -327,6 +327,16 @@ iconify-icon {
   font-size: 0.88rem;
 }
 
+.legal-page {
+  max-width: 48rem;
+}
+
+.legal-updated {
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 /* Layout */
 main {
   padding-bottom: 2rem;
@@ -942,6 +952,74 @@ main {
 
   .award-card:hover .award-card-visual img {
     transform: none;
+  }
+}
+
+/* SaaS calculator CTA */
+.calculator-cta-section {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.calculator-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 1.75rem;
+  padding: 1.65rem 1.85rem;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, var(--surface) 55%);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.calculator-cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  flex-shrink: 0;
+  color: var(--accent);
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 12px;
+  font-size: 1.65rem;
+}
+
+.calculator-cta-body {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.calculator-cta-body h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.calculator-cta-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.calculator-cta-btn {
+  flex-shrink: 0;
+}
+
+.calculator-cta-sidebar p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 640px) {
+  .calculator-cta-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

@@ -30,7 +30,7 @@
 | ✅ | GSC: حذف `sitemap-0.xml` (۴۰۴) | 2026-06-21 |
 | ✅ | GSC: re-submit `sitemap-index.xml` | 2026-06-21 |
 | ✅ | Merge سرور — NK Rent Cars + بلاگ جدید | 2026-06-21 |
-| ✅ | sitemap به‌روز: ۴۱ URL (10+20+11) | 2026-06-21 |
+| ✅ | ساخت `privacy-policy.html` + sitemap + footer links | 2026-06-21 |
 
 **یادآوری:** Google sitemap ping (`google.com/ping?...`) از 2023 **منسوخ** است. فقط GSC submit + `lastmod` در sitemap.
 
@@ -51,7 +51,7 @@ git commit && git push
 |---|---|
 | **هدف** | رفع 404 در GSC؛ الزام قانونی برای فرم Calculator |
 | **مهلت پیشنهادی** | 2026-06-23 |
-| **وضعیت** | `[ ]` انجام نشده |
+| **وضعیت** | `[x]` انجام شد (2026-06-21) |
 
 **چرا مهم است:** GSC یک 404 برای `/privacy-policy` گزارش داده. Calculator در مودال ایمیل به این URL لینک می‌دهد.
 
