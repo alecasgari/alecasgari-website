@@ -1,5 +1,16 @@
 [
   {
+    "slug": "why-digital-transformation-fails-people-vs-tech",
+    "title": "Why Your Digital Transformation Is Failing: It’s Not the Tech, It’s the Team",
+    "excerpt": "Technology is often treated as a plug-and-play solution, but real success relies on human adoption. Learn why culture—not code—is the true engine of sustainable business growth.",
+    "category": "Business",
+    "date": "2026-06-21",
+    "image": "/images/blog/why-digital-transformation-fails-people-vs-tech.jpg",
+    "url": "/blog/why-digital-transformation-fails-people-vs-tech.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "stop-chasing-ai-hype-and-start-fixing-your-data",
     "title": "Stop Chasing AI Hype and Start Fixing Your Data",
     "excerpt": "AI implementation is failing, but not because of the tech. Organizations that prioritize data governance and workforce alignment over mere hype are the ones that will win.",
