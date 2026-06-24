@@ -1,6 +1,18 @@
-/**
- * Shared project page HTML builder (used by n8n-prepare-project-html.js and regen script)
- */
+// n8n Code node: "Prepare HTML for GitHub"
+// Keep in sync with Alec Project Writer workflow — paste this whole file into n8n.
+
+function getProjectRowForHtml() {
+  try {
+    const manual = $('Get Project for photo').first();
+    if (manual?.json?.project_id) return manual.json;
+  } catch (e) {}
+  try {
+    const ai = $('Get Project for AI publish').first();
+    if (ai?.json?.project_id) return ai.json;
+  } catch (e) {}
+  throw new Error('Project row not found from Get Project for photo or Get Project for AI publish.');
+}
+const projectData = getProjectRowForHtml();
 
 function esc(s) {
   return String(s || '')
@@ -34,14 +46,15 @@ function mdToHtml(md) {
       closeList();
       continue;
     }
+    // ## in Gemini markdown → h3 (page already has h1 title + h2 "Project Details")
     if (t.startsWith('## ')) {
       closeList();
-      out.push(`<h2>${inlineMd(t.slice(3))}</h2>`);
+      out.push(`<h3>${inlineMd(t.slice(3))}</h3>`);
       continue;
     }
     if (t.startsWith('### ')) {
       closeList();
-      out.push(`<h3>${inlineMd(t.slice(4))}</h3>`);
+      out.push(`<h4>${inlineMd(t.slice(4))}</h4>`);
       continue;
     }
     if (t.startsWith('- ')) {
@@ -94,85 +107,47 @@ function statusClass(status) {
   return 'project-badge-status--completed';
 }
 
-function resolveBodyHtml(data) {
-  if (data.descriptionHtml) return data.descriptionHtml;
-  return mdToHtml(data.project_description || data.description || '');
+function buildJsonLd(data, title, pageUrl, image, date, excerpt, category, tags, technologies) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: excerpt,
+    url: pageUrl,
+    mainEntityOfPage: pageUrl,
+    image: `https://alecasgari.com${image}`,
+    datePublished: date || undefined,
+    author: {
+      '@type': 'Person',
+      name: 'Alec Asgari',
+      url: 'https://alecasgari.com/about.html',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Alec Asgari',
+    },
+    articleSection: category || undefined,
+    keywords: [...tags, ...technologies].filter(Boolean).join(', ') || undefined,
+  };
+  return JSON.stringify(schema).replace(/</g, '\\u003c');
 }
 
-function resolveLiveUrl(data) {
-  const url = data.live_project_url || data.external_url || data.projectLink || '';
-  if (!url) return '';
-  if (url.includes('alecasgari.com/projects/')) return '';
-  return url;
-}
-
-function buildRelatedCards(currentSlug, allProjects) {
-  const others = allProjects.filter((p) => p.slug !== currentSlug).slice(0, 3);
-  if (!others.length) return '';
-
-  const cards = others
-    .map((p) => {
-      const statusCls = statusClass(p.status);
-      const featured = p.featured
-        ? '<span class="project-related-badge project-related-badge--featured">Featured</span>'
-        : '';
-      return `<a href="${esc(p.url)}" class="project-related-card card-lift reveal">
-        <div class="project-related-img">
-          <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">
-          ${featured}
-        </div>
-        <div class="project-related-body">
-          <div class="project-related-labels">
-            <span class="project-badge project-badge--category">${esc(p.category)}</span>
-            <span class="project-badge project-badge--status ${statusCls}">${esc(p.status)}</span>
-          </div>
-          <h3>${esc(p.title)}</h3>
-          <p>${esc(p.excerpt)}</p>
-        </div>
-      </a>`;
-    })
-    .join('\n');
-
-  return `<section class="section section-alt">
-      <div class="container">
-        <div class="section-head reveal">
-          <iconify-icon icon="lucide:layout-grid" class="section-icon"></iconify-icon>
-          <div>
-            <h2 class="section-title">Related Projects</h2>
-            <p class="section-lead">More technical work from the portfolio.</p>
-          </div>
-        </div>
-        <div class="project-related-grid stagger">${cards}</div>
-      </div>
-    </section>`;
-}
-
-function buildProjectHtml(data, allProjects = []) {
-  const title = data.project_title || data.title;
-  const slug = data.slug || slugify(title);
-  const excerpt = data.short_description || data.excerpt || '';
+function buildProjectHtml(data) {
+  const title = data.project_title;
+  const slug = slugify(title);
+  const excerpt = data.short_description || '';
   const category = data.category || '';
-  const status = data.status || 'Completed';
-  const featured = data.featured === true || data.featured === 'true';
-  const tags = Array.isArray(data.tags) ? data.tags : splitCsv(data.tags);
-  const technologies = Array.isArray(data.technologies)
-    ? data.technologies
-    : splitCsv(data.technologies_used || data.technologies);
-  const image = data.image || `/projects/${slug}.jpg`;
-  const url = data.url || `/projects/${slug}.html`;
+  const status = 'Completed';
+  const featured = true;
+  const tags = splitCsv(data.tags);
+  const technologies = splitCsv(data.technologies_used);
+  const image = `/projects/${slug}.jpg`;
+  const url = `/projects/${slug}.html`;
   const pageUrl = `https://alecasgari.com${url}`;
-  const date = String(data.project_date || data.date || '').slice(0, 10);
-  const clientName = data.client_name || data.clientName || '';
-  const clientCompany = data.client_company || data.clientCompany || '';
-  const duration = data.project_duration || data.duration || '';
-  const bodyHtml = resolveBodyHtml(data);
-  const liveUrl = resolveLiveUrl(data);
-  const videoUrl = data.videoUrl || '';
+  const date = String(data.project_date || '').slice(0, 10);
+  const bodyHtml = mdToHtml(data.project_description);
   const catSlug = categorySlug(category);
-
-  const featuredBadge = featured
-    ? '<span class="project-badge project-badge--featured"><iconify-icon icon="lucide:star"></iconify-icon> Featured</span>'
-    : '';
+  const jsonLd = buildJsonLd(data, title, pageUrl, image, date, excerpt, category, tags, technologies);
 
   const techChips = technologies
     .map(
@@ -188,35 +163,6 @@ function buildProjectHtml(data, allProjects = []) {
     )
     .join('');
 
-  const liveCta = liveUrl
-    ? `<div class="project-meta-block project-meta-live">
-        <h3><iconify-icon icon="lucide:external-link"></iconify-icon> Live Project</h3>
-        <p>See the deployed solution and results in production.</p>
-        <a href="${esc(liveUrl)}" class="btn btn-primary btn-block" target="_blank" rel="noopener">
-          <iconify-icon icon="lucide:globe"></iconify-icon>
-          Visit Live Project
-        </a>
-      </div>`
-    : '';
-
-  const videoSection = videoUrl
-    ? `<section class="project-video-section">
-        <div class="container">
-          <div class="project-video-card reveal">
-            <div class="project-video-header">
-              <iconify-icon icon="lucide:play-circle"></iconify-icon>
-              <h2>Project Walkthrough</h2>
-            </div>
-            <div class="project-video-embed">
-              <iframe src="${esc(videoUrl)}" title="${esc(title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-        </div>
-      </section>`
-    : '';
-
-  const relatedSection = buildRelatedCards(slug, allProjects.length ? allProjects : data.allProjects || []);
-
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -224,7 +170,17 @@ function buildProjectHtml(data, allProjects = []) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)} — Alec Asgari</title>
   <meta name="description" content="${esc(excerpt)}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${esc(title)}">
+  <meta property="og:description" content="${esc(excerpt)}">
+  <meta property="og:image" content="https://alecasgari.com${esc(image)}">
+  <meta property="og:url" content="${pageUrl}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${esc(title)}">
+  <meta name="twitter:description" content="${esc(excerpt)}">
+  <meta name="twitter:image" content="https://alecasgari.com${esc(image)}">
   <link rel="canonical" href="${pageUrl}">
+  <script type="application/ld+json">${jsonLd}</script>
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
   <link rel="stylesheet" href="/assets/css/site.css?v=4">
   <link rel="stylesheet" href="/assets/css/project-detail.css?v=2">
@@ -244,7 +200,6 @@ function buildProjectHtml(data, allProjects = []) {
           <li><a href="/about.html">About Me</a></li>
           <li><a href="/case-studies.html">Case Studies</a></li>
           <li><a href="/projects.html" class="active">Projects</a></li>
-          <li><a href="/blog.html">Blog</a></li>
           <li><a href="/contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -263,7 +218,7 @@ function buildProjectHtml(data, allProjects = []) {
         <div class="project-detail-badges hero-in hero-in-d1">
           <span class="project-badge project-badge--category">${esc(category)}</span>
           <span class="project-badge project-badge--status ${statusClass(status)}">${esc(status)}</span>
-          ${featuredBadge}
+          <span class="project-badge project-badge--featured"><iconify-icon icon="lucide:star"></iconify-icon> Featured</span>
         </div>
         <h1 class="hero-in hero-in-d1">${esc(title)}</h1>
         <p class="project-detail-excerpt hero-in hero-in-d2">${esc(excerpt)}</p>
@@ -271,8 +226,8 @@ function buildProjectHtml(data, allProjects = []) {
           <div class="project-detail-meta-item">
             <iconify-icon icon="lucide:user"></iconify-icon>
             <div>
-              <strong>${esc(clientName)}</strong>
-              <span>${esc(clientCompany)}</span>
+              <strong>${esc(data.client_name)}</strong>
+              <span>${esc(data.client_company)}</span>
             </div>
           </div>
           <div class="project-detail-meta-item">
@@ -286,7 +241,7 @@ function buildProjectHtml(data, allProjects = []) {
             <iconify-icon icon="lucide:clock"></iconify-icon>
             <div>
               <strong>Duration</strong>
-              <span>${esc(duration)}</span>
+              <span>${esc(data.project_duration)}</span>
             </div>
           </div>
         </div>
@@ -301,8 +256,6 @@ function buildProjectHtml(data, allProjects = []) {
       </div>
     </section>
 
-    ${videoSection}
-
     <section class="section">
       <div class="container project-detail-layout">
         <article class="project-detail-content reveal">
@@ -316,9 +269,9 @@ function buildProjectHtml(data, allProjects = []) {
             <ul>
               <li><iconify-icon icon="lucide:layers"></iconify-icon><div><strong>Category</strong>${esc(category)}</div></li>
               <li><iconify-icon icon="lucide:activity"></iconify-icon><div><strong>Status</strong>${esc(status)}</div></li>
-              <li><iconify-icon icon="lucide:user"></iconify-icon><div><strong>Client</strong>${esc(clientName)}</div></li>
+              <li><iconify-icon icon="lucide:user"></iconify-icon><div><strong>Client</strong>${esc(data.client_name)}</div></li>
               <li><iconify-icon icon="lucide:calendar"></iconify-icon><div><strong>Date</strong>${esc(formatDate(date))}</div></li>
-              <li><iconify-icon icon="lucide:clock"></iconify-icon><div><strong>Duration</strong>${esc(duration)}</div></li>
+              <li><iconify-icon icon="lucide:clock"></iconify-icon><div><strong>Duration</strong>${esc(data.project_duration)}</div></li>
             </ul>
           </div>
           <div class="project-meta-block">
@@ -329,12 +282,9 @@ function buildProjectHtml(data, allProjects = []) {
             <h3><iconify-icon icon="lucide:tags"></iconify-icon> Tags</h3>
             <div class="project-chip-list">${tagChips || '<span class="project-meta-empty">No tags</span>'}</div>
           </div>
-          ${liveCta}
         </aside>
       </div>
     </section>
-
-    ${relatedSection}
 
     <section class="section section-alt section-tight">
       <div class="container project-detail-cta reveal">
@@ -355,6 +305,7 @@ function buildProjectHtml(data, allProjects = []) {
       <a href="/" class="footer-logo"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="120" height="32"></a>
       <p class="footer-copy">© 2025 Alec Asgari</p>
       <ul class="footer-links">
+        <li><a href="/privacy-policy.html"><iconify-icon icon="lucide:shield"></iconify-icon> Privacy Policy</a></li>
         <li><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener"><iconify-icon icon="lucide:linkedin"></iconify-icon> LinkedIn</a></li>
         <li><a href="https://github.com/alecasgari" target="_blank" rel="noopener"><iconify-icon icon="lucide:github"></iconify-icon> GitHub</a></li>
         <li><a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> Email</a></li>
@@ -368,66 +319,32 @@ function buildProjectHtml(data, allProjects = []) {
 </html>`;
 }
 
-function buildProjectsJsonEntry(data) {
-  const slug = data.slug || slugify(data.project_title || data.title);
-  const pageUrl = `https://alecasgari.com/projects/${slug}.html`;
-  return {
-    slug,
-    title: data.project_title || data.title,
-    excerpt: data.short_description || data.excerpt,
-    image: data.image || `/projects/${slug}.jpg`,
-    category: data.category,
-    tags: Array.isArray(data.tags) ? data.tags : splitCsv(data.tags),
-    technologies: Array.isArray(data.technologies)
-      ? data.technologies
-      : splitCsv(data.technologies_used || data.technologies),
-    date: String(data.project_date || data.date || '').slice(0, 10),
-    clientName: data.client_name || data.clientName,
-    clientCompany: data.client_company || data.clientCompany,
-    duration: data.project_duration || data.duration,
-    status: data.status || 'Completed',
-    featured: data.featured !== false,
-    projectLink: pageUrl,
-    url: `/projects/${slug}.html`,
-  };
-}
+const slug = slugify(projectData.project_title);
+const html = buildProjectHtml(projectData);
 
-function stripAstroAttrs(html) {
-  return String(html || '')
-    .replace(/\s*data-astro-cid="[^"]*"/g, '')
-    .replace(/\s*data-aos[^=]*="[^"]*"/g, '')
-    .replace(/<div>\s*/g, '<div>')
-    .trim();
-}
+const projectsJsonEntry = {
+  slug,
+  title: projectData.project_title,
+  excerpt: projectData.short_description,
+  image: `/projects/${slug}.jpg`,
+  category: projectData.category,
+  tags: splitCsv(projectData.tags),
+  technologies: splitCsv(projectData.technologies_used),
+  date: String(projectData.project_date || '').slice(0, 10),
+  clientName: projectData.client_name,
+  clientCompany: projectData.client_company,
+  duration: projectData.project_duration,
+  status: 'Completed',
+  featured: true,
+  projectLink: `https://alecasgari.com/projects/${slug}.html`,
+  url: `/projects/${slug}.html`,
+};
 
-function extractDescriptionFromHtml(pageHtml) {
-  const match = pageHtml.match(/<div class="project-description"[^>]*>([\s\S]*?)<\/div>/i);
-  if (!match) return '';
-  return stripAstroAttrs(match[1]);
-}
-
-function extractVideoUrlFromHtml(pageHtml) {
-  const sectionMatch = pageHtml.match(/<section class="project-video[^"]*"[\s\S]*?<\/section>/i);
-  if (!sectionMatch) return '';
-  const iframeMatch = sectionMatch[0].match(/<iframe[^>]+src="([^"]+)"/i);
-  return iframeMatch ? iframeMatch[1] : '';
-}
-
-function isMarkdown(text) {
-  const t = String(text || '').trim();
-  return t.startsWith('##') || t.startsWith('###') || t.startsWith('- ');
-}
-
-module.exports = {
-  esc,
-  mdToHtml,
-  slugify,
-  splitCsv,
-  categorySlug,
-  buildProjectHtml,
-  buildProjectsJsonEntry,
-  stripAstroAttrs,
-  extractDescriptionFromHtml,
-  extractVideoUrlFromHtml,
-  isMarkdown,
+return {
+  slug,
+  project_id: projectData.project_id,
+  project_link: `https://alecasgari.com/projects/${slug}.html`,
+  image_path: `/projects/${slug}.jpg`,
+  base64_html: Buffer.from(html, 'utf8').toString('base64'),
+  projects_json_entry: projectsJsonEntry,
 };
