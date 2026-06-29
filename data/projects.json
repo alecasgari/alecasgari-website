@@ -1,5 +1,36 @@
 [
   {
+    "slug": "Automated-Instagram-and-YouTube-Video-Syndication-System",
+    "title": "Automated Instagram and YouTube Video Syndication System",
+    "excerpt": "I built an automated pipeline that fetches social media content, processes it, and publishes it directly to a static website for Dr. Giv Sharifi. This removes the need for manual content updates.",
+    "image": "/projects/Automated-Instagram-and-YouTube-Video-Syndication-System.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "Automation",
+      "Content Syndication",
+      "Instagram API",
+      "YouTube API",
+      "CloudFlare"
+    ],
+    "technologies": [
+      "n8n",
+      "Telegram API",
+      "Gemini",
+      "CloudFlare R2",
+      "Docker",
+      "Python",
+      "JSON"
+    ],
+    "date": "2026-06-29",
+    "clientName": "Dr. Giv Sharifi",
+    "clientCompany": "Dr. Giv Sharifi Clinic",
+    "duration": "4 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Automated-Instagram-and-YouTube-Video-Syndication-System.html",
+    "url": "/projects/Automated-Instagram-and-YouTube-Video-Syndication-System.html"
+  },
+  {
     "slug": "Integrated-Marketing-Campaign-and-Digital-Lead-Automation-for-NK-Rent-Cars",
     "title": "Integrated Marketing Campaign and Digital Lead Automation for NK Rent Cars",
     "excerpt": "I managed a comprehensive marketing campaign for NK Rent Cars and integrated automated lead generation workflows. I connected ad platforms to a central website and CRM to streamline customer acquisition.",
