@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Campaign-Tracking-and-Vaccination-Enrollment-Automation",
+    "title": "Campaign Tracking and Vaccination Enrollment Automation",
+    "excerpt": "I developed an automated enrollment system using QR-coded posters to track vaccination campaign participation in real-time.",
+    "image": "/projects/Campaign-Tracking-and-Vaccination-Enrollment-Automation.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "Automation",
+      "QR Code",
+      "Data Tracking",
+      "UTM",
+      "Python"
+    ],
+    "technologies": [
+      "Python",
+      "QR Code",
+      "UTM",
+      "Webhooks",
+      "Database"
+    ],
+    "date": "2026-07-02",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "2 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Campaign-Tracking-and-Vaccination-Enrollment-Automation.html",
+    "url": "/projects/Campaign-Tracking-and-Vaccination-Enrollment-Automation.html"
+  },
+  {
     "slug": "Automated-Instagram-and-YouTube-Video-Syndication-System",
     "title": "Automated Instagram and YouTube Video Syndication System",
     "excerpt": "I built an automated pipeline that fetches social media content, processes it, and publishes it directly to a static website for Dr. Giv Sharifi. This removes the need for manual content updates.",
