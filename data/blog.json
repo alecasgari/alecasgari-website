@@ -1,5 +1,16 @@
 [
   {
+    "slug": "zero-trust-mindset-leadership-habit",
+    "title": "Beyond the Wall: Why Zero Trust is a Leadership Habit, Not a Tech Stack",
+    "excerpt": "Stop thinking about security as a wall. Discover why adopting a 'zero trust' mindset is a leadership habit that builds organizational resilience in the age of AI.",
+    "category": "Technology",
+    "date": "2026-07-04",
+    "image": "/images/blog/zero-trust-mindset-leadership-habit.jpg",
+    "url": "/blog/zero-trust-mindset-leadership-habit.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "moving-beyond-the-loyalty-trap-performance-first-management",
     "title": "Moving Beyond the Loyalty Trap: Why High-Impact Leadership Demands Performance-First Management",
     "excerpt": "Many leaders fall into the loyalty trap, prioritizing personal affinity over actual results. Discover why shifting to a performance-first management style is the only way to ensure your organization’s long-term success.",
