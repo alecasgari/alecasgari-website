@@ -9,6 +9,8 @@ Deploy on server: run `./deploy.sh` (or GitHub Actions — step 4).
 | Server path | `/home/alecadmin/alecasgari-website` |
 | NPM forwards to | `http://alec-website-static:80` (Docker nginx container) |
 
+Optional SEO URL redirects: see `deploy/nginx-url-redirects.conf` (apply on VPS nginx, then reload).
+
 ## Preview
 ```bash
 cd alecasgari-website && python -m http.server 8080
