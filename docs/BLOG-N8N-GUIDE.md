@@ -6,14 +6,21 @@
 
 ## چه چیزهایی در template جدید fix شده؟
 
-| مشکل Gemini | راه‌حل در template |
-|-------------|------------------|
+| مشکل | راه‌حل در template |
+|------|-------------------|
 | لیست‌های تقلبی `<p>* ...</p>` | `mdToHtml()` خطوط `- ` و `* ` را به `<ul><li>` تبدیل می‌کند |
 | `<h2>` تکراری عنوان | اگر اولین heading در body با عنوان صفحه یکی باشد، skip می‌شود |
 | نبود Twitter Card | `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image` |
 | نبود `og:url` | اضافه شده |
-| نبود Schema | `BlogPosting` JSON-LD در `<head>` |
-| footer بدون Privacy | لینک Privacy Policy در footer |
+| Schema ضعیف | `BlogPosting` + `BreadcrumbList` در `@graph` با `dateModified`, author `sameAs`, ImageObject |
+| Hero فقط CSS background | `<picture><img>` با `alt`, `preload`, `fetchpriority="high"` |
+| تاریخ مبهم `7/10/2026` | `<time datetime="...">July 10, 2026</time>` |
+| Author bio عمومی | bio تخصصی + role «Systems & Automation Specialist» |
+| Sidebar/Tags با H3 اضافی | `p.blog-sidebar-title` و `p.blog-tags-label` |
+| footer بدون Privacy | لینک Privacy Policy + copyright `© 2025–2026` |
+| نبود robots meta | `max-image-preview:large` برای مقالات |
+
+**منبع template:** `docs/blog-page-builder.js` — در n8n همراه با `docs/blog-html-builder.js` استفاده شود.
 
 ---
 

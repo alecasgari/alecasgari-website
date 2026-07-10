@@ -6,9 +6,22 @@
   display: flex;
   align-items: flex-end;
   padding: 7rem 0 3rem;
-  background-size: cover;
-  background-position: center;
   color: #fff;
+  overflow: hidden;
+}
+
+.blog-detail-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+}
+
+.blog-detail-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .blog-detail-hero-overlay {
@@ -191,6 +204,14 @@
   border-top: 1px solid var(--border);
 }
 
+.blog-tags-label {
+  width: 100%;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
 .blog-tag {
   display: inline-block;
   padding: 0.25rem 0.65rem;
@@ -222,9 +243,11 @@
   flex-shrink: 0;
 }
 
-.blog-author-box h3 {
+.blog-author-name {
   margin: 0 0 0.2rem;
   font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .blog-author-box .role {
@@ -241,12 +264,14 @@
   line-height: 1.5;
 }
 
-.blog-sidebar h3 {
+.blog-sidebar-title {
   display: flex;
   align-items: center;
   gap: 0.45rem;
   margin: 0 0 1rem;
   font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .blog-sidebar ul {
