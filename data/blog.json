@@ -21,8 +21,7 @@
     "image": "/images/blog/the-ai-leadership-trap-why-technology-needs-human-oversight.jpg",
     "url": "/blog/the-ai-leadership-trap-why-technology-needs-human-oversight.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp",
-    "dateModified": "2026-07-10"
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
   },
   {
     "slug": "championship-level-performance-administrative-rigor",
@@ -34,8 +33,7 @@
     "image": "/images/blog/championship-level-performance-administrative-rigor.jpg",
     "url": "/blog/championship-level-performance-administrative-rigor.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp",
-    "dateModified": "2026-07-10"
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
   },
   {
     "slug": "zero-trust-mindset-leadership-habit",
@@ -47,8 +45,7 @@
     "image": "/images/blog/zero-trust-mindset-leadership-habit.jpg",
     "url": "/blog/zero-trust-mindset-leadership-habit.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp",
-    "dateModified": "2026-07-10"
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
   },
   {
     "slug": "moving-beyond-the-loyalty-trap-performance-first-management",
@@ -60,15 +57,15 @@
     "image": "/images/blog/moving-beyond-the-loyalty-trap-performance-first-management.jpg",
     "url": "/blog/moving-beyond-the-loyalty-trap-performance-first-management.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp",
-    "dateModified": "2026-07-10"
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
   },
   {
     "slug": "how-to-detect-and-correct-cultural-drift",
     "title": "The Silent Killer: How to Detect and Correct Cultural Drift",
-    "excerpt": "Culture doesn’t break overnight; it erodes. Learn how to identify the subtle warning signs of cultural drift and how to act as a compass for your team before small misalignments become major crises.",
+    "excerpt": "Culture erodes slowly—not overnight. Learn the warning signs of cultural drift, how to audit values before crisis hits, and why leaders must act as the organizational compass.",
     "category": "Leadership",
     "date": "2026-06-30",
+    "dateModified": "2026-07-10",
     "image": "/images/blog/how-to-detect-and-correct-cultural-drift.jpg",
     "url": "/blog/how-to-detect-and-correct-cultural-drift.html",
     "author": "Alec Asgari",
@@ -77,9 +74,10 @@
   {
     "slug": "purpose-driven-leadership-competitive-advantage",
     "title": "Beyond the Spreadsheet: Why Purpose-Driven Leadership is Your True Competitive Advantage",
-    "excerpt": "Stop treating purpose as a soft skill; it is your greatest competitive advantage for long-term growth and employee innovation. Learn how to integrate sustainability and servant leadership into your core operations.",
+    "excerpt": "Purpose is not a soft skill—it is a growth engine. Learn how servant leadership, mission alignment, and internal culture building create lasting innovation and retention.",
     "category": "Leadership",
     "date": "2026-06-28",
+    "dateModified": "2026-07-10",
     "image": "/images/blog/purpose-driven-leadership-competitive-advantage.jpg",
     "url": "/blog/purpose-driven-leadership-competitive-advantage.html",
     "author": "Alec Asgari",
@@ -88,9 +86,10 @@
   {
     "slug": "ai-organizational-redesign-strategy",
     "title": "The AI Trap: Why Organizational Redesign Must Precede Automation",
-    "excerpt": "Most leaders treat AI as a software upgrade, but true transformation requires deep organizational redesign. Alec Asgari breaks down how to align your business architecture with your AI strategy.",
+    "excerpt": "You cannot automate a broken process. Learn why AI transformation starts with workflow redesign, decision rights, and strategy—not another enterprise license.",
     "category": "Business",
     "date": "2026-06-26",
+    "dateModified": "2026-07-10",
     "image": "/images/blog/ai-organizational-redesign-strategy.jpg",
     "url": "/blog/ai-organizational-redesign-strategy.html",
     "author": "Alec Asgari",
@@ -99,9 +98,10 @@
   {
     "slug": "the-evolution-of-the-manager-in-the-ai-era",
     "title": "The Evolution of the Manager: Why Middle Management is the AI Era's Secret Weapon",
-    "excerpt": "Middle managers are not becoming obsolete; they are evolving into essential architects of AI-augmented organizational success. Learn why this layer of leadership is more critical than ever.",
+    "excerpt": "Middle managers are not obsolete—they are evolving into architects of human-AI collaboration. Learn why this layer is critical for AI adoption and execution.",
     "category": "Leadership",
     "date": "2026-06-24",
+    "dateModified": "2026-07-10",
     "image": "/images/blog/the-evolution-of-the-manager-in-the-ai-era.jpg",
     "url": "/blog/the-evolution-of-the-manager-in-the-ai-era.html",
     "author": "Alec Asgari",
@@ -110,9 +110,10 @@
   {
     "slug": "ai-paradox-why-legacy-leadership-sabotages-technology",
     "title": "The AI Paradox: Why Your Legacy Structure is Sabotaging Your Tech Investment",
-    "excerpt": "Many businesses are racing to adopt AI but forgetting to evolve their leadership. Learn why your legacy management structure is sabotaging your AI investment and how to build an AI-native organization.",
+    "excerpt": "AI capability is racing ahead of organizational capacity. Learn why legacy management structures sabotage tech ROI and how to build an AI-native organization.",
     "category": "Leadership",
     "date": "2026-06-23",
+    "dateModified": "2026-07-10",
     "image": "/images/blog/ai-paradox-why-legacy-leadership-sabotages-technology.jpg",
     "url": "/blog/ai-paradox-why-legacy-leadership-sabotages-technology.html",
     "author": "Alec Asgari",
