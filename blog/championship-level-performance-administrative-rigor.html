@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="Talent alone does not win championships—or markets. Discover how clear roles, data-driven metrics, and universal accountability create repeatable high performance.">
   <meta name="twitter:image" content="https://alecasgari.com/images/blog/championship-level-performance-administrative-rigor.jpg">
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
-  <link rel="stylesheet" href="/assets/css/site.css?v=6">
+  <link rel="stylesheet" href="/assets/css/site.css?v=9">
   <link rel="stylesheet" href="/assets/css/blog-detail.css?v=3">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
@@ -30,7 +30,6 @@
       <a href="/" class="site-logo">
         <img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="140" height="36">
       </a>
-      <button class="nav-toggle" type="button" aria-label="Menu"><iconify-icon icon="lucide:menu"></iconify-icon></button>
       <nav>
         <ul class="site-nav">
           <li><a href="/">Home</a></li>
@@ -41,8 +40,43 @@
           <li><a href="/contact.html">Contact</a></li>
         </ul>
       </nav>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav__backdrop" data-close-nav tabindex="-1" aria-hidden="true"></div>
+  <div class="mobile-nav__panel">
+    <div class="mobile-nav__intro">
+      <p class="mobile-nav__name">Alec Asgari</p>
+      <p class="mobile-nav__role">Systems · Automation · AI</p>
+    </div>
+    <div class="mobile-nav__quick">
+      <a href="/" class="mobile-nav__pill mobile-nav__pill--full"><iconify-icon icon="lucide:home"></iconify-icon> Home</a>
+      <a href="/about.html" class="mobile-nav__pill"><iconify-icon icon="lucide:user"></iconify-icon> About</a>
+      <a href="/blog.html" class="mobile-nav__pill"><iconify-icon icon="lucide:newspaper"></iconify-icon> Blog</a>
+      <a href="/projects.html" class="mobile-nav__pill"><iconify-icon icon="lucide:folder-kanban"></iconify-icon> Projects</a>
+      <a href="/case-studies.html" class="mobile-nav__pill"><iconify-icon icon="lucide:briefcase"></iconify-icon> Case Studies</a>
+    </div>
+    <p class="mobile-nav__label">More</p>
+    <div class="mobile-nav__grid">
+      <a href="/contact.html"><iconify-icon icon="lucide:mail"></iconify-icon> Contact</a>
+      <a href="https://calculator.alecasgari.com/" target="_blank" rel="noopener"><iconify-icon icon="lucide:calculator"></iconify-icon> Calculator</a>
+      <a href="/privacy-policy.html"><iconify-icon icon="lucide:shield"></iconify-icon> Privacy</a>
+    </div>
+    <div class="mobile-nav__contact">
+      <a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> hello@alecasgari.com</a>
+    </div>
+    <div class="mobile-nav__social" aria-label="Social media">
+      <a class="mobile-nav__social-link" href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener" aria-label="LinkedIn"><iconify-icon icon="lucide:linkedin"></iconify-icon></a>
+      <a class="mobile-nav__social-link" href="https://github.com/alecasgari" target="_blank" rel="noopener" aria-label="GitHub"><iconify-icon icon="lucide:github"></iconify-icon></a>
+      <a class="mobile-nav__social-link" href="mailto:hello@alecasgari.com" aria-label="Email"><iconify-icon icon="lucide:mail"></iconify-icon></a>
+    </div>
+    <div class="mobile-nav__actions">
+      <a href="/contact.html" class="btn btn-primary"><iconify-icon icon="lucide:send"></iconify-icon> Get in Touch</a>
+    </div>
+  </div>
+</nav>
 
   <main>
     <section class="blog-detail-hero">
