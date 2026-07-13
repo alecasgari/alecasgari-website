@@ -451,7 +451,7 @@ function buildBlogHtml(data, bodyHtml, tagList, options = {}) {
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-nav.js?v=9"></script>
   <script src="/assets/js/site-reveal.js"></script>
 </body>
 </html>`;
