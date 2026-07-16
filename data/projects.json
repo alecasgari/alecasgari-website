@@ -1,5 +1,36 @@
 [
   {
+    "slug": "Online-Patient-Portal-and-Academic-Automation-for-Professor-Giv-Sharifi",
+    "title": "Online Patient Portal and Academic Automation for Professor Giv Sharifi",
+    "excerpt": "I developed an online portal and integration system for a renowned neurosurgeon to manage international patient admissions and automate academic research updates.",
+    "image": "/projects/Online-Patient-Portal-and-Academic-Automation-for-Professor-Giv-Sharifi.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "Web Development",
+      "Medical Portal",
+      "n8n Workflow Automation",
+      "Google Scholar Integration",
+      "Automated Content Publishing",
+      "Graphic Design"
+    ],
+    "technologies": [
+      "HTML",
+      "CSS",
+      "Python",
+      "JavaScript",
+      "n8n",
+      "Google Scholar"
+    ],
+    "date": "2022-12-01",
+    "clientName": "Giv Sharifi",
+    "clientCompany": "Confidential Client",
+    "duration": "Ongoing",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Online-Patient-Portal-and-Academic-Automation-for-Professor-Giv-Sharifi.html",
+    "url": "/projects/Online-Patient-Portal-and-Academic-Automation-for-Professor-Giv-Sharifi.html"
+  },
+  {
     "slug": "Brand-Identity-and-Company-Profile-Design-for-Makmel-Winery",
     "title": "Brand Identity and Company Profile Design for Makmel Winery",
     "excerpt": "I designed a comprehensive brand identity and company profile for Makmel Winery in Lebanon, helping them build brand recognition and support sales growth.",
