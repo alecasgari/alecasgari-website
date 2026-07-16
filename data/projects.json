@@ -1,5 +1,33 @@
 [
   {
+    "slug": "Brand-Identity-and-Company-Profile-Design-for-Makmel-Winery",
+    "title": "Brand Identity and Company Profile Design for Makmel Winery",
+    "excerpt": "I designed a comprehensive brand identity and company profile for Makmel Winery in Lebanon, helping them build brand recognition and support sales growth.",
+    "image": "/projects/Brand-Identity-and-Company-Profile-Design-for-Makmel-Winery.jpg",
+    "category": "Graphic Design",
+    "tags": [
+      "Brand Identity Design",
+      "Company Profile Design",
+      "Winery Branding",
+      "Graphic Design",
+      "Adobe Illustrator",
+      "Visual Design"
+    ],
+    "technologies": [
+      "Adobe Photoshop",
+      "Adobe Illustrator",
+      "Adobe Color Plate"
+    ],
+    "date": "2022-12-01",
+    "clientName": "Confidential Client",
+    "clientCompany": "Makmel",
+    "duration": "3 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Brand-Identity-and-Company-Profile-Design-for-Makmel-Winery.html",
+    "url": "/projects/Brand-Identity-and-Company-Profile-Design-for-Makmel-Winery.html"
+  },
+  {
     "slug": "Campaign-Tracking-and-Vaccination-Enrollment-Automation",
     "title": "Campaign Tracking and Vaccination Enrollment Automation",
     "excerpt": "I developed an automated enrollment system using QR-coded posters to track vaccination campaign participation in real-time.",
