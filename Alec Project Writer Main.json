@@ -1,0 +1,3313 @@
+{
+  "name": "Alec Project Writer Main",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=projects/{{ $json.slug }}.html",
+        "fileContent": "={{ $json.base64_html }}",
+        "commitMessage": "=Auto-publish new project {{ $json.project_id }} from Telegram"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2400,
+        1520
+      ],
+      "id": "ec9f5970-f368-4906-93e4-66f639948ba6",
+      "name": "Upload HTML",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in Upload HTML to GitHub"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: \"Prepare HTML for GitHub\"\n// Keep in sync with Alec Project Writer workflow — paste this whole file into n8n.\n\nfunction getProjectRowForHtml() {\n  try {\n    const manual = $('Get Project for photo').first();\n    if (manual?.json?.project_id) return manual.json;\n  } catch (e) {}\n  try {\n    const ai = $('Get Project for AI publish').first();\n    if (ai?.json?.project_id) return ai.json;\n  } catch (e) {}\n  throw new Error('Project row not found from Get Project for photo or Get Project for AI publish.');\n}\nconst projectData = getProjectRowForHtml();\n\nfunction esc(s) {\n  return String(s || '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n}\n\nfunction inlineMd(text) {\n  return esc(text)\n    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/`(.+?)`/g, '<code>$1</code>');\n}\n\nfunction mdToHtml(md) {\n  const lines = String(md || '').split('\\n');\n  const out = [];\n  let inList = false;\n\n  function closeList() {\n    if (inList) {\n      out.push('</ul>');\n      inList = false;\n    }\n  }\n\n  for (const line of lines) {\n    const t = line.trim();\n    if (!t) {\n      closeList();\n      continue;\n    }\n    // ## in Gemini markdown → h3 (page already has h1 title + h2 \"Project Details\")\n    if (t.startsWith('## ')) {\n      closeList();\n      out.push(`<h3>${inlineMd(t.slice(3))}</h3>`);\n      continue;\n    }\n    if (t.startsWith('### ')) {\n      closeList();\n      out.push(`<h4>${inlineMd(t.slice(4))}</h4>`);\n      continue;\n    }\n    if (t.startsWith('- ')) {\n      if (!inList) {\n        out.push('<ul>');\n        inList = true;\n      }\n      out.push(`<li>${inlineMd(t.slice(2))}</li>`);\n      continue;\n    }\n    closeList();\n    out.push(`<p>${inlineMd(t)}</p>`);\n  }\n  closeList();\n  return out.join('\\n');\n}\n\nfunction formatDate(iso) {\n  if (!iso) return '';\n  const d = new Date(iso.includes('T') ? iso : iso + 'T00:00:00');\n  return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });\n}\n\nfunction slugify(title) {\n  return String(title || '')\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .slice(0, 80);\n}\n\nfunction splitCsv(val) {\n  return String(val || '')\n    .split(',')\n    .map((t) => t.trim())\n    .filter(Boolean);\n}\n\nfunction categorySlug(category) {\n  return String(category || '')\n    .toLowerCase()\n    .replace(/[^a-z0-9]+/g, '-')\n    .replace(/^-|-$/g, '');\n}\n\nfunction statusClass(status) {\n  const s = String(status || '').toLowerCase();\n  if (s.includes('progress')) return 'project-badge-status--progress';\n  return 'project-badge-status--completed';\n}\n\nfunction buildJsonLd(data, title, pageUrl, image, date, excerpt, category, tags, technologies) {\n  const schema = {\n    '@context': 'https://schema.org',\n    '@type': 'Article',\n    headline: title,\n    description: excerpt,\n    url: pageUrl,\n    mainEntityOfPage: pageUrl,\n    image: `https://alecasgari.com${image}`,\n    datePublished: date || undefined,\n    author: {\n      '@type': 'Person',\n      name: 'Alec Asgari',\n      url: 'https://alecasgari.com/about.html',\n    },\n    publisher: {\n      '@type': 'Person',\n      name: 'Alec Asgari',\n    },\n    articleSection: category || undefined,\n    keywords: [...tags, ...technologies].filter(Boolean).join(', ') || undefined,\n  };\n  return JSON.stringify(schema).replace(/</g, '\\\\u003c');\n}\n\nfunction buildProjectHtml(data) {\n  const title = data.project_title;\n  const slug = slugify(title);\n  const excerpt = data.short_description || '';\n  const category = data.category || '';\n  const status = 'Completed';\n  const featured = true;\n  const tags = splitCsv(data.tags);\n  const technologies = splitCsv(data.technologies_used);\n  const image = `/projects/${slug}.jpg`;\n  const url = `/projects/${slug}.html`;\n  const pageUrl = `https://alecasgari.com${url}`;\n  const date = String(data.project_date || '').slice(0, 10);\n  const bodyHtml = mdToHtml(data.project_description);\n  const catSlug = categorySlug(category);\n  const jsonLd = buildJsonLd(data, title, pageUrl, image, date, excerpt, category, tags, technologies);\n\n  const techChips = technologies\n    .map(\n      (t) =>\n        `<span class=\"project-chip project-chip--tech\"><iconify-icon icon=\"lucide:cpu\"></iconify-icon>${esc(t)}</span>`\n    )\n    .join('');\n\n  const tagChips = tags\n    .map(\n      (t) =>\n        `<span class=\"project-chip project-chip--tag\"><iconify-icon icon=\"lucide:tag\"></iconify-icon>${esc(t)}</span>`\n    )\n    .join('');\n\n  return `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>${esc(title)} — Alec Asgari</title>\n  <meta name=\"description\" content=\"${esc(excerpt)}\">\n  <meta property=\"og:type\" content=\"article\">\n  <meta property=\"og:title\" content=\"${esc(title)}\">\n  <meta property=\"og:description\" content=\"${esc(excerpt)}\">\n  <meta property=\"og:image\" content=\"https://alecasgari.com${esc(image)}\">\n  <meta property=\"og:url\" content=\"${pageUrl}\">\n  <meta name=\"twitter:card\" content=\"summary_large_image\">\n  <meta name=\"twitter:title\" content=\"${esc(title)}\">\n  <meta name=\"twitter:description\" content=\"${esc(excerpt)}\">\n  <meta name=\"twitter:image\" content=\"https://alecasgari.com${esc(image)}\">\n  <link rel=\"canonical\" href=\"${pageUrl}\">\n  <script type=\"application/ld+json\">${jsonLd}</script>\n  <link rel=\"shortcut icon\" href=\"/assets/images/logos/favicon.svg\">\n  <link rel=\"stylesheet\" href=\"/assets/css/site.css?v=4\">\n  <link rel=\"stylesheet\" href=\"/assets/css/project-detail.css?v=2\">\n  <script async src=\"https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ\"></script>\n  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>\n</head>\n<body data-category=\"${esc(catSlug)}\">\n  <header class=\"site-header\">\n    <div class=\"container inner\">\n      <a href=\"/\" class=\"site-logo\">\n        <img src=\"/assets/images/logos/logo-dark.svg\" alt=\"Alec Asgari\" width=\"140\" height=\"36\">\n      </a>\n      <button class=\"nav-toggle\" type=\"button\" aria-label=\"Menu\"><iconify-icon icon=\"lucide:menu\"></iconify-icon></button>\n      <nav>\n        <ul class=\"site-nav\">\n          <li><a href=\"/\">Home</a></li>\n          <li><a href=\"/about.html\">About Me</a></li>\n          <li><a href=\"/case-studies.html\">Case Studies</a></li>\n          <li><a href=\"/projects.html\" class=\"active\">Projects</a></li>\n          <li><a href=\"/contact.html\">Contact</a></li>\n        </ul>\n      </nav>\n    </div>\n  </header>\n\n  <main>\n    <section class=\"project-detail-hero\" style=\"background-image:url('${esc(image)}')\">\n      <div class=\"project-detail-hero-overlay\"></div>\n      <div class=\"project-detail-hero-mesh\" aria-hidden=\"true\"></div>\n      <div class=\"container\">\n        <p class=\"eyebrow hero-in\">\n          <iconify-icon icon=\"lucide:folder-kanban\"></iconify-icon>\n          <a href=\"/projects.html\">Projects</a> / ${esc(category)}\n        </p>\n        <div class=\"project-detail-badges hero-in hero-in-d1\">\n          <span class=\"project-badge project-badge--category\">${esc(category)}</span>\n          <span class=\"project-badge project-badge--status ${statusClass(status)}\">${esc(status)}</span>\n          <span class=\"project-badge project-badge--featured\"><iconify-icon icon=\"lucide:star\"></iconify-icon> Featured</span>\n        </div>\n        <h1 class=\"hero-in hero-in-d1\">${esc(title)}</h1>\n        <p class=\"project-detail-excerpt hero-in hero-in-d2\">${esc(excerpt)}</p>\n        <div class=\"project-detail-meta-row hero-in hero-in-d3\">\n          <div class=\"project-detail-meta-item\">\n            <iconify-icon icon=\"lucide:user\"></iconify-icon>\n            <div>\n              <strong>${esc(data.client_name)}</strong>\n              <span>${esc(data.client_company)}</span>\n            </div>\n          </div>\n          <div class=\"project-detail-meta-item\">\n            <iconify-icon icon=\"lucide:calendar\"></iconify-icon>\n            <div>\n              <strong>Date</strong>\n              <span>${esc(formatDate(date))}</span>\n            </div>\n          </div>\n          <div class=\"project-detail-meta-item\">\n            <iconify-icon icon=\"lucide:clock\"></iconify-icon>\n            <div>\n              <strong>Duration</strong>\n              <span>${esc(data.project_duration)}</span>\n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"project-featured-wrap\">\n      <div class=\"container\">\n        <figure class=\"project-featured-figure reveal\">\n          <img src=\"${esc(image)}\" alt=\"${esc(title)}\" class=\"project-featured-img\">\n        </figure>\n      </div>\n    </section>\n\n    <section class=\"section\">\n      <div class=\"container project-detail-layout\">\n        <article class=\"project-detail-content reveal\">\n          <h2><iconify-icon icon=\"lucide:file-text\"></iconify-icon> Project Details</h2>\n          <div class=\"project-description\">${bodyHtml}</div>\n        </article>\n\n        <aside class=\"project-meta sidebar-panel card-lift reveal\">\n          <div class=\"project-meta-block\">\n            <h3><iconify-icon icon=\"lucide:clipboard-list\"></iconify-icon> Project Info</h3>\n            <ul>\n              <li><iconify-icon icon=\"lucide:layers\"></iconify-icon><div><strong>Category</strong>${esc(category)}</div></li>\n              <li><iconify-icon icon=\"lucide:activity\"></iconify-icon><div><strong>Status</strong>${esc(status)}</div></li>\n              <li><iconify-icon icon=\"lucide:user\"></iconify-icon><div><strong>Client</strong>${esc(data.client_name)}</div></li>\n              <li><iconify-icon icon=\"lucide:calendar\"></iconify-icon><div><strong>Date</strong>${esc(formatDate(date))}</div></li>\n              <li><iconify-icon icon=\"lucide:clock\"></iconify-icon><div><strong>Duration</strong>${esc(data.project_duration)}</div></li>\n            </ul>\n          </div>\n          <div class=\"project-meta-block\">\n            <h3><iconify-icon icon=\"lucide:cpu\"></iconify-icon> Technologies</h3>\n            <div class=\"project-chip-list\">${techChips || '<span class=\"project-meta-empty\">Not specified</span>'}</div>\n          </div>\n          <div class=\"project-meta-block\">\n            <h3><iconify-icon icon=\"lucide:tags\"></iconify-icon> Tags</h3>\n            <div class=\"project-chip-list\">${tagChips || '<span class=\"project-meta-empty\">No tags</span>'}</div>\n          </div>\n        </aside>\n      </div>\n    </section>\n\n    <section class=\"section section-alt section-tight\">\n      <div class=\"container project-detail-cta reveal\">\n        <a href=\"/projects.html\" class=\"btn btn-outline\">\n          <iconify-icon icon=\"lucide:arrow-left\"></iconify-icon>\n          All Projects\n        </a>\n        <a href=\"/contact.html\" class=\"btn btn-primary\">\n          <iconify-icon icon=\"lucide:mail\"></iconify-icon>\n          Discuss Your Project\n        </a>\n      </div>\n    </section>\n  </main>\n\n  <footer class=\"site-footer\">\n    <div class=\"container inner\">\n      <a href=\"/\" class=\"footer-logo\"><img src=\"/assets/images/logos/logo-dark.svg\" alt=\"Alec Asgari\" width=\"120\" height=\"32\"></a>\n      <p class=\"footer-copy\">© 2025 Alec Asgari</p>\n      <ul class=\"footer-links\">\n        <li><a href=\"/privacy-policy.html\"><iconify-icon icon=\"lucide:shield\"></iconify-icon> Privacy Policy</a></li>\n        <li><a href=\"https://www.linkedin.com/in/alecasgari/\" target=\"_blank\" rel=\"noopener\"><iconify-icon icon=\"lucide:linkedin\"></iconify-icon> LinkedIn</a></li>\n        <li><a href=\"https://github.com/alecasgari\" target=\"_blank\" rel=\"noopener\"><iconify-icon icon=\"lucide:github\"></iconify-icon> GitHub</a></li>\n        <li><a href=\"mailto:hello@alecasgari.com\"><iconify-icon icon=\"lucide:mail\"></iconify-icon> Email</a></li>\n      </ul>\n    </div>\n  </footer>\n  <script src=\"https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js\"></script>\n  <script src=\"/assets/js/site-nav.js\"></script>\n  <script src=\"/assets/js/site-reveal.js\"></script>\n</body>\n</html>`;\n}\n\nconst slug = slugify(projectData.project_title);\nconst html = buildProjectHtml(projectData);\n\nconst projectsJsonEntry = {\n  slug,\n  title: projectData.project_title,\n  excerpt: projectData.short_description,\n  image: `/projects/${slug}.jpg`,\n  category: projectData.category,\n  tags: splitCsv(projectData.tags),\n  technologies: splitCsv(projectData.technologies_used),\n  date: String(projectData.project_date || '').slice(0, 10),\n  clientName: projectData.client_name,\n  clientCompany: projectData.client_company,\n  duration: projectData.project_duration,\n  status: 'Completed',\n  featured: true,\n  projectLink: `https://alecasgari.com/projects/${slug}.html`,\n  url: `/projects/${slug}.html`,\n};\n\nreturn {\n  slug,\n  project_id: projectData.project_id,\n  project_link: `https://alecasgari.com/projects/${slug}.html`,\n  image_path: `/projects/${slug}.jpg`,\n  base64_html: Buffer.from(html, 'utf8').toString('base64'),\n  projects_json_entry: projectsJsonEntry,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2176,
+        1520
+      ],
+      "id": "b943103a-48df-4bca-bf21-41a1b3149d9d",
+      "name": "Prepare HTML for GitHub"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        176
+      ],
+      "id": "f6c12e4f-0c1e-49bb-ac97-363413c8fce9",
+      "name": "Get a file2",
+      "webhookId": "208b3280-9a74-442e-b02c-36630cd2b3eb",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        752
+      ],
+      "id": "ebfbb04e-f4ac-4f43-950a-a22ab78e10a7",
+      "name": "Wait",
+      "webhookId": "063761ea-5a73-46c0-ab00-dc79e2e73326"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=To start writing a project please send a voice message including all information. In any language.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        368
+      ],
+      "id": "159467f2-95f6-4d5b-8308-02c928d63b22",
+      "name": "Message is Chat1",
+      "webhookId": "355166c6-d57d-45bf-9410-f84a45b27fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DreK4pmqbA5IPawe",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/DreK4pmqbA5IPawe",
+          "cachedResultName": "Alec Project Writer Serch in PEXELS"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tags": "={{ $json.tags }}"
+          },
+          "matchingColumns": [
+            "tags"
+          ],
+          "schema": [
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        752
+      ],
+      "name": "Call Alec Project Writer Serch in PEXELS1",
+      "id": "d0fc7271-b708-49ca-9573-f930911698f9"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "nLye0Fi4w6MewtQy",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nLye0Fi4w6MewtQy",
+          "cachedResultName": "Alec Project Writer Send Images and Video"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message_chat_id": "={{ $('Telegram Trigger').item.json.callback_query.from.id }}",
+            "": "={{ $('Call Alec Project Writer Serch in PEXELS1').item.json }}"
+          },
+          "matchingColumns": [
+            "message_chat_id",
+            ""
+          ],
+          "schema": [
+            {
+              "id": "message_chat_id",
+              "displayName": "message_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "",
+              "displayName": "",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        752
+      ],
+      "name": "Call Alec Project Writer Send Images and Video1",
+      "id": "d298a652-1184-41e0-b229-80bf2f242fc4"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {
+          "text": "Ok, Wait..."
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        848
+      ],
+      "id": "df31dd19-6d2a-4e8f-afe4-095e8094ee1a",
+      "name": "Answer Query a callback1",
+      "webhookId": "65ff41f6-9cdf-480c-b3d2-2fbaafa441e3",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ۱. دریافت متن پیام از ساختار تلگرام\nconst messageText = $('Telegram Trigger').first().json.callback_query.message.text;\n\n// ۲. جداسازی خطوط، حذف فاصله‌های خالی و فیلتر کردن هدر و فوتر پیام\nconst tagsArray = messageText.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line !== '' && !line.toUpperCase().startsWith('TAGS ARE') && !line.includes('Do you need images'));\n\n// ۳. خروجی دادن به صورت یک آبجکت حاوی آرایه‌ای از تگ‌ها (دقیقاً مشابه تصویر شما)\nreturn {\n  tags: tagsArray\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        752
+      ],
+      "id": "482c3995-50fd-4f01-9fd6-628d0fa37f10",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "confirm_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "f13b26fe-31e9-4d7d-8bf0-c767830d1740"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Confirm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "image-pexels-yes_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "b56e7dc3-9b9d-47e8-87ff-62f70141a111"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pexels"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "image-pexels-yes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6d1e4dba-3a2f-4a5e-b8eb-9a3324135f7f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pexels legacy"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "img-manual_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "81416cc7-40f8-4287-aa9d-b254ab717a99"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Manual photo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "img-openai_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "885ab64e-eb5f-4b96-b51d-9612a78f5d63"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OpenAI generate"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+                    "rightValue": "img-openai-use_",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "b2b6c5aa-aabb-40cc-8fae-215669007522"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OpenAI use"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        784
+      ],
+      "id": "f450200b-0641-4a65-8175-1004b7c027ba",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Got it. Please Wait...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        176
+      ],
+      "id": "ae88794a-488f-434e-a7c7-5911e760f4b0",
+      "name": "Welcome1",
+      "webhookId": "355166c6-d57d-45bf-9410-f84a45b27fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "637839dc-3bc1-4d8d-a698-8693f6907b09",
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VOICE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9d194e9c-2aae-4af7-9458-9b71e6d06f33",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TEXT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8075d315-6c39-4c1f-b3de-a3ea134fddef",
+                    "leftValue": "={{ $json.message.video }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIDEO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "74b2cbdc-e5f7-43af-aea3-a16a9010414e",
+                    "leftValue": "={{ $json.message.animation.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GIF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "66986022-8549-4cf7-bb9c-cfee11b181af",
+                    "leftValue": "={{ $json.message.document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FILE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2d14e830-3300-4cb7-a372-dc1e19399d50",
+                    "leftValue": "={{ $json.callback_query }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CALL BACK"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "95896b3d-613e-449f-9fce-266c8dc00e18",
+                    "leftValue": "={{ $json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PHOTO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        672
+      ],
+      "id": "150138d5-02bf-48e9-bcfc-4976ce4b4111",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "project_id": "={{ $json.project_id }}",
+            "project_title": "={{ $('Prepare Project Data').item.json.project_title }}",
+            "short_description": "={{ $('Prepare Project Data').item.json.short_description }}",
+            "category": "={{ $('Prepare Project Data').item.json.category }}",
+            "tags": "={{ $('Prepare Project Data').item.json.tags.join(', ') }}",
+            "project_date": "={{ $('Prepare Project Data').item.json.project_date }}",
+            "project_description": "={{ $('Prepare Project Data').item.json.project_description }}",
+            "client_name": "={{ $('Prepare Project Data').item.json.client_name }}",
+            "client_company": "={{ $('Prepare Project Data').item.json.client_company }}",
+            "technologies_used": "={{ $('Prepare Project Data').item.json.technologies_used.join(', ') }}",
+            "project_duration": "={{ $('Prepare Project Data').item.json.project_duration }}",
+            "publish_status": "Pending",
+            "created_at": "={{ $now.format('yyyy-MM-dd hh:mm:ss') }}",
+            "telegram_id": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "project_id",
+              "displayName": "project_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "project_title",
+              "displayName": "project_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "short_description",
+              "displayName": "short_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_date",
+              "displayName": "project_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "client_company",
+              "displayName": "client_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "technologies_used",
+              "displayName": "technologies_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_duration",
+              "displayName": "project_duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_link",
+              "displayName": "video_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "youtube",
+              "displayName": "youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publish_status",
+              "displayName": "publish_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_link",
+              "displayName": "project_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2320,
+        160
+      ],
+      "id": "5eb1284f-8129-4c4b-8a27-922e45dab415",
+      "name": "Append row in sheet1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Here is the project:\n\nTitle:\n*{{ $json.project_title }}*\n\nShort Description:\n*{{ $json.short_description }}*\n\nCategory:\n*{{ $json.category }}*\n\nTags:\n*{{ $json.tags }}*\n\nTechnologies:\n*{{ $json.technologies_used }}*\n\nDate: *{{ $json.project_date }}*\nDuration: *{{ $json.project_duration }}*\n\nClient: \n*{{ $json.client_name }} | {{ $json.client_company }}*\n\nProject ID: {{ $json.project_id }}\n\nConfirmed?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Yes",
+                    "additionalFields": {
+                      "callback_data": "=confirm_{{$('Prepare Project Data').item.json.project_id}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2544,
+        160
+      ],
+      "id": "0d83a414-2012-467f-86d9-db7718351440",
+      "name": "Send Project Preview1",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "publish_status": "Awaiting_Image",
+            "updated_at": "={{ $now.format('yyyy-MM-dd hh:mm:ss') }}",
+            "row_number": 0,
+            "project_id": "={{ $json.project_id }}"
+          },
+          "matchingColumns": [
+            "project_id"
+          ],
+          "schema": [
+            {
+              "id": "project_id",
+              "displayName": "project_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_title",
+              "displayName": "project_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "short_description",
+              "displayName": "short_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_date",
+              "displayName": "project_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_company",
+              "displayName": "client_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "technologies_used",
+              "displayName": "technologies_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_duration",
+              "displayName": "project_duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_link",
+              "displayName": "video_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "youtube",
+              "displayName": "youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publish_status",
+              "displayName": "publish_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_link",
+              "displayName": "project_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        928,
+        368
+      ],
+      "id": "33dce7ad-3147-48d0-bb48-744b892a31d3",
+      "name": "Append image link1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Project ID: {{ $json.project_id }}\n\nThe project has been confirmed successfully. Please send the project image. \n\nFORCE REPLY MESSAGE\nDO NOT CHANGE IT",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        944
+      ],
+      "id": "191b6f3c-ea8e-4be1-a5d1-bff657521913",
+      "name": "Send Ask Image1",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// اسکن کردن تمام آیتم‌های ورودی\nfor (const item of $input.all()) {\n  // اگر فایل باینری با نام data وجود داشت (که خروجی دیفالت تلگرامه)\n  if (item.binary && item.binary.data) {\n    // تغییر اجباری لیبل فایل به فرمت صوتی استاندارد تلگرام\n    item.binary.data.mimeType = 'audio/ogg';\n    item.binary.data.fileExtension = 'ogg';\n    item.binary.data.fileName = 'voice_message.ogg';\n  }\n}\n\n// بازگرداندن دیتای اصلاح‌شده به نود بعدی (جمنای)\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        176
+      ],
+      "id": "60ca9830-0c9e-479f-abc7-d51036ec5ce7",
+      "name": "Convert Voice1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.callback_query.data.split('_')[1] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        368
+      ],
+      "id": "bb73fbe2-48aa-4924-8343-ad2dc10ce51f",
+      "name": "Get Project1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.photo[$('Telegram Trigger').item.json.message.photo.length - 1].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        1520
+      ],
+      "id": "c472b5e3-87d6-42f8-9987-26ffac963014",
+      "name": "Get a file3",
+      "webhookId": "bfb540d4-4241-4b48-af67-48a38b969d1f",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: Prepare image for GitHub1\n// REPLACE only the top of your existing node — publish chain stays the same.\n// Supports:\n//   A) Manual Telegram photo  → Get Project for photo → Get a file3 → here\n//   B) OpenAI image           → Get Project for AI publish → Download AI image → here\n\nfunction getProjectRow() {\n  try {\n    const manual = $('Get Project for photo').first();\n    if (manual?.json?.project_id) return manual.json;\n  } catch (e) {}\n\n  try {\n    const ai = $('Get Project for AI publish').first();\n    if (ai?.json?.project_id) return ai.json;\n  } catch (e) {}\n\n  throw new Error('Project row not found from Get Project for photo or Get Project for AI publish.');\n}\n\nconst projectData = getProjectRow();\nconst binaryData = await this.helpers.getBinaryDataBuffer(0, 'data');\n\nfunction slugify(title) {\n  return String(title || '')\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .slice(0, 80);\n}\n\nconst slug = slugify(projectData.project_title);\nconst imagePath = `/projects/${slug}.jpg`;\nconst projectLink = `https://alecasgari.com/projects/${slug}.html`;\n\nreturn {\n  project_id: projectData.project_id,\n  project_title: projectData.project_title,\n  slug,\n  project_link: projectLink,\n  image_path: imagePath,\n  base64_image: binaryData.toString('base64'),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        1520
+      ],
+      "id": "d8317e8d-a50f-43f7-96e4-7df1e1e5c8ef",
+      "name": "Prepare image for GitHub1"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=projects/{{ $json.slug }}.jpg",
+        "fileContent": "={{ $json.base64_image }}",
+        "commitMessage": "=- Upload cover image for project {{ $json.project_id }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        1520
+      ],
+      "id": "43a74135-71b1-4eb9-901d-d43646f72bbf",
+      "name": "Upload image1",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in Upload image to GitHub"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $json.message.reply_to_message?.text?.match(/Project ID:\\s*(PRJ-\\d+-\\d+)/)?.[1] || \"Error_No_ID\" }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        1520
+      ],
+      "id": "1e39ca7a-5ff0-4236-b03a-087bb113f7f1",
+      "name": "Get Project for photo",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/projects.json",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2624,
+        1520
+      ],
+      "id": "5f6eac4e-1bac-4610-ba2b-a9a3d5028e8f",
+      "name": "Get projects.json",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in Get Project JASON to GitHub"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — نام پیشنهادی: Merge projects JSON\n// ورودی: خروجی node «Get projects.json» (GitHub)\n// فقط از Prepare HTML for GitHub برای entry استفاده می‌کند\n\nconst entry = $('Prepare HTML for GitHub').first().json.projects_json_entry;\n\nif (!entry || !entry.slug) {\n  throw new Error('projects_json_entry not found. Run Prepare HTML for GitHub first.');\n}\n\nlet existing = [];\nconst item = $input.first().json;\n\ntry {\n  if (item.content) {\n    const b64 = String(item.content).replace(/\\s/g, '');\n    existing = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));\n  } else if (typeof item.data === 'string') {\n    existing = JSON.parse(item.data);\n  }\n} catch (e) {\n  existing = [];\n}\n\nif (!Array.isArray(existing)) existing = [];\n\nconst filtered = existing.filter((p) => p.slug !== entry.slug);\nfiltered.unshift(entry);\n\nconst jsonText = JSON.stringify(filtered, null, 2) + '\\n';\n\nreturn {\n  slug: entry.slug,\n  project_id: $('Prepare HTML for GitHub').first().json.project_id,\n  project_link: entry.url ? `https://alecasgari.com${entry.url}` : '',\n  base64_projects_json: Buffer.from(jsonText, 'utf8').toString('base64'),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2848,
+        1520
+      ],
+      "id": "449d2154-9bec-4547-8496-883101b86a65",
+      "name": "Merge projects JSON"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "alecasgari",
+          "mode": "list",
+          "cachedResultName": "alecasgari",
+          "cachedResultUrl": "https://github.com/alecasgari"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "alecasgari-website",
+          "mode": "list",
+          "cachedResultName": "alecasgari-website",
+          "cachedResultUrl": "https://github.com/alecasgari/alecasgari-website"
+        },
+        "filePath": "=data/projects.json",
+        "fileContent": "={{ $json.base64_projects_json }}",
+        "commitMessage": "=Update projects.json for {{ $json.slug }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        3072,
+        1520
+      ],
+      "id": "91c6f93b-892f-4ea8-89c9-a1660c9c42da",
+      "name": "Upload projects.json",
+      "webhookId": "90dd553d-a7f2-4d68-b055-5992d10adc06",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "githubApi": {
+          "id": "BEgFUtA5fFbIXcNj",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in Upload projects.json GitHub"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Project ID: {{ $json.project_id }}\n\n*{{ $('Get Project1').item.json.project_title }}*\n\nTags (for Pexels):\n{{ $('Get Project1').item.json.tags }}\n\nChoose a cover image:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Upload my photo",
+                    "additionalFields": {
+                      "callback_data": "=img-manual_{{ $json.project_id }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Pexels stock",
+                    "additionalFields": {
+                      "callback_data": "=image-pexels-yes_{{ $json.project_id }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "AI generate",
+                    "additionalFields": {
+                      "callback_data": "=img-openai_{{ $json.project_id }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        368
+      ],
+      "id": "f3a3abed-24ff-4474-8523-17b73681a230",
+      "name": "Send Image Source Menu",
+      "webhookId": "acbf6b0a-24bb-446f-80ad-d121dc7280af",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.callback_query.data.replace('img-manual_', '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        944
+      ],
+      "id": "8574a721-3808-4956-bf44-f596fb27dc85",
+      "name": "Get Project for manual photo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.callback_query.data.replace('image-pexels-yes_', '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        560
+      ],
+      "id": "9bb56fcb-b313-48b8-911e-0ab3eaba4974",
+      "name": "Get Project for Pexels",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.callback_query.data.replace('img-openai_', '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        1136
+      ],
+      "id": "727ebdb4-75a5-4528-a1df-a19d535e4c23",
+      "name": "Get Project for OpenAI",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "project_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.callback_query.data.replace('img-openai-use_', '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        1328
+      ],
+      "id": "93a92c04-f543-40f0-a985-55ac02e0d985",
+      "name": "Get Project for AI publish",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node: Prepare Pexels tags\n// Input: Get Project for Pexels (Google Sheets row)\n// Output: same shape the Pexels subworkflow expects\n\nconst row = $input.first().json;\nconst tagsRaw = row.tags || '';\n\nconst tags = String(tagsRaw)\n  .split(',')\n  .map((t) => t.trim())\n  .filter(Boolean);\n\nif (!tags.length) {\n  throw new Error('No tags on project row for Pexels search.');\n}\n\nreturn {\n  project_id: row.project_id,\n  project_title: row.project_title,\n  tags,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        560
+      ],
+      "id": "aca34fc9-141b-4933-879e-0ece533a2b5f",
+      "name": "Prepare Pexels tags"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.from.id }}",
+        "text": "=Project ID: {{ $json.project_id }}\n\nSearching Pexels for:\n{{ Array.isArray($json.tags) ? $json.tags.join(', ') : $json.tags }}\n\nWhen you receive image options, pick one and *reply to this message* with that photo.",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        560
+      ],
+      "id": "a2916af8-3e51-484b-9d7d-806a947e3202",
+      "name": "Send Pexels pick hint",
+      "webhookId": "ecbb5cf3-9069-4d33-91be-4543b14ad692",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node: Build OpenAI image prompt\n// Input: Get Project for OpenAI (Google Sheets row)\n\nconst row = $input.first().json;\n\nconst title = row.project_title || 'Project';\nconst category = row.category || '';\nconst excerpt = row.short_description || '';\nconst tags = String(row.tags || '')\n  .split(',')\n  .map((t) => t.trim())\n  .filter(Boolean)\n  .slice(0, 5)\n  .join(', ');\n\nconst imagePrompt = [\n  'Professional portfolio cover photo for a completed client project.',\n  `Project: ${title}.`,\n  category ? `Category: ${category}.` : '',\n  excerpt ? `Summary: ${excerpt}` : '',\n  tags ? `Themes: ${tags}.` : '',\n  'Style: clean, modern, realistic, soft natural light, subtle tech or business mood matching the project type.',\n  'No text, no logos, no watermarks, no faces close-up, no copyrighted brands.',\n  'Wide cinematic composition suitable for a website hero banner.',\n].filter(Boolean).join(' ');\n\nreturn {\n  project_id: row.project_id,\n  project_title: row.project_title,\n  image_prompt: imagePrompt,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        1136
+      ],
+      "id": "912aac8c-2eba-4210-8ae4-ff0b390b3325",
+      "name": "Build OpenAI image prompt"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.from.id }}",
+        "binaryData": true,
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Use this image",
+                    "additionalFields": {
+                      "callback_data": "=img-openai-use_{{ $json.project_id }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Regenerate",
+                    "additionalFields": {
+                      "callback_data": "=img-openai_{{ $json.project_id }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "caption": "=AI cover preview for *{{ $json.project_title }}*\n\nProject ID: {{ $json.project_id }}\n\nUse this image or regenerate?"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        1136
+      ],
+      "id": "b433471e-a775-4d88-89d3-68903dab8824",
+      "name": "Send AI image preview",
+      "webhookId": "6bb608a8-9c09-4f1d-b2cf-c1427d6c5124",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-image-1-mini"
+        },
+        "prompt": "={{ $json.image_prompt }}",
+        "options": {
+          "quality": "medium",
+          "size": "1536x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1168,
+        1136
+      ],
+      "id": "0334e7be-2bc7-4609-a808-2a52b1bc2eec",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "kQILD8OnuaQsXV0d",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        752
+      ],
+      "id": "b3da2166-0aae-48a9-b19b-08a592c694cb",
+      "name": "Telegram Trigger",
+      "webhookId": "cd583b45-9aa1-4f05-8e8a-e7702cdecd69",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const project = $('Build OpenAI image prompt').first().json;\nconst inputItem = $input.first();\n\nreturn {\n  json: {\n    project_id: String(project.project_id),\n    project_title: project.project_title,\n  },\n  binary: inputItem.binary,\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        1136
+      ],
+      "id": "bad665c3-0000-402f-826c-99e0b18a6ba9",
+      "name": "Cache AI image for preview"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sent = $('Send AI image preview').first().json;\nconst photos = sent.photo || sent.result?.photo;\n\nif (!photos?.length) {\n  throw new Error(\n    'Telegram preview sent but no photo file_id returned. Tap AI generate again and wait for the preview.'\n  );\n}\n\nconst fileId = photos[photos.length - 1].file_id;\nconst project = $('Cache AI image for preview').first().json;\n\nreturn {\n  project_id: project.project_id,\n  image_link: `tgfile:${fileId}`,\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        1136
+      ],
+      "id": "7380d5d3-7156-47d9-9841-d8be32ec913e",
+      "name": "Save AI preview file_id"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA",
+          "mode": "list",
+          "cachedResultName": "alecasgari.com-projects-maindb",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KiNL2a7YjI2bkgthFDZ8gl0xu9WlBA01e_eh1fDnSTA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "project_id": "={{ $('Build OpenAI image prompt').item.json.project_id }}",
+            "image_link": "={{ $json.image_link }}",
+            "updated_at": "={{ $now.format('yyyy-MM-dd hh:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "project_id"
+          ],
+          "schema": [
+            {
+              "id": "project_id",
+              "displayName": "project_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_title",
+              "displayName": "project_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "short_description",
+              "displayName": "short_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_date",
+              "displayName": "project_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_company",
+              "displayName": "client_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "technologies_used",
+              "displayName": "technologies_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_duration",
+              "displayName": "project_duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_link",
+              "displayName": "video_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "youtube",
+              "displayName": "youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publish_status",
+              "displayName": "publish_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_link",
+              "displayName": "project_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2016,
+        1136
+      ],
+      "id": "968e6975-06a4-486c-9e86-6dd1a4d4737f",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Mr7ite9jGAkonsWv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $('Get Project for AI publish').first().json;\nconst callback = $('Telegram Trigger').first().json.callback_query;\nconst photos = callback?.message?.photo;\n\nfunction cleanFileId(value) {\n  return String(value || '')\n    .trim()\n    .replace(/^tgfile:/i, '');\n}\n\nif (photos?.length) {\n  const fileId = cleanFileId(photos[photos.length - 1].file_id);\n  if (!fileId) {\n    throw new Error('Preview photo found on Telegram message but file_id is empty.');\n  }\n  return {\n    ...row,\n    ai_preview_file_id: fileId,\n  };\n}\n\nconst link = cleanFileId(row.image_link);\nif (link) {\n  return {\n    ...row,\n    ai_preview_file_id: link,\n  };\n}\n\nthrow new Error(\n  'Could not find preview photo. Tap \"Use this image\" on the latest AI preview message (not an older chat message).'\n);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        1328
+      ],
+      "id": "02965099-1373-4f93-aa82-a658a48e3617",
+      "name": "Resolve AI preview file_id"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.ai_preview_file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        1328
+      ],
+      "id": "48ee06ff-6b89-452e-9ad9-8c5922eb4a8f",
+      "name": "Get a file",
+      "webhookId": "f6a0b173-9914-4bfc-8c7f-efc095ec1c1a",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=⚠️ Error in Analyze audio... Try Again...",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Yes",
+                    "additionalFields": {
+                      "callback_data": "=confirm_{{$('Prepare Project Data').item.json.project_id}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2544,
+        336
+      ],
+      "id": "52726945-d735-4a8c-b7ce-c919e82c7c27",
+      "name": "Send Error",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=⚠️ Error in Analyze audio... Try Again...",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Yes",
+                    "additionalFields": {
+                      "callback_data": "=confirm_{{$('Prepare Project Data').item.json.project_id}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3376,
+        1824
+      ],
+      "id": "3926f6cb-6787-4ae6-b23c-a3559e14a4cd",
+      "name": "Send Error1",
+      "webhookId": "43e89db1-db7a-44b3-9ed8-90d1bb109588",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "=@alec_asgari",
+        "binaryData": true,
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "👁️ Project Page",
+                    "additionalFields": {
+                      "url": "=https://alecasgari.com/projects/{{ $('Prepare HTML for GitHub').item.json.slug }}.html"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "caption": "=😍 New Project By Alec Asgari is Published:\n\n✅ Title:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.title }}\n\n🗄️ Description:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.excerpt }}\n\n📂 Category:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.category }}\n\n#️⃣ Tags:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.tags }}\n\n⚙️ Tech Stack:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.technologies }}\n\n📅 Date and Duration:\n{{ $('Prepare HTML for GitHub').item.json.projects_json_entry.date }} | {{ $('Prepare HTML for GitHub').item.json.projects_json_entry.duration }}\n\nSee the project here 👇\n",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4192,
+        1520
+      ],
+      "id": "afd45d5c-a986-4c0c-88de-904c7e7b9ee5",
+      "name": "Send to Channel",
+      "webhookId": "6bb608a8-9c09-4f1d-b2cf-c1427d6c5124",
+      "credentials": {
+        "telegramApi": {
+          "id": "S8OBOVmxzA7O5oQs",
+          "name": "Alec Linkedin Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://alecasgari.com{{ $('Prepare HTML for GitHub').item.json.image_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3984,
+        1520
+      ],
+      "id": "3fdcfd3d-3c61-4082-b52e-a844bab6afd4",
+      "name": "HTTP Request1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3776,
+        1520
+      ],
+      "id": "04a2b8c3-6042-463c-bc9f-fac3c7262c5b",
+      "name": "Wait1",
+      "webhookId": "695b46b1-74ad-4a4f-ae2b-ea0d533b721d"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "text": "=Listen carefully to the supplied voice message and extract structured project notes.\n\nThe speaker is Alec Asgari describing a real professional project. The voice message may be in Persian, English or a mixture of both languages.\n\nYour task at this stage is only to understand and organize the information contained in the audio.\n\nDo not write the final portfolio page.\n\nDo not create SEO copy.\n\nDo not generate a polished project title, meta description, case study, marketing text or publication-ready content.\n\nReturn accurate structured notes that another AI model will use to write the final project page.\n\n# LANGUAGE\n\nUnderstand the source language accurately.\n\nReturn all extracted notes in clear professional English.\n\nPreserve the original meaning of the speaker.\n\nDo not translate technical product names, platform names, API names or company names incorrectly.\n\n# FACTUAL RULES\n\nTreat the voice message as the primary source of truth.\n\nSeparate information into:\n\n1. Confirmed information explicitly stated in the voice message.\n2. Reasonable technical interpretation needed to understand the described workflow.\n3. Missing or uncertain information.\n\nDo not convert technical interpretation into a confirmed fact.\n\nNever invent:\n\n* client names;\n* company names;\n* industries;\n* dates;\n* project durations;\n* team sizes;\n* user counts;\n* transaction volumes;\n* budgets;\n* financial outcomes;\n* percentages;\n* measured improvements;\n* performance statistics;\n* technologies not mentioned or clearly identifiable;\n* integrations not described;\n* project features not described;\n* business results not stated;\n* customer feedback;\n* security or compliance requirements;\n* implementation challenges that were not mentioned.\n\n# HANDLING SHORT OR INCOMPLETE VOICE MESSAGES\n\nThe voice message may be short, informal or incomplete.\n\nExtract every useful detail available.\n\nYou may clarify the logical role of a technology or workflow component when that role is strongly supported by the description.\n\nFor example, if the speaker says that a Telegram bot receives information and saves it in Google Sheets, you may describe the likely flow as:\n\n* the Telegram bot receives user input;\n* the workflow structures the submitted data;\n* Google Sheets stores the records;\n* an administrator can review the stored information.\n\nThis is acceptable as a reasonable technical interpretation.\n\nHowever, do not claim that validation, authentication, error handling, security controls, reporting or approval steps were implemented unless they were stated or clearly described.\n\nDo not make the extracted notes look more complete by inventing details.\n\nIf information is missing, include it in missing_information.\n\nDo not ask questions in the output.\n\n# EXTRACTION FIELDS\n\nReturn exactly one valid JSON object with these fields:\n\n* source_language\n* raw_transcript\n* project_summary\n* confirmed_facts\n* reasonable_technical_interpretations:\nDo not upgrade a general platform reference into a specific API, protocol or implementation method unless it was stated or is technically unavoidable.\n\nFor example, if the speaker says “Telegram,” prefer “Telegram integration” rather than “Telegram Bot API” unless the API is explicitly mentioned.\n* project_type\n* business_problem: Do not assume that the previous process was manual, slow, inefficient or error-prone unless the speaker explicitly says so.\n\nWhen the previous state is unknown, describe the operational need rather than inventing an existing problem.\n\nFor example, prefer:\n\n“The project needed a coordinated way to collect registrations and verify membership.”\n\nInstead of:\n\n“The manual registration process was slow and inefficient.”\n* project_goal\n* alec_responsibilities\n* workflow_steps\n* technologies_mentioned\n* integrations_mentioned\n* features_mentioned\n* challenges_mentioned\n* outcomes_mentioned:\nDo not use words such as “successfully,” “improved,” “reduced,” “increased,” “optimized” or “eliminated” unless the speaker explicitly confirms that outcome.\n\nWhen only the delivered capability is known, describe what the solution provides.\n\nPrefer:\n\n“The solution provides an automated registration workflow.”\n\nInstead of:\n\n“The solution successfully automated the registration process.”\n* client_name\n* client_company\n* project_date\n* project_duration\n* target_users\n* constraints\n* missing_information\n* confidence_notes\n\n# FIELD RULES\n\nsource_language:\nIdentify the primary language of the voice message.\n\nAllowed examples:\n\n* Persian\n* English\n* Persian and English\n\nraw_transcript:\nProvide a clean transcript of the voice message.\n\nPreserve the speaker’s meaning.\n\nRemove verbal fillers, repeated fragments and obvious speech-recognition noise, but do not remove meaningful information.\n\nIf a word or phrase cannot be understood, mark it as:\n\n[unclear]\n\nDo not guess an unclear name, number or technical term.\n\nproject_summary:\nWrite a factual summary of approximately two to five sentences.\n\nExplain what the described project appears to be and its main purpose.\n\nDo not make it promotional.\n\nconfirmed_facts:\nReturn an array of short factual statements explicitly supported by the voice message.\n\nExample:\n\n[\n\"Alec built the workflow in n8n.\",\n\"The workflow interacts with users through Telegram.\",\n\"Registration data is stored in Google Sheets.\"\n]\n\nreasonable_technical_interpretations:\nReturn an array containing only technical interpretations strongly implied by the description.\n\nEach item must begin with cautious language such as:\n\n* \"The described flow suggests that...\"\n* \"It is reasonable to interpret that...\"\n* \"The stated components appear to...\"\n\nDo not repeat confirmed facts in this field.\n\nproject_type:\nReturn a concise description of the core project type.\n\nExamples:\n\n* Telegram bot automation\n* n8n workflow automation\n* CRM integration\n* ERP implementation\n* AI-assisted document generation\n* Automated content publishing\n* Website development\n\nIf unclear, return an empty string.\n\nbusiness_problem:\nDescribe the operational or business problem explicitly mentioned.\n\nIf the problem is only partially explained, summarize only the supported part.\n\nIf no problem is provided, return an empty string.\n\nproject_goal:\nDescribe what the project was intended to achieve.\n\nDo not claim that the goal was successfully achieved unless the audio confirms this.\n\nalec_responsibilities:\nReturn an array describing the work Alec explicitly says he performed.\n\nUse action-oriented phrases such as:\n\n* \"Designed the n8n workflow\"\n* \"Configured Telegram interactions\"\n* \"Connected Google Sheets\"\n* \"Created the publishing logic\"\n\nDo not add responsibilities that were not mentioned or strongly implied.\n\nworkflow_steps:\nReturn an ordered array of the described process from trigger to final output.\n\nUse concise steps.\n\nOnly include steps stated or strongly supported.\n\ntechnologies_mentioned:\nReturn an array containing only technologies, platforms, programming languages, frameworks, protocols or services mentioned or clearly identifiable from the audio.\n\nPreserve official capitalization where possible.\n\nExamples:\n\n* n8n\n* Telegram Bot API\n* Google Sheets\n* Google Gemini\n* GitHub\n* JavaScript\n* REST API\n* Webhooks\n\nDo not include business concepts such as Automation, Strategy or Digital Transformation.\n\nintegrations_mentioned:\nReturn an array describing confirmed system connections.\n\nExamples:\n\n* \"Telegram to n8n\"\n* \"n8n to Google Sheets\"\n* \"n8n to GitHub\"\n\nDo not invent an integration.\n\nfeatures_mentioned:\nReturn an array of project features stated in the voice message.\n\nExamples:\n\n* Membership validation\n* Inline Telegram buttons\n* Automated PDF generation\n* Admin approval\n* Error logging\n\nDo not add standard features merely because they are common.\n\nchallenges_mentioned:\nReturn an array containing challenges or limitations explicitly mentioned.\n\nIf none are mentioned, return an empty array.\n\noutcomes_mentioned:\nReturn an array containing only outcomes or delivered capabilities explicitly mentioned.\n\nSeparate delivered capabilities from measured results.\n\nDo not invent measurements.\n\nclient_name:\nReturn the client name only if clearly stated.\n\nOtherwise return an empty string.\n\nclient_company:\nReturn the company name only if clearly stated.\n\nOtherwise return an empty string.\n\nproject_date:\nReturn the completion date only if clearly stated or reliably identifiable.\n\nUse YYYY-MM-DD.\n\nDo not use the current date merely because the workflow is running today.\n\nIf unknown, return an empty string.\n\nproject_duration:\nReturn the duration only if clearly stated.\n\nExamples:\n\n* 3 weeks\n* 2 months\n* Ongoing\n\nIf unknown, return an empty string.\n\ntarget_users:\nReturn an array describing the people or teams who use the solution, when stated or clearly identifiable.\n\nExamples:\n\n* Webinar participants\n* Administrators\n* Recruitment team\n* Website visitors\n* Sales team\n\nconstraints:\nReturn an array of technical, business, privacy, timing or operational constraints explicitly mentioned.\n\nIf none are mentioned, return an empty array.\n\nmissing_information:\nReturn an array of useful project details that were not supplied or remain unclear.\n\nExamples:\n\n* Client name\n* Completion date\n* Project duration\n* Confirmed measurable results\n* Exact user volume\n* Hosting environment\n\nDo not treat missing optional information as an error.\n\nconfidence_notes:\nReturn an array identifying uncertain transcription or interpretation issues.\n\nExamples:\n\n* \"The name of one platform was unclear in the audio.\"\n* \"The project completion date was not stated.\"\n* \"The workflow sequence after the approval stage was not fully explained.\"\n\nIf there are no meaningful uncertainties, return an empty array.\n\n# OUTPUT FORMAT\n\nReturn only one valid raw JSON object.\n\nDo not wrap the output in Markdown.\n\nDo not use a JSON code fence.\n\nDo not include commentary before or after the JSON.\n\nUse valid JSON double quotes.\n\nEscape double quotes inside strings.\n\nAll list fields must be JSON arrays.\n\nExample structure:\n\n{\n\"source_language\": \"Persian\",\n\"raw_transcript\": \"I built a Telegram bot using n8n...\",\n\"project_summary\": \"Alec described an n8n-based Telegram automation that collects user information and stores it in Google Sheets for administrative review.\",\n\"confirmed_facts\": [\n\"The workflow was built in n8n.\",\n\"Users interact with the system through Telegram.\",\n\"Google Sheets stores submitted information.\"\n],\n\"reasonable_technical_interpretations\": [\n\"The described flow suggests that Telegram submissions are converted into structured records before being stored.\"\n],\n\"project_type\": \"Telegram bot automation\",\n\"business_problem\": \"User information was being handled through a manual process.\",\n\"project_goal\": \"Create an automated method for collecting and storing user submissions.\",\n\"alec_responsibilities\": [\n\"Designed the n8n workflow\",\n\"Configured the Telegram bot\",\n\"Connected the workflow to Google Sheets\"\n],\n\"workflow_steps\": [\n\"A user submits information through Telegram.\",\n\"n8n receives and processes the submission.\",\n\"The information is stored in Google Sheets.\",\n\"An administrator reviews the stored record.\"\n],\n\"technologies_mentioned\": [\n\"n8n\",\n\"Telegram Bot API\",\n\"Google Sheets\"\n],\n\"integrations_mentioned\": [\n\"Telegram to n8n\",\n\"n8n to Google Sheets\"\n],\n\"features_mentioned\": [],\n\"challenges_mentioned\": [],\n\"outcomes_mentioned\": [\n\"The workflow provides an automated path for recording Telegram submissions.\"\n],\n\"client_name\": \"\",\n\"client_company\": \"\",\n\"project_date\": \"\",\n\"project_duration\": \"\",\n\"target_users\": [\n\"Telegram users\",\n\"Administrators\"\n],\n\"constraints\": [],\n\"missing_information\": [\n\"Client name\",\n\"Completion date\",\n\"Project duration\",\n\"Confirmed measurable results\"\n],\n\"confidence_notes\": []\n}\n",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        176
+      ],
+      "id": "aa33a246-87d2-46ab-b4db-3d3117a141a2",
+      "name": "Extract Project Notes",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 3,
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0TqKEZFBkZpqUH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Project Notes\n// Converts Gemini's text response into a clean JSON object.\n\nconst input = $input.first().json;\n\nfunction getGeminiText(data) {\n  // Current Gemini response structure\n  const directText = data?.content?.parts?.[0]?.text;\n  if (typeof directText === 'string' && directText.trim()) {\n    return directText.trim();\n  }\n\n  // Fallback structures in case n8n output settings change\n  if (typeof data?.text === 'string' && data.text.trim()) {\n    return data.text.trim();\n  }\n\n  if (typeof data?.output === 'string' && data.output.trim()) {\n    return data.output.trim();\n  }\n\n  if (typeof data?.response === 'string' && data.response.trim()) {\n    return data.response.trim();\n  }\n\n  throw new Error('No Gemini text output was found.');\n}\n\nfunction cleanJsonText(text) {\n  let cleaned = String(text || '').trim();\n\n  // Remove Markdown code fences if Gemini adds them.\n  cleaned = cleaned\n    .replace(/^```json\\s*/i, '')\n    .replace(/^```\\s*/i, '')\n    .replace(/\\s*```$/i, '')\n    .trim();\n\n  // Keep only the outer JSON object if extra text appears.\n  const firstBrace = cleaned.indexOf('{');\n  const lastBrace = cleaned.lastIndexOf('}');\n\n  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {\n    throw new Error('Gemini output does not contain a valid JSON object.');\n  }\n\n  return cleaned.slice(firstBrace, lastBrace + 1);\n}\n\nfunction ensureArray(value) {\n  if (Array.isArray(value)) {\n    return value\n      .map((item) => String(item ?? '').trim())\n      .filter(Boolean);\n  }\n\n  if (value === null || value === undefined || value === '') {\n    return [];\n  }\n\n  return [String(value).trim()].filter(Boolean);\n}\n\nconst rawText = getGeminiText(input);\nconst cleanedText = cleanJsonText(rawText);\n\nlet notes;\n\ntry {\n  notes = JSON.parse(cleanedText);\n} catch (error) {\n  throw new Error(`Project Notes JSON could not be parsed: ${error.message}`);\n}\n\nconst normalized = {\n  source_language: String(notes.source_language || '').trim(),\n  raw_transcript: String(notes.raw_transcript || '').trim(),\n  project_summary: String(notes.project_summary || '').trim(),\n\n  confirmed_facts: ensureArray(notes.confirmed_facts),\n  reasonable_technical_interpretations: ensureArray(\n    notes.reasonable_technical_interpretations\n  ),\n\n  project_type: String(notes.project_type || '').trim(),\n  business_problem: String(notes.business_problem || '').trim(),\n  project_goal: String(notes.project_goal || '').trim(),\n\n  alec_responsibilities: ensureArray(notes.alec_responsibilities),\n  workflow_steps: ensureArray(notes.workflow_steps),\n  technologies_mentioned: ensureArray(notes.technologies_mentioned),\n  integrations_mentioned: ensureArray(notes.integrations_mentioned),\n  features_mentioned: ensureArray(notes.features_mentioned),\n  challenges_mentioned: ensureArray(notes.challenges_mentioned),\n  outcomes_mentioned: ensureArray(notes.outcomes_mentioned),\n\n  client_name: String(notes.client_name || '').trim(),\n  client_company: String(notes.client_company || '').trim(),\n  project_date: String(notes.project_date || '').trim(),\n  project_duration: String(notes.project_duration || '').trim(),\n\n  target_users: ensureArray(notes.target_users),\n  constraints: ensureArray(notes.constraints),\n  missing_information: ensureArray(notes.missing_information),\n  confidence_notes: ensureArray(notes.confidence_notes),\n};\n\nreturn [\n  {\n    json: {\n      project_notes: normalized,\n\n      // Useful top-level fields for debugging and future expressions\n      source_language: normalized.source_language,\n      raw_transcript: normalized.raw_transcript,\n      project_summary: normalized.project_summary,\n      project_type: normalized.project_type,\n\n      notes_parse_status: 'success',\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        160
+      ],
+      "id": "e4b16f08-83c7-4562-85c2-e77e2db60651",
+      "name": "Parse Project Notes"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a complete English portfolio project case study from the structured project notes below.\n\nPROJECT NOTES:\n\n{{ JSON.stringify($json.project_notes, null, 2) }}\n\nThe project notes were extracted from a real voice message from Alec Asgari.\n\nYour task is to turn those notes into accurate, professional and SEO-focused project content for Alec Asgari’s portfolio website.\n\n# MAIN GOAL\n\nCreate a useful project page that clearly explains:\n\n* what I built;\n* why the project was needed;\n* how I approached it;\n* how the solution works;\n* which technologies were used;\n* what practical value the project provides;\n* what the project demonstrates about my skills.\n\nThis is a portfolio case study, not a general blog article.\n\nWrite in first person as Alec Asgari.\n\nUse:\n\n* I\n* my\n* me\n\nDo not use:\n\n* we\n* our\n* us\n\nDo not refer to Alec in the third person inside project_description.\n\n# SOURCE PRIORITY\n\nUse these fields as the primary factual source:\n\n* confirmed_facts\n* project_summary\n* project_type\n* business_problem\n* project_goal\n* alec_responsibilities\n* workflow_steps\n* technologies_mentioned\n* integrations_mentioned\n* features_mentioned\n* outcomes_mentioned\n* target_users\n* challenges_mentioned\n* constraints\n\nThe field reasonable_technical_interpretations contains possible explanations, not confirmed facts.\n\nYou may use those interpretations only when they are clearly consistent with the confirmed project details.\n\nDo not present an interpretation as a confirmed implementation detail.\n\nFor example:\n\nIf Telegram is confirmed but Telegram Bot API is only inferred, write “Telegram” or “Telegram bot,” not “Telegram Bot API.”\n\nIf webhooks are only inferred, do not state that webhooks were implemented.\n\n# SHORT OR INCOMPLETE VOICE MESSAGES\n\nThe original voice message may be short, informal or incomplete.\n\nDo not produce weak, fragmented or overly short content only because the input is limited.\n\nUse the confirmed project details as the factual foundation, then expand them into a complete professional case study.\n\nYou may:\n\n* organize fragmented information into a clear narrative;\n* explain how confirmed components work together;\n* explain the normal role of confirmed technologies;\n* describe the workflow in a logical sequence;\n* explain the practical purpose of delivered features;\n* turn short notes into complete professional paragraphs;\n* explain reasonable operational value;\n* add stable technical context needed to understand the solution;\n* describe common implementation logic that is clearly consistent with the confirmed project.\n\nReasonable elaboration is allowed.\n\nHowever, do not invent:\n\n* clients;\n* company names;\n* industries;\n* project dates;\n* project durations;\n* team sizes;\n* user counts;\n* transaction volumes;\n* budgets;\n* percentages;\n* financial results;\n* measured performance improvements;\n* customer feedback;\n* technologies not mentioned;\n* integrations not supported by the notes;\n* features not supported by the notes;\n* APIs not confirmed;\n* databases not confirmed;\n* security controls not mentioned;\n* compliance requirements not mentioned.\n\nDo not invent numerical results to make the project appear more impressive.\n\n# PRACTICAL VALUE\n\nYou may explain practical operational value when it logically follows from the implemented solution.\n\nExamples of acceptable wording:\n\n* “The workflow brings the main registration steps into one coordinated process.”\n* “The solution stores participant information in one structured spreadsheet.”\n* “The system sends a confirmation message after registration.”\n* “The workflow supports a consistent sequence for membership checking and registration.”\n* “The project reduces the need to repeat the same data-handling steps.”\n* “The automation provides a clearer process for administrators and users.”\n\nDo not claim:\n\n* exact time savings;\n* percentage improvements;\n* increased sales;\n* increased conversion;\n* reduced costs;\n* improved customer satisfaction;\n* guaranteed accuracy;\n* complete elimination of manual work;\n\nunless explicitly confirmed in the project notes.\n\n# SEARCH INTENT AND SEO\n\nBefore writing, internally identify:\n\n* the project type;\n* the main service or solution;\n* the central technology;\n* the operational use case;\n* the likely reader;\n* one primary search phrase;\n* three to six related topic phrases.\n\nDo not output this planning.\n\nUse it only to create focused content.\n\nThe primary topic should naturally appear in:\n\n* project_title;\n* short_description;\n* the Overview section;\n* at least one other section;\n* tags.\n\nDo not repeat the same phrase mechanically.\n\nDo not use keyword stuffing.\n\nDo not add unrelated keywords.\n\nPossible primary topics include:\n\n* n8n workflow automation;\n* Telegram bot automation;\n* webinar registration automation;\n* Telegram bot development;\n* Google Sheets automation;\n* CRM integration;\n* ERP integration;\n* AI document generation;\n* automated content publishing;\n* business process automation;\n* website development.\n\n# PROJECT TITLE\n\nproject_title must:\n\n* clearly describe what was built;\n* mention the main platform or technology when useful;\n* mention the practical use case;\n* be specific and accurate;\n* normally contain approximately 45 to 70 characters where practical;\n* avoid clickbait;\n* avoid exaggerated wording;\n* avoid vague titles;\n* not end with punctuation;\n* avoid the client name unless it is necessary.\n\nGood title patterns:\n\n* “Webinar Registration Automation with n8n and Telegram”\n* “n8n Telegram Bot for Webinar Registration”\n* “CRM and ERP Integration for Customer Data Management”\n* “AI-Assisted CV Tailoring and PDF Generation Workflow”\n* “Automated Blog Publishing with Gemini and GitHub”\n* “Lead Qualification Chatbot Connected to a CRM”\n\nAvoid:\n\n* “My Automation Project”\n* “Powerful Digital Transformation”\n* “Revolutionary AI System”\n* “Complete Business Solution”\n* “Project for Confidential Client”\n\n# SHORT DESCRIPTION\n\nshort_description is used as both:\n\n* the visible project summary;\n* the HTML meta description.\n\nIt must:\n\n* be one or two natural sentences;\n* normally contain approximately 140 to 165 characters where practical;\n* explain what I built;\n* explain the main use case;\n* include the primary topic naturally;\n* be specific;\n* avoid unsupported outcomes;\n* avoid promotional language;\n* not repeat the title word for word;\n* not begin with “This project is about.”\n\nUse concrete details such as:\n\n* workflow;\n* registration;\n* membership validation;\n* data storage;\n* confirmation messaging;\n* integration;\n* content publishing;\n* document generation;\n* approval process.\n\n# CATEGORY\n\nReturn exactly one category from this list:\n\n* AI Automation\n* System Integration\n* Web Development\n* Web Application\n* Mobile Application\n* Online Shop\n* Marketing\n* Graphic Design\n\nUse AI Automation for projects mainly involving:\n\n* n8n;\n* workflow automation;\n* Telegram bots;\n* chatbots;\n* AI agents;\n* voice automation;\n* document generation;\n* automated publishing;\n* operational automation.\n\nUse System Integration for projects mainly involving:\n\n* CRM integration;\n* ERP integration;\n* API integration;\n* data synchronization;\n* database migration;\n* system-to-system connectivity.\n\nUse Web Development for:\n\n* marketing websites;\n* brochure sites;\n* landing pages;\n* corporate websites;\n* front-end or back-end website delivery without a complex product app.\n\nUse Web Application for:\n\n* web applications;\n* dashboards;\n* client or admin portals;\n* SaaS-style tools;\n* interactive multi-user systems in the browser.\n\nUse Mobile Application for:\n\n* iOS apps;\n* Android apps;\n* cross-platform mobile apps;\n* React Native or Flutter products.\n\nUse Online Shop for:\n\n* e-commerce websites;\n* online stores;\n* product catalogs with checkout;\n* Shopify, WooCommerce or similar shop platforms.\n\nUse Marketing for:\n\n* campaigns;\n* lead generation;\n* SEO delivery;\n* content marketing;\n* email marketing;\n* social media workflows.\n\nUse Graphic Design for:\n\n* logo design;\n* brand identity;\n* Figma;\n* interface design;\n* illustration;\n* visual systems.\n\nChoose the category based on the main deliverable.\nIf more than one category could apply, pick the primary product type (for example Online Shop over Web Development, Mobile Application over Web Application).\n\n# TAGS\n\nReturn five to seven SEO-focused tags.\n\nTags must:\n\n* be concise topic phrases;\n* use natural Title Case;\n* describe the technology, service and use case;\n* avoid hashtags;\n* avoid duplicates;\n* avoid near-duplicates;\n* avoid broad words such as Technology, Business, Project or Digital;\n* not include unsupported technologies.\n\nGood examples:\n\n* “n8n Workflow Automation”\n* “Telegram Bot Development”\n* “Webinar Registration Automation”\n* “Channel Membership Validation”\n* “Google Sheets Automation”\n* “Business Process Automation”\n* “Automated Content Publishing”\n* “CRM Integration”\n\n# TECHNOLOGIES USED\n\ntechnologies_used must contain only technologies confirmed in:\n\nproject_notes.technologies_mentioned\n\nYou may normalize names, for example:\n\n* N8N → n8n\n* Google Sheet → Google Sheets\n* Google Spreadsheet → Google Sheets\n\nDo not upgrade a general technology into a more specific technology unless confirmed.\n\nFor example:\n\n* do not change Telegram into Telegram Bot API unless confirmed;\n* do not add Webhooks unless confirmed;\n* do not add REST API unless confirmed;\n* do not add JavaScript unless confirmed;\n* do not add a database unless confirmed.\n\nDo not place business concepts in technologies_used.\n\nDo not include:\n\n* Automation\n* Strategy\n* Digital Transformation\n* Lead Generation\n* Marketing\n\nThose belong in tags, not technologies_used.\n\n# CLIENT INFORMATION\n\nIf project_notes.client_name contains a confirmed value, use it.\n\nOtherwise return:\n\n“Confidential Client”\n\nIf project_notes.client_company contains a confirmed value, use it.\n\nOtherwise return:\n\n“Confidential Client”\n\nDo not invent a person, company or industry.\n\n# PROJECT DATE\n\nUse project_notes.project_date only when it contains a valid confirmed date in this format:\n\nYYYY-MM-DD\n\nIf missing or unclear, return an empty string.\n\nDo not use today’s date.\n\nDo not infer the project date from the publication date.\n\n# PROJECT DURATION\n\nUse project_notes.project_duration only when clearly supplied.\n\nIf missing, return:\n\n“Not specified”\n\nDo not estimate the duration.\n\n# PROJECT DESCRIPTION\n\nWrite project_description in raw Markdown.\n\nUse exactly these headings in exactly this order:\n\n## Overview\n\n## The Problem\n\n## My Approach\n\n## The Solution\n\n## Technical Stack\n\n## Results & Impact\n\n## Key Takeaways\n\nDo not add an H1.\n\nDo not repeat project_title inside project_description.\n\nDo not add an Introduction heading.\n\nDo not add a References section.\n\nThe description should normally contain approximately 600 to 900 words when enough information is available.\n\nIf the project notes are limited, produce a shorter accurate case study rather than adding repetitive filler.\n\nEvery section must provide useful new information.\n\n# OVERVIEW\n\nExplain:\n\n* what I built;\n* the main technology;\n* the central workflow or use case;\n* the main users when known;\n* the practical purpose.\n\nThe first paragraph must immediately explain the project.\n\nDo not begin with a broad statement about technology, innovation or digital transformation.\n\nUse the primary search topic naturally.\n\n# THE PROBLEM\n\nExplain the operational need supported by the notes.\n\nDo not automatically assume that the previous process was:\n\n* manual;\n* slow;\n* inefficient;\n* expensive;\n* fragmented;\n* error-prone;\n\nunless this is clearly supported.\n\nWhen the previous process is unknown, describe the requirement.\n\nExample:\n\n“The project required one coordinated way to collect webinar registrations, verify channel membership, store participant information and send confirmation messages.”\n\n# MY APPROACH\n\nExplain how I structured the project.\n\nUse confirmed responsibilities, workflow steps and features.\n\nYou may explain:\n\n* how I divided the workflow into stages;\n* how I connected confirmed systems;\n* how conditions guide the workflow;\n* how user interaction and data storage are coordinated;\n* how the solution keeps the process understandable and maintainable.\n\nDo not claim unconfirmed:\n\n* security controls;\n* testing methods;\n* deployment methods;\n* error handling;\n* authentication;\n* approval processes;\n* validation methods;\n* custom code.\n\n# THE SOLUTION\n\nExplain the confirmed end-to-end workflow.\n\nDescribe the sequence from the first user or system action to the final output.\n\nUse:\n\n* workflow_steps;\n* confirmed_facts;\n* features_mentioned;\n* integrations_mentioned.\n\nDo not add unsupported workflow stages.\n\nMake the flow easy for a non-technical reader to understand.\n\n# TECHNICAL STACK\n\nBegin with one short paragraph explaining why the confirmed tools were suitable.\n\nThen add one Markdown bullet for every technology in technologies_used.\n\nUse exactly this format:\n\n* **Technology:** Its role in this project.\n\nExample:\n\n* **n8n:** I used it to coordinate the registration workflow and connect Telegram with Google Sheets.\n* **Telegram:** It provided the user-facing channel for registration and confirmation messages.\n* **Google Sheets:** It stored the webinar registration records.\n\nUse `- ` for bullets.\n\nDo not use `* ` bullets.\n\nOnly mention technologies included in technologies_used.\n\n# RESULTS & IMPACT\n\nExplain:\n\n* what capabilities were delivered;\n* what the solution now allows;\n* how the workflow organizes the process;\n* the practical operational value;\n* what the finished project demonstrates.\n\nUse careful language such as:\n\n* provides;\n* supports;\n* allows;\n* coordinates;\n* records;\n* sends;\n* creates;\n* is designed to;\n* brings the steps into one workflow.\n\nAvoid unsupported phrases such as:\n\n* successfully;\n* significantly;\n* dramatically;\n* guaranteed;\n* perfectly;\n* completely eliminates;\n* revolutionary;\n* seamless.\n\nDo not invent measurements.\n\nDo not claim increased revenue, conversions, satisfaction or performance unless confirmed.\n\n# KEY TAKEAWAYS\n\nReturn three to five Markdown bullet points.\n\nEach bullet must begin with a short bold label.\n\nExample:\n\n* **Coordinated registration:** I connected membership checking, data storage and confirmation messaging in one workflow.\n* **Structured records:** Google Sheets stores the registration information in a clear spreadsheet format.\n* **Automated communication:** Telegram sends a confirmation message after the registration process.\n* **Workflow orchestration:** n8n coordinates the interaction between the confirmed project components.\n\nThe takeaways must be specific to the project.\n\nDo not use generic lessons such as:\n\n* Communication is important.\n* Technology improves business.\n* Planning creates success.\n* Automation saves time.\n\n# WRITING STYLE\n\nWrite clear and natural professional English.\n\nThe tone must be:\n\n* practical;\n* credible;\n* technically informed;\n* direct;\n* calm;\n* easy to understand.\n\nUse active voice where appropriate.\n\nKeep most paragraphs between two and four sentences.\n\nExplain what each technology does instead of only listing it.\n\nAvoid unnecessary jargon.\n\nAvoid common AI-generated phrases including:\n\n* game-changer;\n* cutting-edge;\n* revolutionary;\n* seamless;\n* robust;\n* unlock the power;\n* leverage;\n* delve into;\n* transformative journey;\n* state-of-the-art;\n* in today’s rapidly evolving landscape;\n* it is important to note.\n\nDo not make every project sound complex, innovative or transformative.\n\n# INTERNAL VALIDATION\n\nBefore returning the output, silently confirm:\n\n* project_title matches the real project;\n* short_description matches the title and content;\n* category is one of the allowed values;\n* five to seven tags are returned;\n* technologies_used contains only confirmed technologies;\n* no unsupported API, webhook, programming language or database was added;\n* client details were not invented;\n* project date was not invented;\n* project duration was not estimated;\n* project_description is written in first person;\n* all required headings are present in the correct order;\n* no H1 exists;\n* no References section exists;\n* all unordered bullets use `- `;\n* no percentage or numerical result was invented;\n* no financial result was invented;\n* no unsupported client outcome was claimed;\n* every Technical Stack item exists in technologies_used.\n\nReturn only the structured output required by the connected Structured Output Parser.\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are the senior portfolio case-study writer and SEO editor for Alec Asgari’s professional website.\n\nYou transform structured notes from real voice messages into accurate, useful and search-focused project pages.\n\nYour priorities, in order, are:\n\n1. Factual accuracy\n2. Clear explanation of the real project\n3. Professional first-person authorship\n4. Practical value for potential clients and employers\n5. Natural SEO relevance\n6. Internal consistency\n7. Correct structured output\n\nThe project notes are not all equally reliable.\n\nTreat:\n\n* confirmed_facts as verified source information;\n* workflow_steps and features_mentioned as reliable when consistent with confirmed_facts;\n* reasonable_technical_interpretations as uncertain supporting context;\n* missing_information as unavailable;\n* confidence_notes as warnings.\n\nNever convert an interpretation into a confirmed implementation detail.\n\nNever invent:\n\n* clients;\n* companies;\n* industries;\n* technologies;\n* APIs;\n* integrations;\n* features;\n* dates;\n* durations;\n* budgets;\n* team sizes;\n* user volumes;\n* percentages;\n* time savings;\n* measured outcomes;\n* security controls;\n* test results;\n* performance improvements.\n\nYou may professionally expand short project notes by explaining:\n\n* how confirmed components work together;\n* the standard role of confirmed technologies;\n* the sequence of confirmed workflow steps;\n* the operational value of delivered capabilities;\n* relevant stable technical context.\n\nThis explanatory expansion must remain consistent with the confirmed facts.\n\nWrite project_description in Alec’s first-person voice.\n\nUse:\n\n* I\n* my\n* me\n\nNever use:\n\n* we\n* our\n* us\n\nDo not refer to Alec in the third person inside project_description.\n\nDo not write a generic blog post.\n\nDo not pad sections with broad technology commentary.\n\nDo not produce promotional claims.\n\nDo not claim that the project was successful unless the notes explicitly confirm tested or measured success.\n\nDo not use inferred technologies such as Telegram Bot API, webhooks, REST APIs, databases or JavaScript unless they appear in technologies_mentioned or confirmed_facts.\n\nSEO must support the reader rather than distort the content.\n\nInternally identify one primary project topic and related phrases.\n\nUse them naturally in the title, summary, content and tags.\n\nAvoid keyword stuffing and near-duplicate tags.\n\nReturn exactly one valid object matching the Structured Output Parser.\n\nRequired fields:\n\n* project_title\n* short_description\n* category\n* tags\n* project_date\n* project_description\n* client_name\n* client_company\n* technologies_used\n* project_duration\n\nField constraints:\n\nproject_title:\n\n* accurate;\n* specific;\n* normally 45 to 70 characters where practical;\n* no ending punctuation;\n* no clickbait.\n\nshort_description:\n\n* one or two sentences;\n* normally approximately 140 to 165 characters where practical;\n* concrete;\n* accurate;\n* suitable as a meta description.\n\ncategory:\nReturn exactly one of:\n\n* AI Automation\n* System Integration\n* Web Development\n* Marketing\n* Graphic Design\n\ntags:\n\n* five to seven strings;\n* natural Title Case;\n* specific;\n* non-duplicative;\n* no hashtags.\n\nproject_date:\n\n* YYYY-MM-DD when confirmed;\n* otherwise empty string.\n\nclient_name:\n\n* confirmed value;\n* otherwise “Confidential Client”.\n\nclient_company:\n\n* confirmed value;\n* otherwise “Confidential Client”.\n\ntechnologies_used:\n\n* array of confirmed technologies only;\n* no inferred APIs or tools.\n\nproject_duration:\n\n* confirmed value;\n* otherwise “Not specified”.\n\nproject_description:\n\n* raw Markdown;\n* first person;\n* no H1;\n* no title repetition;\n* no References;\n* contains exactly these main headings in this order:\n\n## Overview\n\n## The Problem\n\n## My Approach\n\n## The Solution\n\n## Technical Stack\n\n## Results & Impact\n\n## Key Takeaways\n\nReturn no commentary, explanation, code fence or content outside the structured object.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1648,
+        160
+      ],
+      "id": "cc51bde3-ebce-47aa-bcc3-0d845869af70",
+      "name": "Write SEO Project"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        320
+      ],
+      "id": "d1b74694-136f-4e5d-bf9e-33f4d630512f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0TqKEZFBkZpqUH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"project_title\": \"n8n Telegram Bot for Webinar Registration\",\n  \"short_description\": \"I built an n8n Telegram bot that collects webinar registrations, verifies channel membership and stores participant details in Google Sheets.\",\n  \"category\": \"AI Automation\",\n  \"tags\": [\n    \"n8n Workflow Automation\",\n    \"Telegram Bot Development\",\n    \"Webinar Registration Automation\",\n    \"Channel Membership Validation\",\n    \"Google Sheets Automation\",\n    \"Business Process Automation\"\n  ],\n  \"project_date\": \"\",\n  \"project_description\": \"## Overview\\n\\nI built an n8n-based Telegram bot to manage webinar registration, membership verification and confirmation messaging through one coordinated workflow.\\n\\n## The Problem\\n\\nThe project required a structured way to collect participant details, confirm channel membership and maintain registration records.\\n\\n## My Approach\\n\\nI organized the process into clear stages covering user interaction, membership checking, data storage and confirmation messaging.\\n\\n## The Solution\\n\\nThe user submits registration information through Telegram. The workflow checks channel membership, records the registration in Google Sheets and sends a confirmation message.\\n\\n## Technical Stack\\n\\nI selected tools that supported user interaction, workflow orchestration and structured data storage.\\n\\n- **n8n:** I used it to coordinate the registration workflow and connect the project components.\\n- **Telegram:** It provided the user-facing registration and confirmation channel.\\n- **Google Sheets:** It stored participant registration information.\\n\\n## Results & Impact\\n\\nThe completed workflow provides one coordinated process for registration, membership verification, record storage and user confirmation.\\n\\n## Key Takeaways\\n\\n- **Coordinated registration:** I connected the core registration stages in one workflow.\\n- **Membership-based access:** The process checks channel membership before completing registration.\\n- **Centralized records:** Google Sheets stores the participant information in one accessible location.\",\n  \"client_name\": \"Confidential Client\",\n  \"client_company\": \"Confidential Client\",\n  \"technologies_used\": [\n    \"n8n\",\n    \"Telegram\",\n    \"Google Sheets\"\n  ],\n  \"project_duration\": \"Not specified\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1824,
+        320
+      ],
+      "id": "78cc4043-9050-4c85-9000-a503710fb2b7",
+      "name": "Project Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare Project Data\n// Input: Write SEO Project output\n// Purpose:\n// - Normalize the AI output\n// - Apply safe defaults\n// - Keep compatibility with the existing project workflow\n\nconst input = $input.first().json;\n\nconst ai =\n  input?.output && typeof input.output === 'object'\n    ? input.output\n    : input;\n\nif (!ai || typeof ai !== 'object') {\n  throw new Error('Project writer output was not found.');\n}\n\nconst allowedCategories = [\n  'AI Automation',\n  'System Integration',\n  'Web Development',\n  'Web Application',\n  'Mobile Application',\n  'Online Shop',\n  'Marketing',\n  'Graphic Design',\n];\n\nfunction cleanString(value) {\n  return String(value ?? '')\n    .replace(/\\r\\n/g, '\\n')\n    .trim();\n}\n\nfunction ensureArray(value) {\n  if (Array.isArray(value)) {\n    return value\n      .map((item) => cleanString(item))\n      .filter(Boolean);\n  }\n\n  if (typeof value === 'string' && value.trim()) {\n    const text = value.trim();\n\n    if (text.startsWith('[')) {\n      try {\n        const parsed = JSON.parse(text);\n\n        if (Array.isArray(parsed)) {\n          return parsed\n            .map((item) => cleanString(item))\n            .filter(Boolean);\n        }\n      } catch (error) {\n        // Fall back to comma-separated parsing.\n      }\n    }\n\n    return text\n      .split(',')\n      .map((item) => cleanString(item))\n      .filter(Boolean);\n  }\n\n  return [];\n}\n\nfunction uniqueValues(values) {\n  const seen = new Set();\n\n  return values.filter((value) => {\n    const key = value.toLowerCase();\n\n    if (seen.has(key)) return false;\n\n    seen.add(key);\n    return true;\n  });\n}\n\nfunction normalizeMarkdown(value) {\n  return cleanString(value)\n    // Remove accidental Markdown fences.\n    .replace(/^```(?:markdown|md)?\\s*/i, '')\n    .replace(/\\s*```$/i, '')\n    // The existing HTML converter expects \"- \" bullets.\n    .replace(/^\\s*\\*\\s+/gm, '- ')\n    // Prevent H1 inside the project description.\n    .replace(/^#\\s+/gm, '## ')\n    // Remove excessive blank lines.\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\n\nfunction normalizeTechnology(value) {\n  const technology = cleanString(value);\n\n  const replacements = {\n    N8N: 'n8n',\n    'n8n.io': 'n8n',\n    'Google Sheet': 'Google Sheets',\n    'Google Spreadsheet': 'Google Sheets',\n    'Telegram Bot': 'Telegram',\n  };\n\n  return replacements[technology] || technology;\n}\n\nfunction normalizeCategory(category, title, tags, technologies) {\n  const supplied = cleanString(category);\n\n  // Prefer a valid category chosen by the writer.\n  if (allowedCategories.includes(supplied)) {\n    return supplied;\n  }\n\n  const context = [\n    title,\n    ...tags,\n    ...technologies,\n  ]\n    .join(' ')\n    .toLowerCase();\n\n  if (\n    context.includes('online shop') ||\n    context.includes('e-commerce') ||\n    context.includes('ecommerce') ||\n    context.includes('woocommerce') ||\n    context.includes('shopify') ||\n    context.includes('online store')\n  ) {\n    return 'Online Shop';\n  }\n\n  if (\n    context.includes('mobile application') ||\n    context.includes('mobile app') ||\n    context.includes('ios app') ||\n    context.includes('android app') ||\n    context.includes('react native') ||\n    context.includes('flutter')\n  ) {\n    return 'Mobile Application';\n  }\n\n  if (\n    context.includes('web application') ||\n    context.includes('web app') ||\n    context.includes('dashboard') ||\n    context.includes('portal') ||\n    context.includes('saas')\n  ) {\n    return 'Web Application';\n  }\n\n  // Workflow, chatbot and automation projects belong to AI Automation.\n  if (\n    context.includes('n8n') ||\n    context.includes('workflow automation') ||\n    context.includes('telegram bot') ||\n    context.includes('chatbot') ||\n    context.includes('ai agent') ||\n    context.includes('document generation') ||\n    context.includes('automated publishing')\n  ) {\n    return 'AI Automation';\n  }\n\n  if (\n    context.includes('crm integration') ||\n    context.includes('erp integration') ||\n    context.includes('system integration') ||\n    context.includes('data synchronization') ||\n    context.includes('api integration')\n  ) {\n    return 'System Integration';\n  }\n\n  if (\n    context.includes('website') ||\n    context.includes('landing page') ||\n    context.includes('frontend') ||\n    context.includes('backend') ||\n    context.includes('web development')\n  ) {\n    return 'Web Development';\n  }\n\n  if (\n    context.includes('marketing') ||\n    context.includes('campaign') ||\n    context.includes('seo') ||\n    context.includes('lead generation')\n  ) {\n    return 'Marketing';\n  }\n\n  if (\n    context.includes('graphic design') ||\n    context.includes('logo') ||\n    context.includes('figma') ||\n    context.includes('brand identity')\n  ) {\n    return 'Graphic Design';\n  }\n\n  return 'AI Automation';\n}\n\nfunction normalizeDate(value) {\n  const date = cleanString(value);\n\n  if (!date) return '';\n\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) {\n    return '';\n  }\n\n  const parsed = new Date(`${date}T00:00:00Z`);\n\n  return Number.isNaN(parsed.getTime()) ? '' : date;\n}\n\nfunction generateProjectId() {\n  const timestamp = Date.now();\n  const random = Math.floor(1000 + Math.random() * 9000);\n\n  return `PRJ-${timestamp}-${random}`;\n}\n\nconst projectTitle = cleanString(ai.project_title)\n  .replace(/[.!?]+$/g, '')\n  .trim();\n\nconst shortDescription = cleanString(ai.short_description);\n\nconst tags = uniqueValues(\n  ensureArray(ai.tags)\n    .map((tag) => tag.replace(/^#+/, '').trim())\n    .filter(Boolean)\n).slice(0, 7);\n\nconst technologiesUsed = uniqueValues(\n  ensureArray(ai.technologies_used)\n    .map(normalizeTechnology)\n    .filter(Boolean)\n);\n\nconst category = normalizeCategory(\n  ai.category,\n  projectTitle,\n  tags,\n  technologiesUsed\n);\n\nconst projectDescription = normalizeMarkdown(\n  ai.project_description\n);\n\nconst projectDate = normalizeDate(ai.project_date);\n\nconst clientName =\n  cleanString(ai.client_name) || 'Confidential Client';\n\nconst clientCompany =\n  cleanString(ai.client_company) || 'Confidential Client';\n\nconst projectDuration =\n  cleanString(ai.project_duration) || 'Not specified';\n\nif (!projectTitle) {\n  throw new Error('Project title is missing.');\n}\n\nif (!shortDescription) {\n  throw new Error('Short description is missing.');\n}\n\nif (!projectDescription) {\n  throw new Error('Project description is missing.');\n}\n\nif (!technologiesUsed.length) {\n  throw new Error('No technologies were returned for the project.');\n}\n\nconst projectId = generateProjectId();\n\nreturn [\n  {\n    json: {\n      project_id: projectId,\n      project_title: projectTitle,\n      short_description: shortDescription,\n      category,\n      tags,\n      project_date: projectDate,\n      project_description: projectDescription,\n      client_name: clientName,\n      client_company: clientCompany,\n      technologies_used: technologiesUsed,\n      project_duration: projectDuration,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        160
+      ],
+      "id": "0eacc303-6c0a-4d0a-a361-97675ecc172d",
+      "name": "Prepare Project Data"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=New Project is Up now...\n",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Check on Website",
+                    "additionalFields": {
+                      "url": "=https://alecasgari.com/projects/{{ $('Merge projects JSON').item.json.slug }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3312,
+        1520
+      ],
+      "id": "ea873e58-c82a-4bf9-8e02-44f51475cb93",
+      "name": "Send Project Link",
+      "webhookId": "6bb608a8-9c09-4f1d-b2cf-c1427d6c5124",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://alecasgari.com{{ $('Prepare HTML for GitHub').item.json.image_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        4352,
+        1520
+      ],
+      "id": "a2bee13d-e3f5-4294-8bc6-79865fcacabc",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "person": "461BVLxCzb",
+        "text": "=🚀 New Project Completed\n\nI’m pleased to share a new project from my portfolio:\n\n🔹 Project:\n{{ $('Get Project for photo').item.json.project_title }}\n\n💡 What I built:\n{{ $('Get Project for photo').item.json.short_description }}\n\n📂 Category:\n{{ $('Get Project for photo').item.json.category }}\n\n🛠 Technology Stack:\n{{ String($('Get Project for photo').first().json.technologies_used || '')\n  .split(',')\n  .map(item => item.trim())\n  .filter(Boolean)\n  .join(' • ') || 'Not specified' }}\n\n📅 Project Date:\n{{ $('Get Project for photo').item.json.project_date || 'Not specified' }}\n\n⏱ Duration:\n{{ $('Get Project for photo').item.json.project_duration || 'Not specified' }}\n\nThis project reflects my focus on practical automation, system integration and building workflows that connect technology with real operational needs.\n\n🔗 View the full project:\n{{ $('Send Project Link').item.json.result.reply_markup.inline_keyboard[0][0].url }}\n\n{{ String($('Get Project for photo').first().json.tags || '')\n  .split(',')\n  .map(item => item.trim())\n  .filter(Boolean)\n  .slice(0, 7)\n  .map(item => '#' + item.replace(/[^a-zA-Z0-9]+/g, ''))\n  .join(' ') }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {
+          "title": "={{ $('Get Project for photo').item.json.project_title }}",
+          "visibility": "PUBLIC"
+        }
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        4544,
+        1520
+      ],
+      "id": "88411e30-6c8e-4fbf-a67e-88784f0f77b8",
+      "name": "Publish on LinkedIn",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "JmCwThJTTBqZP8KO",
+          "name": "Alec Main"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=(●'◡'●)\n\nLinkedIn:\nhttps://www.linkedin.com/feed/update/{{ $json.urn }}",
+        "replyMarkup": "replyKeyboardRemove",
+        "replyKeyboardRemove": {
+          "remove_keyboard": true
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_notification": true
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4784,
+        1440
+      ],
+      "id": "6daa1c7a-23a9-47cf-a58d-e45c30bbe2cd",
+      "name": "Send Emoji remove reply",
+      "webhookId": "6bb608a8-9c09-4f1d-b2cf-c1427d6c5124",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $if($(\"Telegram Trigger\").isExecuted, $(\"Telegram Trigger\").item.json.message?.from?.id || $(\"Telegram Trigger\").item.json.callback_query?.from?.id, \"\") }}",
+        "text": "=Error In Linkdin\nLinkedIn:\nhttps://www.linkedin.com/feed/update/{{ $json.urn }}",
+        "replyMarkup": "replyKeyboardRemove",
+        "replyKeyboardRemove": {
+          "remove_keyboard": true
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_notification": true
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4784,
+        1664
+      ],
+      "id": "72dde4b6-85e7-4a4d-bd5d-c3793be139be",
+      "name": "Send Error LinkedIn",
+      "webhookId": "6bb608a8-9c09-4f1d-b2cf-c1427d6c5124",
+      "credentials": {
+        "telegramApi": {
+          "id": "aNiI5Jnw2twVaCnv",
+          "name": "AlecProjectWriter_bot"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 414485722,
+          "message": {
+            "message_id": 1110,
+            "from": {
+              "id": 436773142,
+              "is_bot": false,
+              "first_name": "Alec",
+              "last_name": "Asgari",
+              "username": "alecasgari88",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 436773142,
+              "first_name": "Alec",
+              "last_name": "Asgari",
+              "username": "alecasgari88",
+              "type": "private"
+            },
+            "date": 1784197804,
+            "reply_to_message": {
+              "message_id": 1109,
+              "from": {
+                "id": 8252500898,
+                "is_bot": true,
+                "first_name": "Alec Project Writer",
+                "username": "AlecProjectWriter_bot"
+              },
+              "chat": {
+                "id": 436773142,
+                "first_name": "Alec",
+                "last_name": "Asgari",
+                "username": "alecasgari88",
+                "type": "private"
+              },
+              "date": 1784197797,
+              "text": "Project ID: PRJ-1784197776206-4892\n\nThe project has been confirmed successfully. Please send the project image. \n\nFORCE REPLY MESSAGE\nDO NOT CHANGE IT"
+            },
+            "photo": [
+              {
+                "file_id": "AgACAgQAAxkBAAIEVmpYsqxqO9OnOfObLxNFKU3LaRYqAAJPDmsbWAHJUo09NJqqVK_YAQADAgADcwADPQQ",
+                "file_unique_id": "AQADTw5rG1gByVJ4",
+                "file_size": 1123,
+                "width": 90,
+                "height": 51
+              },
+              {
+                "file_id": "AgACAgQAAxkBAAIEVmpYsqxqO9OnOfObLxNFKU3LaRYqAAJPDmsbWAHJUo09NJqqVK_YAQADAgADbQADPQQ",
+                "file_unique_id": "AQADTw5rG1gByVJy",
+                "file_size": 12243,
+                "width": 320,
+                "height": 180
+              },
+              {
+                "file_id": "AgACAgQAAxkBAAIEVmpYsqxqO9OnOfObLxNFKU3LaRYqAAJPDmsbWAHJUo09NJqqVK_YAQADAgADeAADPQQ",
+                "file_unique_id": "AQADTw5rG1gByVJ9",
+                "file_size": 51792,
+                "width": 800,
+                "height": 449
+              },
+              {
+                "file_id": "AgACAgQAAxkBAAIEVmpYsqxqO9OnOfObLxNFKU3LaRYqAAJPDmsbWAHJUo09NJqqVK_YAQADAgADeQADPQQ",
+                "file_unique_id": "AQADTw5rG1gByVJ-",
+                "file_size": 90269,
+                "width": 1280,
+                "height": 719
+              }
+            ]
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Prepare HTML for GitHub": {
+      "main": [
+        [
+          {
+            "node": "Upload HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload HTML": {
+      "main": [
+        [
+          {
+            "node": "Get projects.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file2": {
+      "main": [
+        [
+          {
+            "node": "Convert Voice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Alec Project Writer Serch in PEXELS1": {
+      "main": [
+        [
+          {
+            "node": "Call Alec Project Writer Send Images and Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Call Alec Project Writer Serch in PEXELS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Project1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for Pexels",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for manual photo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for AI publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome1": {
+      "main": [
+        [
+          {
+            "node": "Get a file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Welcome1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message is Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Answer Query a callback1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Project for photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send Project Preview1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append image link1": {
+      "main": [
+        [
+          {
+            "node": "Send Image Source Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Voice1": {
+      "main": [
+        [
+          {
+            "node": "Extract Project Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project1": {
+      "main": [
+        [
+          {
+            "node": "Append image link1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file3": {
+      "main": [
+        [
+          {
+            "node": "Prepare image for GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare image for GitHub1": {
+      "main": [
+        [
+          {
+            "node": "Upload image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload image1": {
+      "main": [
+        [
+          {
+            "node": "Prepare HTML for GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for photo": {
+      "main": [
+        [
+          {
+            "node": "Get a file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get projects.json": {
+      "main": [
+        [
+          {
+            "node": "Merge projects JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge projects JSON": {
+      "main": [
+        [
+          {
+            "node": "Upload projects.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for manual photo": {
+      "main": [
+        [
+          {
+            "node": "Send Ask Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for Pexels": {
+      "main": [
+        [
+          {
+            "node": "Prepare Pexels tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Pexels tags": {
+      "main": [
+        [
+          {
+            "node": "Send Pexels pick hint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Pexels pick hint": {
+      "main": [
+        [
+          {
+            "node": "Call Alec Project Writer Serch in PEXELS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Build OpenAI image prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build OpenAI image prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project for AI publish": {
+      "main": [
+        [
+          {
+            "node": "Resolve AI preview file_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Cache AI image for preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache AI image for preview": {
+      "main": [
+        [
+          {
+            "node": "Send AI image preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send AI image preview": {
+      "main": [
+        [
+          {
+            "node": "Save AI preview file_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save AI preview file_id": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve AI preview file_id": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Prepare image for GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload projects.json": {
+      "main": [
+        [
+          {
+            "node": "Send Project Link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send to Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Project Notes": {
+      "main": [
+        [
+          {
+            "node": "Parse Project Notes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Project Notes": {
+      "main": [
+        [
+          {
+            "node": "Write SEO Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write SEO Project",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write SEO Project",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write SEO Project": {
+      "main": [
+        [
+          {
+            "node": "Prepare Project Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Project Data": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Project Link": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Channel": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Publish on LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish on LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Send Emoji remove reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Dubai",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "ac1bf129-5ffa-46be-aa83-3f120be1def9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a55157a0954f95a04f20b1e0e82243dda61031940e83e11c00d94baf8c58fe50"
+  },
+  "nodeGroups": [],
+  "id": "mNnvOAYg86xh1HVy",
+  "tags": []
+}

@@ -8,6 +8,9 @@
     'AI Automation',
     'System Integration',
     'Web Development',
+    'Web Application',
+    'Mobile Application',
+    'Online Shop',
     'Marketing',
     'Graphic Design',
   ];
@@ -24,10 +27,36 @@
       .replace(/"/g, '&quot;');
   }
 
-  function formatDate(iso) {
+  function formatRelativeDate(iso) {
     if (!iso) return '';
     var d = new Date(iso.includes('T') ? iso : iso + 'T00:00:00');
-    return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US');
+    if (isNaN(d.getTime())) return iso;
+
+    var now = new Date();
+    var startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var diffDays = Math.round((startToday - startDate) / 86400000);
+
+    if (diffDays < 0) {
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return diffDays + ' days ago';
+    if (diffDays < 14) return '1 week ago';
+    if (diffDays < 30) {
+      var weeks = Math.floor(diffDays / 7);
+      return weeks + (weeks === 1 ? ' week ago' : ' weeks ago');
+    }
+    if (diffDays < 365) {
+      var months = Math.max(1, Math.floor(diffDays / 30));
+      return months + (months === 1 ? ' month ago' : ' months ago');
+    }
+
+    var years = Math.floor(diffDays / 365);
+    if (years === 1) return '1 year ago';
+    if (years < 3) return years + ' years ago';
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
   function sortByDate(projects) {
@@ -66,7 +95,7 @@
       '<span class="project-tag">' + esc(p.category) + '</span>' +
       '<h3>' + esc(p.title) + '</h3>' +
       '<p>' + esc(p.excerpt) + '</p>' +
-      '<time datetime="' + esc(p.date) + '">' + esc(formatDate(p.date)) + '</time>' +
+      '<time datetime="' + esc(p.date) + '" title="' + esc(p.date) + '">' + esc(formatRelativeDate(p.date)) + '</time>' +
       '</div></div></a></article>'
     );
   }
