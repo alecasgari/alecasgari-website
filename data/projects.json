@@ -1,5 +1,35 @@
 [
   {
+    "slug": "n8n-Telegram-Bot-for-Group-Chat-Summaries-and-Memories",
+    "title": "n8n Telegram Bot for Group Chat Summaries and Memories",
+    "excerpt": "I developed an n8n-powered Telegram bot with PostgreSQL and AI models to summarize group chats, reply to questions, and track member activity.",
+    "image": "/projects/n8n-Telegram-Bot-for-Group-Chat-Summaries-and-Memories.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "n8n Workflow Automation",
+      "Telegram Bot Automation",
+      "AI Chatbot Development",
+      "PostgreSQL Database",
+      "Cursor Development",
+      "Chat Summarization"
+    ],
+    "technologies": [
+      "n8n",
+      "Telegram",
+      "PostgreSQL",
+      "Cursor",
+      "Artificial Intelligence"
+    ],
+    "date": "2026-07-23",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "3 days",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/n8n-Telegram-Bot-for-Group-Chat-Summaries-and-Memories.html",
+    "url": "/projects/n8n-Telegram-Bot-for-Group-Chat-Summaries-and-Memories.html"
+  },
+  {
     "slug": "Online-Patient-Portal-and-Academic-Automation-for-Professor-Giv-Sharifi",
     "title": "Online Patient Portal and Academic Automation for Professor Giv Sharifi",
     "excerpt": "I developed an online portal and integration system for a renowned neurosurgeon to manage international patient admissions and automate academic research updates.",
