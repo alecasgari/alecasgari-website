@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Healthcare-Pitch-Deck-Design-for-UAE-Market-Expansion",
+    "title": "Healthcare Pitch Deck Design for UAE Market Expansion",
+    "excerpt": "I designed an investor pitch deck using Adobe Illustrator, Photoshop, and Canva to support a healthcare organization's expansion from India to the UAE.",
+    "image": "/projects/Healthcare-Pitch-Deck-Design-for-UAE-Market-Expansion.jpg",
+    "category": "Graphic Design",
+    "tags": [
+      "Pitch Deck Design",
+      "Graphic Design",
+      "Healthcare Presentation",
+      "Investor Presentation",
+      "Adobe Illustrator",
+      "Photoshop Design"
+    ],
+    "technologies": [
+      "Canva",
+      "Adobe Illustrator",
+      "Photoshop",
+      "Stock photos"
+    ],
+    "date": "",
+    "clientName": "Mr. Bidkhan",
+    "clientCompany": "TACA",
+    "duration": "3 days",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Healthcare-Pitch-Deck-Design-for-UAE-Market-Expansion.html",
+    "url": "/projects/Healthcare-Pitch-Deck-Design-for-UAE-Market-Expansion.html"
+  },
+  {
     "slug": "n8n-Telegram-Bot-for-Group-Chat-Summaries-and-Memories",
     "title": "n8n Telegram Bot for Group Chat Summaries and Memories",
     "excerpt": "I developed an n8n-powered Telegram bot with PostgreSQL and AI models to summarize group chats, reply to questions, and track member activity.",
