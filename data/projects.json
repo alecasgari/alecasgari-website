@@ -1,5 +1,36 @@
 [
   {
+    "slug": "Web-Application-and-CRM-Lead-Management-for-Maritime-Export",
+    "title": "Web Application and CRM Lead Management for Maritime Export",
+    "excerpt": "I developed a custom web application featuring a corporate showcase and integrated CRM lead management for maritime exporter Seabright Coast.",
+    "image": "/projects/Web-Application-and-CRM-Lead-Management-for-Maritime-Export.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Application Development",
+      "Corporate Website Design",
+      "CRM Lead Management",
+      "Maritime Export Platform",
+      "Digital Showcase",
+      "Custom Web Development"
+    ],
+    "technologies": [
+      "HTML",
+      "CSS",
+      "Python",
+      "JavaScript",
+      "C",
+      "Adobe"
+    ],
+    "date": "2023-02-07",
+    "clientName": "Mahmoud",
+    "clientCompany": "Seabright Coast",
+    "duration": "1 month",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Web-Application-and-CRM-Lead-Management-for-Maritime-Export.html",
+    "url": "/projects/Web-Application-and-CRM-Lead-Management-for-Maritime-Export.html"
+  },
+  {
     "slug": "Healthcare-Pitch-Deck-Design-for-UAE-Market-Expansion",
     "title": "Healthcare Pitch Deck Design for UAE Market Expansion",
     "excerpt": "I designed an investor pitch deck using Adobe Illustrator, Photoshop, and Canva to support a healthcare organization's expansion from India to the UAE.",
