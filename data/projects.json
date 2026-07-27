@@ -1,5 +1,35 @@
 [
   {
+    "slug": "Web-Application-and-Marketing-System-for-Copper-City-Co",
+    "title": "Web Application and Marketing System for Copper City Co",
+    "excerpt": "I developed a web application with a frontend, backend, and admin panel for Copper City Co. to centralize UAE market presence and drive lead generation.",
+    "image": "/projects/Web-Application-and-Marketing-System-for-Copper-City-Co.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Application Development",
+      "PHP Development",
+      "Python Backend",
+      "Admin Panel Development",
+      "Marketing System Integration",
+      "Lead Generation Platform"
+    ],
+    "technologies": [
+      "PHP",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Python"
+    ],
+    "date": "2023-02-27",
+    "clientName": "Nazem",
+    "clientCompany": "Copper City Co.",
+    "duration": "2 years",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Web-Application-and-Marketing-System-for-Copper-City-Co.html",
+    "url": "/projects/Web-Application-and-Marketing-System-for-Copper-City-Co.html"
+  },
+  {
     "slug": "Web-Application-and-CRM-Lead-Management-for-Maritime-Export",
     "title": "Web Application and CRM Lead Management for Maritime Export",
     "excerpt": "I developed a custom web application featuring a corporate showcase and integrated CRM lead management for maritime exporter Seabright Coast.",
