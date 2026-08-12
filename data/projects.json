@@ -1,5 +1,37 @@
 [
   {
+    "slug": "Telegram-Mini-App-Castle-Game-with-Admin-Dashboard",
+    "title": "Telegram Mini-App Castle Game with Admin Dashboard",
+    "excerpt": "I developed an interactive Telegram mini-app strategy game featuring team castle battles, artificial intelligence, and a full admin dashboard.",
+    "image": "/projects/Telegram-Mini-App-Castle-Game-with-Admin-Dashboard.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Telegram Mini-App",
+      "Web Application Development",
+      "React Game Development",
+      "Admin Dashboard",
+      "PostgreSQL Database",
+      "AI Integration"
+    ],
+    "technologies": [
+      "React",
+      "PostgreSQL",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "TypeScript",
+      "Artificial Intelligence"
+    ],
+    "date": "2026-08-12",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "4 days",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Telegram-Mini-App-Castle-Game-with-Admin-Dashboard.html",
+    "url": "/projects/Telegram-Mini-App-Castle-Game-with-Admin-Dashboard.html"
+  },
+  {
     "slug": "Web-Application-and-Marketing-System-for-Copper-City-Co",
     "title": "Web Application and Marketing System for Copper City Co",
     "excerpt": "I developed a web application with a frontend, backend, and admin panel for Copper City Co. to centralize UAE market presence and drive lead generation.",
