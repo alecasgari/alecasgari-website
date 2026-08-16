@@ -1,5 +1,34 @@
 [
   {
+    "slug": "Voice-to-Recipe-Web-Application-with-n8n-and-AI",
+    "title": "Voice-to-Recipe Web Application with n8n and AI",
+    "excerpt": "A web application that converts voice instructions into structured recipes with ingredients and images, published to a static site using n8n.",
+    "image": "/projects/Voice-to-Recipe-Web-Application-with-n8n-and-AI.jpg",
+    "category": "Web Application",
+    "tags": [
+      "n8n Automation",
+      "Voice Input",
+      "Recipe Publishing",
+      "Artificial Intelligence",
+      "Static Site Hosting",
+      "Web Application"
+    ],
+    "technologies": [
+      "GitHub Pages",
+      "n8n",
+      "Artificial Intelligence",
+      "Voice"
+    ],
+    "date": "2026-08-01",
+    "clientName": "Confidential Client",
+    "clientCompany": "Confidential Client",
+    "duration": "1 week",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Voice-to-Recipe-Web-Application-with-n8n-and-AI.html",
+    "url": "/projects/Voice-to-Recipe-Web-Application-with-n8n-and-AI.html"
+  },
+  {
     "slug": "Telegram-Mini-App-Castle-Game-with-Admin-Dashboard",
     "title": "Telegram Mini-App Castle Game with Admin Dashboard",
     "excerpt": "I developed an interactive Telegram mini-app strategy game featuring team castle battles, artificial intelligence, and a full admin dashboard.",
