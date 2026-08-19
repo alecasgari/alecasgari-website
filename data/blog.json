@@ -1,5 +1,16 @@
 [
   {
+    "slug": "sustainable-ai-adoption-governance-cost-control",
+    "title": "Sustainable AI Adoption: Balancing Cost Control and Governance",
+    "excerpt": "Discover how organizations can scale AI adoption sustainably by balancing cost control, intelligent routing, and rigorous enterprise data governance.",
+    "category": "Technology",
+    "date": "2026-08-19",
+    "image": "/images/blog/sustainable-ai-adoption-governance-cost-control.jpg",
+    "url": "/blog/sustainable-ai-adoption-governance-cost-control.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "building-ai-ready-organizations-operational-integration",
     "title": "Building AI-Ready Organizations Through Operational Integration",
     "excerpt": "Discover how organizations can move beyond basic AI experimentation to build integrated, resilient, and AI-ready operational workflows.",
