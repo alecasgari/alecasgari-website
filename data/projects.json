@@ -1,5 +1,39 @@
 [
   {
+    "slug": "Web-Application-Development-for-Hotel-Supplies-Manufacturer",
+    "title": "Web Application Development for Hotel Supplies Manufacturer",
+    "excerpt": "I designed and developed a frontend and backend web application for Leart to showcase hotel supplies and manage generated leads with social media integration.",
+    "image": "/projects/Web-Application-Development-for-Hotel-Supplies-Manufacturer.jpg",
+    "category": "Web Development",
+    "tags": [
+      "Web Application Development",
+      "Frontend Development",
+      "Backend Development",
+      "Product Showcase",
+      "Lead Management",
+      "Social Media Integration"
+    ],
+    "technologies": [
+      "HTML5",
+      "CSS",
+      "React",
+      "JavaScript",
+      "Node.js",
+      "Photoshop",
+      "Illustrator",
+      "Canva",
+      "Cursor"
+    ],
+    "date": "",
+    "clientName": "Youssef Sandalwala",
+    "clientCompany": "Leart",
+    "duration": "1 year",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Web-Application-Development-for-Hotel-Supplies-Manufacturer.html",
+    "url": "/projects/Web-Application-Development-for-Hotel-Supplies-Manufacturer.html"
+  },
+  {
     "slug": "Voice-to-Recipe-Web-Application-with-n8n-and-AI",
     "title": "Voice-to-Recipe Web Application with n8n and AI",
     "excerpt": "A web application that converts voice instructions into structured recipes with ingredients and images, published to a static site using n8n.",
