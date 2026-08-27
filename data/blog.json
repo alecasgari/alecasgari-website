@@ -1,5 +1,16 @@
 [
   {
+    "slug": "infrastructure-deficit-in-enterprise-automation",
+    "title": "Addressing the Infrastructure Deficit in Enterprise Automation",
+    "excerpt": "Discover how enterprises must modernize their infrastructure, data pipelines, and workflows to support heavy automation, AI, and robotics.",
+    "category": "Technology",
+    "date": "2026-08-27",
+    "image": "/images/blog/infrastructure-deficit-in-enterprise-automation.jpg",
+    "url": "/blog/infrastructure-deficit-in-enterprise-automation.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "navigating-economic-slow-lane-ai-readiness-strategy",
     "title": "Navigating Economic Slow-Lane Pressures Through AI Readiness and Strategy",
     "excerpt": "Discover how leaders can build an AI-ready organization, redesign operational workflows, and navigate economic slow-lane pressures through strategic adaptation.",
