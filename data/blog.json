@@ -1,5 +1,16 @@
 [
   {
+    "slug": "digital-regulation-automation-governance-enterprise-growth",
+    "title": "Digital Regulation: Moving from Reckless Automation to Enterprise Trust",
+    "excerpt": "Explore how enterprise leaders must move from reckless automation to rigorous digital regulation to protect consumer trust and operational integrity.",
+    "category": "Technology",
+    "date": "2026-08-29",
+    "image": "/images/blog/digital-regulation-automation-governance-enterprise-growth.jpg",
+    "url": "/blog/digital-regulation-automation-governance-enterprise-growth.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "infrastructure-deficit-in-enterprise-automation",
     "title": "Addressing the Infrastructure Deficit in Enterprise Automation",
     "excerpt": "Discover how enterprises must modernize their infrastructure, data pipelines, and workflows to support heavy automation, AI, and robotics.",
