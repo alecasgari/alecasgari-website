@@ -1,5 +1,16 @@
 [
   {
+    "slug": "securing-autonomous-ai-agents-in-enterprise-workflows",
+    "title": "Securing Autonomous AI Agents in Enterprise Workflows",
+    "excerpt": "Discover how organizations can safely deploy autonomous AI agents by balancing operational speed with rigorous cybersecurity governance and workflow controls.",
+    "category": "Technology",
+    "date": "2026-09-12",
+    "image": "/images/blog/securing-autonomous-ai-agents-in-enterprise-workflows.jpg",
+    "url": "/blog/securing-autonomous-ai-agents-in-enterprise-workflows.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp"
+  },
+  {
     "slug": "navigating-ai-workforce-shift-junior-roles-upskilling",
     "title": "Navigating the AI Workforce Shift: Junior Roles and Upskilling",
     "excerpt": "Explore how artificial intelligence is reshaping junior white-collar roles and discover practical strategies for workforce upskilling and workflow redesign.",
