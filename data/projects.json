@@ -1,5 +1,205 @@
 [
   {
+    "slug": "AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation",
+    "title": "AI-Powered Telegram & n8n Workflow for Automated Voice-to-Presentation",
+    "excerpt": "An n8n Telegram bot that transcribes voice messages, extracts structured data with OpenAI, and automatically builds PowerPoint presentations — built for a medical practice in the UAE.",
+    "image": "/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.jpg",
+    "category": "AI Automation",
+    "tags": [
+      "n8n",
+      "Telegram bot",
+      "voice transcription",
+      "PowerPoint automation",
+      "OpenAI"
+    ],
+    "technologies": [
+      "n8n",
+      "Telegram Bot API",
+      "OpenAI API",
+      "Google Drive API",
+      "Google Slides",
+      "JavaScript"
+    ],
+    "date": "2025-10-12",
+    "clientName": "Prof. Guive Sharifi",
+    "clientCompany": "Prof. Guive Sharifi",
+    "duration": "2 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html",
+    "url": "/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html"
+  },
+  {
+    "slug": "AI-Powered-Chatbot",
+    "title": "AI-Powered 24/7 Sales Assistant Chatbot",
+    "excerpt": "A 24/7 AI sales assistant chatbot that qualifies inbound leads conversationally, books calendar meetings, and hands off to a human via Telegram when needed.",
+    "image": "/projects/AI-Powered-Chatbot.webp",
+    "category": "AI Automation",
+    "tags": [
+      "AI chatbot",
+      "lead qualification",
+      "n8n",
+      "sales automation",
+      "calendar integration"
+    ],
+    "technologies": [
+      "n8n",
+      "OpenAI",
+      "WebSockets",
+      "Telegram Bot API",
+      "Google Calendar API",
+      "Vector database"
+    ],
+    "date": "2025-10-09",
+    "clientName": "Basant Mohammed",
+    "clientCompany": "Basant Accounting",
+    "duration": "3 weeks",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/AI-Powered-Chatbot.html",
+    "url": "/projects/AI-Powered-Chatbot.html"
+  },
+  {
+    "slug": "Full-business-automation-implementation",
+    "title": "End-to-End IT Infrastructure and AI-Powered Automation for DFISX",
+    "excerpt": "Full digital infrastructure for Future Innovation Summit in Dubai: website, AI content, ticketing, and automated speaker/attendee workflows for 150+ speakers.",
+    "image": "/projects/Full-business-automation-implementation.png",
+    "category": "System Integration",
+    "tags": [
+      "event automation",
+      "Dubai",
+      "n8n",
+      "IT infrastructure",
+      "system integration"
+    ],
+    "technologies": [
+      "Node.js",
+      "n8n",
+      "ChatGPT API",
+      "QR codes",
+      "email automation"
+    ],
+    "date": "2024-10-23",
+    "clientName": "Adnan Al Noorani",
+    "clientCompany": "Future Innovation Summit",
+    "duration": "6 months + 1 year support",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Full-business-automation-implementation.html",
+    "url": "/projects/Full-business-automation-implementation.html"
+  },
+  {
+    "slug": "ERP-System-Implementation",
+    "title": "Complete ERP System Implementation for Pharma Tech",
+    "excerpt": "ERPNext rollout for PharmaTech in Dubai covering procurement through logistics, with n8n workflow automation across pharmaceutical operations.",
+    "image": "/projects/ERP-System-Implementation.webp",
+    "category": "System Integration",
+    "tags": [
+      "ERPNext",
+      "pharmaceutical ERP",
+      "n8n",
+      "workflow automation",
+      "Dubai"
+    ],
+    "technologies": [
+      "ERPNext",
+      "n8n"
+    ],
+    "date": "2026-04-30",
+    "clientName": "Dr. Herfan Pakchian",
+    "clientCompany": "PharmaTech For Medical LLC | Dubai",
+    "duration": "6 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/ERP-System-Implementation.html",
+    "url": "/projects/ERP-System-Implementation.html"
+  },
+  {
+    "slug": "Development-of-an-Advanced-Car-Rental--Booking-Portal-for-the-Dubai-Market",
+    "title": "Development of an Advanced Car Rental & Booking Portal for the Dubai Market",
+    "excerpt": "End-to-end car rental portal for NK Rent Cars in Dubai: custom booking engine, WhatsApp alerts, ads-to-CRM automation, and B2B vehicle listings.",
+    "image": "/projects/Development-of-an-Advanced-Car-Rental--Booking-Portal-for-the-Dubai-Market.webp",
+    "category": "Web Development",
+    "tags": [
+      "car rental portal",
+      "Dubai",
+      "booking system",
+      "WhatsApp",
+      "n8n"
+    ],
+    "technologies": [
+      "WordPress",
+      "JetEngine",
+      "Meta Ads",
+      "Make.com",
+      "MailerLite"
+    ],
+    "date": "2025-04-01",
+    "clientName": "Mr. Nikkhah",
+    "clientCompany": "NK Rent Cars",
+    "duration": "Approximately 2 years",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Development-of-an-Advanced-Car-Rental--Booking-Portal-for-the-Dubai-Market.html",
+    "url": "/projects/Development-of-an-Advanced-Car-Rental--Booking-Portal-for-the-Dubai-Market.html"
+  },
+  {
+    "slug": "Intelligent-Multi-Step-Migration-Form-Automation-for-Rahkar-Gasht",
+    "title": "Intelligent Multi-Step Migration Form Automation for Rahkar Gasht",
+    "excerpt": "A Node.js multi-step immigration form with n8n: personalized destination suggestions, SMS/WhatsApp OTP, and CRM plus Slack/Telegram lead routing.",
+    "image": "/projects/Intelligent-Multi-Step-Migration-Form-Automation-for-Rahkar-Gasht.webp",
+    "category": "AI Automation",
+    "tags": [
+      "migration automation",
+      "multi-step form",
+      "n8n",
+      "OTP",
+      "CRM"
+    ],
+    "technologies": [
+      "Node.js",
+      "n8n",
+      "Google Sheets",
+      "Payamgostar CRM",
+      "Slack",
+      "Telegram"
+    ],
+    "date": "2025-11-11",
+    "clientName": "Dr. Nasim",
+    "clientCompany": "Rahkar Gasht",
+    "duration": "3 months",
+    "status": "Completed",
+    "featured": true,
+    "projectLink": "https://alecasgari.com/projects/Intelligent-Multi-Step-Migration-Form-Automation-for-Rahkar-Gasht.html",
+    "url": "/projects/Intelligent-Multi-Step-Migration-Form-Automation-for-Rahkar-Gasht.html"
+  },
+  {
+    "slug": "amber-bottle",
+    "title": "Blockchain Legals Portal",
+    "excerpt": "WordPress and WooCommerce portal for Blockchain Legals, a crypto-native international law practice — content, shop, and payment gateway.",
+    "image": "/projects/amber-bottle.jpg",
+    "category": "Web Development",
+    "tags": [
+      "WordPress",
+      "WooCommerce",
+      "legal tech",
+      "web development"
+    ],
+    "technologies": [
+      "WordPress",
+      "WooCommerce",
+      "payment gateway"
+    ],
+    "date": "2025-09-03",
+    "clientName": "Mr. Omar",
+    "clientCompany": "Blockchain Legals",
+    "duration": "10 months",
+    "status": "Completed",
+    "featured": false,
+    "projectLink": "https://alecasgari.com/projects/amber-bottle.html",
+    "url": "/projects/amber-bottle.html"
+  },
+  {
     "slug": "Web-Application-Development-for-Hotel-Supplies-Manufacturer",
     "title": "Web Application Development for Hotel Supplies Manufacturer",
     "excerpt": "I designed and developed a frontend and backend web application for Leart to showcase hotel supplies and manage generated leads with social media integration.",
