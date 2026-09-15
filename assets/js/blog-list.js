@@ -18,18 +18,27 @@
     return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US');
   }
 
-  function renderCard(post) {
+  function listingImage(post) {
+    return post.card_image || post.image || PLACEHOLDER;
+  }
+
+  function renderCard(post, index) {
+    var eager = index < 2;
     return (
       '<article class="project-card-item">' +
       '<a href="' + esc(post.url) + '" class="project-card-link">' +
       '<div class="project-card">' +
-      '<img src="' + esc(post.image) + '" alt="' + esc(post.title) + '" class="project-card-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
+      '<img src="' + esc(listingImage(post)) + '" alt="' + esc(post.title) + '" class="project-card-thumb" width="720" height="405" loading="' +
+      (eager ? 'eager' : 'lazy') +
+      '" decoding="async"' +
+      (eager ? ' fetchpriority="high"' : '') +
+      ' onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
       '<div class="project-card-body">' +
       '<span class="project-tag">' + esc(post.category) + '</span>' +
       '<h3>' + esc(post.title) + '</h3>' +
       '<p>' + esc(post.excerpt) + '</p>' +
       '<div class="blog-card-meta">' +
-      '<img src="' + esc(post.author_image) + '" alt="' + esc(post.author) + '" width="28" height="28" class="blog-card-author">' +
+      '<img src="' + esc(post.author_image) + '" alt="' + esc(post.author) + '" width="28" height="28" class="blog-card-author" loading="lazy" decoding="async">' +
       '<span>' + esc(post.author) + '</span>' +
       '<time>' + esc(formatDate(post.date)) + '</time>' +
       '</div>' +
@@ -53,7 +62,9 @@
         return new Date(b.date) - new Date(a.date);
       });
 
-      grid.innerHTML = posts.map(renderCard).join('');
+      grid.innerHTML = posts.map(function (post, index) {
+        return renderCard(post, index);
+      }).join('');
       grid.classList.add('is-visible');
     } catch (e) {
       console.error('Failed to load blog posts', e);

@@ -134,21 +134,73 @@ function injectNoscript(file, markerId, html) {
   fs.writeFileSync(file, src);
 }
 
-const blogLinks = blogs.map((p) => ({ href: p.url, title: p.title }));
-const projectLinks = projects
-  .filter((p) => !isStub(path.join(ROOT, "projects", `${p.slug}.html`)))
-  .map((p) => ({ href: p.url || `/projects/${p.slug}.html`, title: p.title }));
+function cardMarkup(item, imageKey) {
+  const href = xmlEscape(item.href);
+  const title = xmlEscape(item.title);
+  const img = xmlEscape(item.image || "");
+  const cat = xmlEscape(item.category || "");
+  const excerpt = xmlEscape(item.excerpt || "");
+  return `      <article class="project-card-item"><a href="${href}" class="project-card-link"><div class="project-card"><img src="${img}" alt="${title}" class="project-card-thumb" width="720" height="405" loading="lazy" decoding="async"><div class="project-card-body"><span class="project-tag">${cat}</span><h3>${title}</h3><p>${excerpt}</p></div></div></a></article>`;
+}
 
-injectNoscript(
-  path.join(ROOT, "blog.html"),
-  '<div id="blog-grid" class="stagger"></div>',
-  noscriptList(blogLinks)
-);
-injectNoscript(
-  path.join(ROOT, "projects.html"),
-  '<div id="projects-grid" class="stagger"></div>',
-  noscriptList(projectLinks)
-);
+function injectGrid(file, gridId, cards) {
+  let src = fs.readFileSync(file, "utf8");
+  src = src.replace(/\s*<noscript>\s*<ul class="seo-fallback-list">[\s\S]*?<\/ul>\s*<\/noscript>\s*/g, "\n");
+  const open = `<div id="${gridId}" class="stagger">`;
+  const start = src.indexOf(open);
+  if (start < 0) {
+    console.warn("grid missing", gridId, file);
+    return;
+  }
+  let i = start + open.length;
+  let depth = 1;
+  while (i < src.length && depth) {
+    if (src.startsWith("<div", i)) {
+      depth += 1;
+      i += 4;
+    } else if (src.startsWith("</div>", i)) {
+      depth -= 1;
+      if (depth === 0) {
+        src = src.slice(0, start + open.length) + "\n" + cards + "\n    " + src.slice(i);
+        break;
+      }
+      i += 6;
+    } else {
+      i += 1;
+    }
+  }
+  fs.writeFileSync(file, src);
+}
+
+const blogCards = blogs
+  .slice()
+  .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+  .map((p) =>
+    cardMarkup({
+      href: p.url,
+      title: p.title,
+      image: p.card_image || p.image,
+      category: p.category,
+      excerpt: p.excerpt,
+    })
+  )
+  .join("\n");
+
+const projectCards = projects
+  .filter((p) => !isStub(path.join(ROOT, "projects", `${p.slug}.html`)))
+  .map((p) =>
+    cardMarkup({
+      href: p.url || `/projects/${p.slug}.html`,
+      title: p.title,
+      image: p.image,
+      category: p.category,
+      excerpt: p.excerpt,
+    })
+  )
+  .join("\n");
+
+injectGrid(path.join(ROOT, "blog.html"), "blog-grid", blogCards);
+injectGrid(path.join(ROOT, "projects.html"), "projects-grid", projectCards);
 
 console.log(
   JSON.stringify(

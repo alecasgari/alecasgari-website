@@ -1,562 +1,611 @@
 [
   {
     "slug": "strategic-ai-slowdown-sustainable-innovation-leadership",
-    "title": "Why Leaders Must Embrace a Strategic AI Slowdown for Sustainable Innovation",
+    "title": "Strategic AI Slowdown for Leaders",
     "excerpt": "Explore why leaders must embrace a strategic AI slowdown to balance velocity with safety, data governance, and sustainable organizational impact.",
     "category": "Technology",
     "date": "2026-09-14",
-    "image": "/images/blog/strategic-ai-slowdown-sustainable-innovation-leadership.jpg",
+    "image": "/images/blog/strategic-ai-slowdown-sustainable-innovation-leadership.webp",
     "url": "/blog/strategic-ai-slowdown-sustainable-innovation-leadership.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/strategic-ai-slowdown-sustainable-innovation-leadership-card.webp"
   },
   {
     "slug": "securing-autonomous-ai-agents-in-enterprise-workflows",
-    "title": "Securing Autonomous AI Agents in Enterprise Workflows",
+    "title": "Securing Autonomous AI Agents",
     "excerpt": "Discover how organizations can safely deploy autonomous AI agents by balancing operational speed with rigorous cybersecurity governance and workflow controls.",
     "category": "Technology",
     "date": "2026-09-12",
-    "image": "/images/blog/securing-autonomous-ai-agents-in-enterprise-workflows.jpg",
+    "image": "/images/blog/securing-autonomous-ai-agents-in-enterprise-workflows.webp",
     "url": "/blog/securing-autonomous-ai-agents-in-enterprise-workflows.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/securing-autonomous-ai-agents-in-enterprise-workflows-card.webp"
   },
   {
     "slug": "navigating-ai-workforce-shift-junior-roles-upskilling",
-    "title": "Navigating the AI Workforce Shift: Junior Roles and Upskilling",
+    "title": "AI Workforce Shift and Upskilling",
     "excerpt": "Explore how artificial intelligence is reshaping junior white-collar roles and discover practical strategies for workforce upskilling and workflow redesign.",
     "category": "Technology",
     "date": "2026-09-10",
-    "image": "/images/blog/navigating-ai-workforce-shift-junior-roles-upskilling.jpg",
+    "image": "/images/blog/navigating-ai-workforce-shift-junior-roles-upskilling.webp",
     "url": "/blog/navigating-ai-workforce-shift-junior-roles-upskilling.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/navigating-ai-workforce-shift-junior-roles-upskilling-card.webp"
   },
   {
     "slug": "bridging-small-business-ai-digital-divide",
-    "title": "Bridging the Small Business AI Digital Divide",
+    "title": "Small Business AI Digital Divide",
     "excerpt": "Explore how small businesses can bridge the AI digital divide through practical workflows, targeted training, and sensible operational automation.",
     "category": "Technology",
     "date": "2026-09-08",
-    "image": "/images/blog/bridging-small-business-ai-digital-divide.jpg",
+    "image": "/images/blog/bridging-small-business-ai-digital-divide.webp",
     "url": "/blog/bridging-small-business-ai-digital-divide.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/bridging-small-business-ai-digital-divide-card.webp"
   },
   {
     "slug": "why-technology-adoption-fails-without-team-consultation",
-    "title": "Why Technology Adoption Fails Without Direct Team Consultation",
+    "title": "Tech Adoption Needs Team Input",
     "excerpt": "Discover why digital transformation fails without team consultation and learn a practical framework for building trust during AI adoption.",
     "category": "Leadership",
     "date": "2026-09-06",
-    "image": "/images/blog/why-technology-adoption-fails-without-team-consultation.jpg",
+    "image": "/images/blog/why-technology-adoption-fails-without-team-consultation.webp",
     "url": "/blog/why-technology-adoption-fails-without-team-consultation.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-technology-adoption-fails-without-team-consultation-card.webp"
   },
   {
     "slug": "digital-infrastructure-sovereignty-ai-readiness",
-    "title": "Digital Infrastructure and Sovereign Capability in the AI Era",
+    "title": "Digital Infrastructure in the AI Era",
     "excerpt": "Explore why digital infrastructure and data centres are now critical for national sovereignty and enterprise security in the modern digital age.",
     "category": "Technology",
     "date": "2026-09-04",
-    "image": "/images/blog/digital-infrastructure-sovereignty-ai-readiness.jpg",
+    "image": "/images/blog/digital-infrastructure-sovereignty-ai-readiness.webp",
     "url": "/blog/digital-infrastructure-sovereignty-ai-readiness.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/digital-infrastructure-sovereignty-ai-readiness-card.webp"
   },
   {
     "slug": "sluggish-technology-adoption-economic-growth-ai-readiness",
-    "title": "Overcoming Sluggish Technology Adoption and AI Hesitation",
+    "title": "Fix Slow Tech Adoption and AI Fear",
     "excerpt": "Discover how sluggish technology adoption and worker shortages threaten economic growth, and learn actionable frameworks to build AI-ready organizations.",
     "category": "Technology",
     "date": "2026-09-02",
-    "image": "/images/blog/sluggish-technology-adoption-economic-growth-ai-readiness.jpg",
+    "image": "/images/blog/sluggish-technology-adoption-economic-growth-ai-readiness.webp",
     "url": "/blog/sluggish-technology-adoption-economic-growth-ai-readiness.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/sluggish-technology-adoption-economic-growth-ai-readiness-card.webp"
   },
   {
     "slug": "building-the-ai-ready-organization-digital-twins-and-workforce-scalability",
-    "title": "Building the AI-Ready Organization: Digital Twins and Workforce Scalability",
+    "title": "AI Digital Twins and Workforce Scale",
     "excerpt": "Discover how digital twins and autonomous agents are redefining workforce scalability, and learn a practical framework for building an AI-ready organization.",
     "category": "Technology",
     "date": "2026-08-31",
-    "image": "/images/blog/building-the-ai-ready-organization-digital-twins-and-workforce-scalability.jpg",
+    "image": "/images/blog/building-the-ai-ready-organization-digital-twins-and-workforce-scalability.webp",
     "url": "/blog/building-the-ai-ready-organization-digital-twins-and-workforce-scalability.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/building-the-ai-ready-organization-digital-twins-and-workforce-scalability-card.webp"
   },
   {
     "slug": "digital-regulation-automation-governance-enterprise-growth",
-    "title": "Digital Regulation: Moving from Reckless Automation to Enterprise Trust",
+    "title": "From Reckless Automation to Trust",
     "excerpt": "Explore how enterprise leaders must move from reckless automation to rigorous digital regulation to protect consumer trust and operational integrity.",
     "category": "Technology",
     "date": "2026-08-29",
-    "image": "/images/blog/digital-regulation-automation-governance-enterprise-growth.jpg",
+    "image": "/images/blog/digital-regulation-automation-governance-enterprise-growth.webp",
     "url": "/blog/digital-regulation-automation-governance-enterprise-growth.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/digital-regulation-automation-governance-enterprise-growth-card.webp"
   },
   {
     "slug": "infrastructure-deficit-in-enterprise-automation",
-    "title": "Addressing the Infrastructure Deficit in Enterprise Automation",
+    "title": "Fix the Enterprise Automation Gap",
     "excerpt": "Discover how enterprises must modernize their infrastructure, data pipelines, and workflows to support heavy automation, AI, and robotics.",
     "category": "Technology",
     "date": "2026-08-27",
-    "image": "/images/blog/infrastructure-deficit-in-enterprise-automation.jpg",
+    "image": "/images/blog/infrastructure-deficit-in-enterprise-automation.webp",
     "url": "/blog/infrastructure-deficit-in-enterprise-automation.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/infrastructure-deficit-in-enterprise-automation-card.webp"
   },
   {
     "slug": "navigating-economic-slow-lane-ai-readiness-strategy",
-    "title": "Navigating Economic Slow-Lane Pressures Through AI Readiness and Strategy",
+    "title": "AI Readiness in a Slow Economy",
     "excerpt": "Discover how leaders can build an AI-ready organization, redesign operational workflows, and navigate economic slow-lane pressures through strategic adaptation.",
     "category": "Business",
     "date": "2026-08-25",
-    "image": "/images/blog/navigating-economic-slow-lane-ai-readiness-strategy.jpg",
+    "image": "/images/blog/navigating-economic-slow-lane-ai-readiness-strategy.webp",
     "url": "/blog/navigating-economic-slow-lane-ai-readiness-strategy.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/navigating-economic-slow-lane-ai-readiness-strategy-card.webp"
   },
   {
     "slug": "balancing-ai-growth-infrastructure-accountability",
-    "title": "Balancing AI Growth with Sustainable Infrastructure and Accountability",
+    "title": "Balance AI Growth With Accountability",
     "excerpt": "Balance AI growth with infrastructure planning and community accountability to build a resilient, sustainable enterprise technology strategy.",
     "category": "Technology",
     "date": "2026-08-23",
-    "image": "/images/blog/balancing-ai-growth-infrastructure-accountability.jpg",
+    "image": "/images/blog/balancing-ai-growth-infrastructure-accountability.webp",
     "url": "/blog/balancing-ai-growth-infrastructure-accountability.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/balancing-ai-growth-infrastructure-accountability-card.webp"
   },
   {
     "slug": "sustainable-ai-adoption-governance-cost-control",
-    "title": "Sustainable AI Adoption: Balancing Cost Control and Governance",
+    "title": "AI Cost Control and Governance",
     "excerpt": "Discover how organizations can scale AI adoption sustainably by balancing cost control, intelligent routing, and rigorous enterprise data governance.",
     "category": "Technology",
     "date": "2026-08-19",
-    "image": "/images/blog/sustainable-ai-adoption-governance-cost-control.jpg",
+    "image": "/images/blog/sustainable-ai-adoption-governance-cost-control.webp",
     "url": "/blog/sustainable-ai-adoption-governance-cost-control.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/sustainable-ai-adoption-governance-cost-control-card.webp"
   },
   {
     "slug": "building-ai-ready-organizations-operational-integration",
-    "title": "Building AI-Ready Organizations Through Operational Integration",
+    "title": "AI-Ready Ops Through Integration",
     "excerpt": "Discover how organizations can move beyond basic AI experimentation to build integrated, resilient, and AI-ready operational workflows.",
     "category": "Technology",
     "date": "2026-08-17",
-    "image": "/images/blog/building-ai-ready-organizations-operational-integration.jpg",
+    "image": "/images/blog/building-ai-ready-organizations-operational-integration.webp",
     "url": "/blog/building-ai-ready-organizations-operational-integration.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/building-ai-ready-organizations-operational-integration-card.webp"
   },
   {
     "slug": "navigating-financial-literacy-crisis-public-ai-business",
-    "title": "Navigating the Financial Literacy Crisis in the Age of Public AI",
+    "title": "Public AI and Financial Literacy",
     "excerpt": "Explore why small business owners rely on public AI for financial decisions, the risks of the financial literacy crisis, and how to balance tech with oversight.",
     "category": "Business",
     "date": "2026-08-15",
-    "image": "/images/blog/navigating-financial-literacy-crisis-public-ai-business.jpg",
+    "image": "/images/blog/navigating-financial-literacy-crisis-public-ai-business.webp",
     "url": "/blog/navigating-financial-literacy-crisis-public-ai-business.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/navigating-financial-literacy-crisis-public-ai-business-card.webp"
   },
   {
     "slug": "bridging-generative-divide-workplace-reverse-mentoring",
-    "title": "Bridging the Generative Divide Through Workplace Reverse-Mentoring",
+    "title": "Reverse Mentoring for the AI Divide",
     "excerpt": "Discover how reverse-mentoring bridges the generative AI divide, helping senior leaders and Gen Z employees collaborate to build AI-ready organizations.",
     "category": "Leadership",
     "date": "2026-08-09",
-    "image": "/images/blog/bridging-generative-divide-workplace-reverse-mentoring.jpg",
+    "image": "/images/blog/bridging-generative-divide-workplace-reverse-mentoring.webp",
     "url": "/blog/bridging-generative-divide-workplace-reverse-mentoring.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/bridging-generative-divide-workplace-reverse-mentoring-card.webp"
   },
   {
     "slug": "supporting-domain-experts-ai-workflow-adoption",
-    "title": "Supporting Domain Experts for Successful AI Workflow Adoption",
+    "title": "Help Domain Experts Adopt AI",
     "excerpt": "Learn how supporting frontline domain experts through structured collaboration and protected experimentation drives successful AI and workflow adoption.",
     "category": "Technology",
     "date": "2026-08-07",
-    "image": "/images/blog/supporting-domain-experts-ai-workflow-adoption.jpg",
+    "image": "/images/blog/supporting-domain-experts-ai-workflow-adoption.webp",
     "url": "/blog/supporting-domain-experts-ai-workflow-adoption.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/supporting-domain-experts-ai-workflow-adoption-card.webp"
   },
   {
     "slug": "why-executive-leadership-determines-ai-adoption-success",
-    "title": "Why Executive Leadership Determines AI Adoption Success",
+    "title": "Why Leaders Decide AI Success",
     "excerpt": "True AI transformation starts at the executive level. Learn how leaders must align strategy, culture, and workflows to achieve sustainable adoption.",
     "category": "Leadership",
     "date": "2026-08-05",
-    "image": "/images/blog/why-executive-leadership-determines-ai-adoption-success.jpg",
+    "image": "/images/blog/why-executive-leadership-determines-ai-adoption-success.webp",
     "url": "/blog/why-executive-leadership-determines-ai-adoption-success.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-executive-leadership-determines-ai-adoption-success-card.webp"
   },
   {
     "slug": "why-new-leaders-must-understand-organization-before-change",
-    "title": "Why New Leaders Must Understand the Organization Before Making Changes",
+    "title": "New Leaders: Learn the Org First",
     "excerpt": "Discover why new leaders must understand organizational culture and workflows before attempting structural change, and how to lead sustainable transformation.",
     "category": "Leadership",
     "date": "2026-07-30",
-    "image": "/images/blog/why-new-leaders-must-understand-organization-before-change.jpg",
+    "image": "/images/blog/why-new-leaders-must-understand-organization-before-change.webp",
     "url": "/blog/why-new-leaders-must-understand-organization-before-change.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-new-leaders-must-understand-organization-before-change-card.webp"
   },
   {
     "slug": "building-ai-ready-organization-risk-management",
-    "title": "Building an AI-Ready Organization: Risk Management and Workflow Strategy",
+    "title": "AI Risk Management for Workflows",
     "excerpt": "Learn how to build an AI-ready organization by implementing structured risk diagnostics, clear governance policies, and safe human-AI workflows.",
     "category": "Technology",
     "date": "2026-07-28",
-    "image": "/images/blog/building-ai-ready-organization-risk-management.jpg",
+    "image": "/images/blog/building-ai-ready-organization-risk-management.webp",
     "url": "/blog/building-ai-ready-organization-risk-management.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/building-ai-ready-organization-risk-management-card.webp"
   },
   {
     "slug": "proactive-succession-planning-leadership-development",
-    "title": "Proactive Succession Planning: Building Future Leaders Today",
+    "title": "Build Future Leaders With Succession",
     "excerpt": "Discover how proactive succession planning and leadership development protect organizational momentum, prevent talent gaps, and support sustainable growth.",
     "category": "Leadership",
     "date": "2026-07-24",
-    "image": "/images/blog/proactive-succession-planning-leadership-development.jpg",
+    "image": "/images/blog/proactive-succession-planning-leadership-development.webp",
     "url": "/blog/proactive-succession-planning-leadership-development.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/proactive-succession-planning-leadership-development-card.webp"
   },
   {
     "slug": "workforce-planning-tech-strategy-ai-workflows",
-    "title": "Workforce Planning and Tech Strategy in AI-Enabled Organizations",
+    "title": "Workforce Planning for AI Workflows",
     "excerpt": "Discover how leaders can align workforce planning, technical talent acquisition, and AI-enabled workflows to turn technology efficiency into real ROI.",
     "category": "Business",
     "date": "2026-07-22",
-    "image": "/images/blog/workforce-planning-tech-strategy-ai-workflows.jpg",
+    "image": "/images/blog/workforce-planning-tech-strategy-ai-workflows.webp",
     "url": "/blog/workforce-planning-tech-strategy-ai-workflows.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/workforce-planning-tech-strategy-ai-workflows-card.webp"
   },
   {
     "slug": "building-ai-ready-organizations-through-cultural-shift",
-    "title": "Building AI-Ready Organizations Through Cultural Shift",
+    "title": "AI-Ready Culture, Not Just Tools",
     "excerpt": "Successful AI adoption requires more than new tools; it demands a cultural shift. Learn how to build an AI-ready organization through human-centric design.",
     "category": "Leadership",
     "date": "2026-07-20",
-    "image": "/images/blog/building-ai-ready-organizations-through-cultural-shift.jpg",
+    "image": "/images/blog/building-ai-ready-organizations-through-cultural-shift.webp",
     "url": "/blog/building-ai-ready-organizations-through-cultural-shift.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/building-ai-ready-organizations-through-cultural-shift-card.webp"
   },
   {
     "slug": "industrial-ot-asset-management-cybersecurity-strategy",
-    "title": "Securing Industrial Operations Through Better Visibility",
+    "title": "OT Visibility for Industrial Security",
     "excerpt": "Achieving industrial cybersecurity requires moving beyond firewalls to total visibility. Leaders must prioritize a proactive asset management strategy to be secure.",
     "category": "Technology",
     "date": "2026-07-18",
-    "image": "/images/blog/industrial-ot-asset-management-cybersecurity-strategy.jpg",
+    "image": "/images/blog/industrial-ot-asset-management-cybersecurity-strategy.webp",
     "url": "/blog/industrial-ot-asset-management-cybersecurity-strategy.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/industrial-ot-asset-management-cybersecurity-strategy-card.webp"
   },
   {
     "slug": "addressing-ai-fatigue-in-modern-workplace",
-    "title": "Addressing AI Fatigue in the Modern Workplace",
+    "title": "Addressing AI Fatigue at Work",
     "excerpt": "AI fatigue occurs when organizational AI adoption outpaces human capacity. Learn how leaders can shift from task-based management to sustainable workflow design.",
     "category": "Leadership",
     "date": "2026-07-16",
-    "image": "/images/blog/addressing-ai-fatigue-in-modern-workplace.jpg",
+    "image": "/images/blog/addressing-ai-fatigue-in-modern-workplace.webp",
     "url": "/blog/addressing-ai-fatigue-in-modern-workplace.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/addressing-ai-fatigue-in-modern-workplace-card.webp"
   },
   {
     "slug": "modern-leadership-strategy-outcomes-over-tasks",
-    "title": "Modern Leadership: Why Outcomes Matter More Than Tasks",
+    "title": "Lead With Outcomes, Not Tasks",
     "excerpt": "Modern leadership is about synthesizing data and inspiring teams toward outcomes, not managing tasks. Learn to build more effective, adaptable organizations.",
     "category": "Leadership",
     "date": "2026-07-14",
-    "image": "/images/blog/modern-leadership-strategy-outcomes-over-tasks.jpg",
+    "image": "/images/blog/modern-leadership-strategy-outcomes-over-tasks.webp",
     "url": "/blog/modern-leadership-strategy-outcomes-over-tasks.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/modern-leadership-strategy-outcomes-over-tasks-card.webp"
   },
   {
     "slug": "adaptive-hr-intelligence-organizational-strategy",
-    "title": "Implementing an Adaptive HR Intelligence Strategy",
+    "title": "Adaptive HR Intelligence Strategy",
     "excerpt": "Adaptive HR Intelligence integrates human strategy and technology to enable real-time decision-making and agility, turning HR into a key driver of business value.",
     "category": "Leadership",
     "date": "2026-07-12",
-    "image": "/images/blog/adaptive-hr-intelligence-organizational-strategy.jpg",
+    "image": "/images/blog/adaptive-hr-intelligence-organizational-strategy.webp",
     "url": "/blog/adaptive-hr-intelligence-organizational-strategy.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/adaptive-hr-intelligence-organizational-strategy-card.webp"
   },
   {
     "slug": "rethinking-agility-speed-without-strategy-is-a-failure",
-    "title": "Organizational Agility: Why Speed Without Strategy Is a Failure",
+    "title": "Agility Fails Without Strategy",
     "excerpt": "Learn why speed alone does not create organizational agility—and how leaders can align structure, strategy, and decision-making with changing market conditions.",
     "category": "Leadership",
     "date": "2026-07-10",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/rethinking-agility-speed-without-strategy-is-a-failure.jpg",
+    "image": "/images/blog/rethinking-agility-speed-without-strategy-is-a-failure.webp",
     "url": "/blog/rethinking-agility-speed-without-strategy-is-a-failure.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/rethinking-agility-speed-without-strategy-is-a-failure-card.webp"
   },
   {
     "slug": "the-ai-leadership-trap-why-technology-needs-human-oversight",
-    "title": "The AI Leadership Trap: Why Technology Needs Human Oversight",
+    "title": "AI Needs Human Oversight",
     "excerpt": "AI multiplies whatever you already have—including chaos. Learn why human oversight, process design, and trenches leadership matter more than buying another tool.",
     "category": "Leadership",
     "date": "2026-07-08",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/the-ai-leadership-trap-why-technology-needs-human-oversight.jpg",
+    "image": "/images/blog/the-ai-leadership-trap-why-technology-needs-human-oversight.webp",
     "url": "/blog/the-ai-leadership-trap-why-technology-needs-human-oversight.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/the-ai-leadership-trap-why-technology-needs-human-oversight-card.webp"
   },
   {
     "slug": "championship-level-performance-administrative-rigor",
-    "title": "Championship-Level Performance: Why Administrative Rigor Matters More Than Talent",
+    "title": "Admin Rigor Beats Raw Talent",
     "excerpt": "Talent alone does not win championships—or markets. Discover how clear roles, data-driven metrics, and universal accountability create repeatable high performance.",
     "category": "Leadership",
     "date": "2026-07-06",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/championship-level-performance-administrative-rigor.jpg",
+    "image": "/images/blog/championship-level-performance-administrative-rigor.webp",
     "url": "/blog/championship-level-performance-administrative-rigor.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/championship-level-performance-administrative-rigor-card.webp"
   },
   {
     "slug": "zero-trust-mindset-leadership-habit",
-    "title": "Beyond the Wall: Why Zero Trust is a Leadership Habit, Not a Tech Stack",
+    "title": "Zero Trust as a Leadership Habit",
     "excerpt": "Zero trust is not a firewall purchase—it is a leadership habit of continuous verification. Learn how to build security culture beyond the castle-and-moat mindset.",
     "category": "Technology",
     "date": "2026-07-04",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/zero-trust-mindset-leadership-habit.jpg",
+    "image": "/images/blog/zero-trust-mindset-leadership-habit.webp",
     "url": "/blog/zero-trust-mindset-leadership-habit.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/zero-trust-mindset-leadership-habit-card.webp"
   },
   {
     "slug": "moving-beyond-the-loyalty-trap-performance-first-management",
-    "title": "Moving Beyond the Loyalty Trap: Why High-Impact Leadership Demands Performance-First Management",
+    "title": "Performance-First Leadership",
     "excerpt": "Managing for comfort feels safe but stalls growth. Learn how performance-first leadership aligns talent, feedback, and strategy for long-term results.",
     "category": "Leadership",
     "date": "2026-07-02",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/moving-beyond-the-loyalty-trap-performance-first-management.jpg",
+    "image": "/images/blog/moving-beyond-the-loyalty-trap-performance-first-management.webp",
     "url": "/blog/moving-beyond-the-loyalty-trap-performance-first-management.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/moving-beyond-the-loyalty-trap-performance-first-management-card.webp"
   },
   {
     "slug": "how-to-detect-and-correct-cultural-drift",
-    "title": "The Silent Killer: How to Detect and Correct Cultural Drift",
+    "title": "How to Detect Cultural Drift",
     "excerpt": "Culture erodes slowly—not overnight. Learn the warning signs of cultural drift, how to audit values before crisis hits, and why leaders must act as the organizational compass.",
     "category": "Leadership",
     "date": "2026-06-30",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/how-to-detect-and-correct-cultural-drift.jpg",
+    "image": "/images/blog/how-to-detect-and-correct-cultural-drift.webp",
     "url": "/blog/how-to-detect-and-correct-cultural-drift.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/how-to-detect-and-correct-cultural-drift-card.webp"
   },
   {
     "slug": "purpose-driven-leadership-competitive-advantage",
-    "title": "Beyond the Spreadsheet: Why Purpose-Driven Leadership is Your True Competitive Advantage",
+    "title": "Purpose-Driven Leadership Advantage",
     "excerpt": "Purpose is not a soft skill—it is a growth engine. Learn how servant leadership, mission alignment, and internal culture building create lasting innovation and retention.",
     "category": "Leadership",
     "date": "2026-06-28",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/purpose-driven-leadership-competitive-advantage.jpg",
+    "image": "/images/blog/purpose-driven-leadership-competitive-advantage.webp",
     "url": "/blog/purpose-driven-leadership-competitive-advantage.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/purpose-driven-leadership-competitive-advantage-card.webp"
   },
   {
     "slug": "ai-organizational-redesign-strategy",
-    "title": "The AI Trap: Why Organizational Redesign Must Precede Automation",
+    "title": "Redesign the Org Before AI",
     "excerpt": "You cannot automate a broken process. Learn why AI transformation starts with workflow redesign, decision rights, and strategy—not another enterprise license.",
     "category": "Business",
     "date": "2026-06-26",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/ai-organizational-redesign-strategy.jpg",
+    "image": "/images/blog/ai-organizational-redesign-strategy.webp",
     "url": "/blog/ai-organizational-redesign-strategy.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/ai-organizational-redesign-strategy-card.webp"
   },
   {
     "slug": "the-evolution-of-the-manager-in-the-ai-era",
-    "title": "The Evolution of the Manager: Why Middle Management is the AI Era's Secret Weapon",
+    "title": "Middle Managers in the AI Era",
     "excerpt": "Middle managers are not obsolete—they are evolving into architects of human-AI collaboration. Learn why this layer is critical for AI adoption and execution.",
     "category": "Leadership",
     "date": "2026-06-24",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/the-evolution-of-the-manager-in-the-ai-era.jpg",
+    "image": "/images/blog/the-evolution-of-the-manager-in-the-ai-era.webp",
     "url": "/blog/the-evolution-of-the-manager-in-the-ai-era.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/the-evolution-of-the-manager-in-the-ai-era-card.webp"
   },
   {
     "slug": "ai-paradox-why-legacy-leadership-sabotages-technology",
-    "title": "The AI Paradox: Why Your Legacy Structure is Sabotaging Your Tech Investment",
+    "title": "Legacy Structure Sabotages AI",
     "excerpt": "AI capability is racing ahead of organizational capacity. Learn why legacy management structures sabotage tech ROI and how to build an AI-native organization.",
     "category": "Leadership",
     "date": "2026-06-23",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/ai-paradox-why-legacy-leadership-sabotages-technology.jpg",
+    "image": "/images/blog/ai-paradox-why-legacy-leadership-sabotages-technology.webp",
     "url": "/blog/ai-paradox-why-legacy-leadership-sabotages-technology.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/ai-paradox-why-legacy-leadership-sabotages-technology-card.webp"
   },
   {
     "slug": "the-silent-architect-leadership-execution",
-    "title": "The Silent Architect: Why Execution Outperforms Vision Every Time",
+    "title": "Why Execution Beats Vision",
     "excerpt": "Vision without execution architecture is a daydream. Learn how leaders translate strategy into daily workflows, ownership, and repeatable systems that deliver.",
     "category": "Leadership",
     "date": "2026-06-22",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/the-silent-architect-leadership-execution.jpg",
+    "image": "/images/blog/the-silent-architect-leadership-execution.webp",
     "url": "/blog/the-silent-architect-leadership-execution.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/the-silent-architect-leadership-execution-card.webp"
   },
   {
     "slug": "why-digital-transformation-fails-people-vs-tech",
-    "title": "Why Your Digital Transformation Is Failing: It’s Not the Tech, It’s the Team",
+    "title": "Transformation Fails Without People",
     "excerpt": "The most expensive software fails without adoption. Learn why digital transformation is a people and culture challenge—and how to close the efficiency-adoption gap.",
     "category": "Business",
     "date": "2026-06-21",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/why-digital-transformation-fails-people-vs-tech.jpg",
+    "image": "/images/blog/why-digital-transformation-fails-people-vs-tech.webp",
     "url": "/blog/why-digital-transformation-fails-people-vs-tech.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-digital-transformation-fails-people-vs-tech-card.webp"
   },
   {
     "slug": "stop-chasing-ai-hype-and-start-fixing-your-data",
-    "title": "Stop Chasing AI Hype and Start Fixing Your Data",
+    "title": "Stop Chasing AI. Fix Your Data",
     "excerpt": "AI ROI stalls when data is fragmented and untrusted. Learn why fixing governance, plumbing, and workforce alignment beats chasing the next shiny model.",
     "category": "Business",
     "date": "2026-06-20",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/stop-chasing-ai-hype-and-start-fixing-your-data.jpg",
+    "image": "/images/blog/stop-chasing-ai-hype-and-start-fixing-your-data.webp",
     "url": "/blog/stop-chasing-ai-hype-and-start-fixing-your-data.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/stop-chasing-ai-hype-and-start-fixing-your-data-card.webp"
   },
   {
     "slug": "why-technology-alone-wont-save-your-business",
-    "title": "Why Technology Alone Won’t Save Your Business",
+    "title": "Technology Alone Won't Save You",
     "excerpt": "AI sprawl without culture and talent strategy creates expensive overhead. Learn why collaboration, experimentation, and human growth must lead tool adoption.",
     "category": "Leadership",
     "date": "2026-06-19",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/why-technology-alone-wont-save-your-business.jpg",
+    "image": "/images/blog/why-technology-alone-wont-save-your-business.webp",
     "url": "/blog/why-technology-alone-wont-save-your-business.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-technology-alone-wont-save-your-business-card.webp"
   },
   {
     "slug": "the-end-of-the-accidental-manager",
-    "title": "The End of the Accidental Manager: Why Your Best Performer Shouldn't Always Be Your Next Leader",
+    "title": "Don't Promote Accidental Managers",
     "excerpt": "Promoting top performers without leadership training creates accidental managers who sink teams. Learn how to build leaders by design—not default promotion.",
     "category": "Leadership",
     "date": "2025-05-22",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/the-end-of-the-accidental-manager.jpg",
+    "image": "/images/blog/the-end-of-the-accidental-manager.webp",
     "url": "/blog/the-end-of-the-accidental-manager.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/the-end-of-the-accidental-manager-card.webp"
   },
   {
     "slug": "the-hidden-cost-of-flattening-organizational-structures",
-    "title": "The Hidden Cost of the Flattening Craze: Why Middle Management Matters",
+    "title": "Why Middle Management Still Matters",
     "excerpt": "Flattening org charts can destroy psychological safety and execution handoffs. Learn why middle management is connective tissue—not bureaucratic bloat.",
     "category": "Leadership",
     "date": "2025-05-22",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/the-hidden-cost-of-flattening-organizational-structures.jpg",
+    "image": "/images/blog/the-hidden-cost-of-flattening-organizational-structures.webp",
     "url": "/blog/the-hidden-cost-of-flattening-organizational-structures.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/the-hidden-cost-of-flattening-organizational-structures-card.webp"
   },
   {
     "slug": "why-your-tech-investments-are-failing-and-how-to-fix-it",
-    "title": "Why Your Tech Investments Are Failing (And How to Fix It)",
+    "title": "Why Tech Investments Fail",
     "excerpt": "AI and automation fail when layered on broken workflows. Learn how workflow audits, leadership alignment, and human capital unlock real tech ROI.",
     "category": "Business",
     "date": "2025-05-14",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/why-your-tech-investments-are-failing-and-how-to-fix-it.jpg",
+    "image": "/images/blog/why-your-tech-investments-are-failing-and-how-to-fix-it.webp",
     "url": "/blog/why-your-tech-investments-are-failing-and-how-to-fix-it.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/why-your-tech-investments-are-failing-and-how-to-fix-it-card.webp"
   },
   {
     "slug": "ai-strategic-imperative-business-transformation",
-    "title": "Why AI is No Longer an IT Project: The Path to Strategic Transformation",
+    "title": "AI Is a Business Strategy, Not IT",
     "excerpt": "AI must sit in your business plan—not your IT backlog. Learn why strategic integration, manager empowerment, and outcome ownership drive transformation.",
     "category": "Business",
     "date": "2026-06-15",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/ai-strategic-imperative-business-transformation.jpg",
+    "image": "/images/blog/ai-strategic-imperative-business-transformation.webp",
     "url": "/blog/ai-strategic-imperative-business-transformation.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/ai-strategic-imperative-business-transformation-card.webp"
   },
   {
     "slug": "stop-outsourcing-your-culture-build-from-within",
-    "title": "Stop Outsourcing Your Culture: Build from Within",
+    "title": "Stop Outsourcing Your Culture",
     "excerpt": "You cannot buy great culture from consultants or perk vendors. Learn how honest conversations, internal vision, and empowered teams build lasting transformation.",
     "category": "Leadership",
     "date": "2026-06-14",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/stop-outsourcing-your-culture-build-from-within.jpg",
+    "image": "/images/blog/stop-outsourcing-your-culture-build-from-within.webp",
     "url": "/blog/stop-outsourcing-your-culture-build-from-within.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/stop-outsourcing-your-culture-build-from-within-card.webp"
   },
   {
     "slug": "beyond-the-algorithm-why-leadership-vision-beats-ai-efficiency",
-    "title": "Beyond the Algorithm: Why Leadership Vision Beats AI Efficiency",
+    "title": "Leadership Vision Beats AI Efficiency",
     "excerpt": "AI optimizes known problems; leaders find what is missing. Learn why vision, system design, and human judgment beat algorithmic efficiency alone.",
     "category": "Leadership",
     "date": "2026-06-14",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/beyond-the-algorithm-why-leadership-vision-beats-ai-efficiency.jpg",
+    "image": "/images/blog/beyond-the-algorithm-why-leadership-vision-beats-ai-efficiency.webp",
     "url": "/blog/beyond-the-algorithm-why-leadership-vision-beats-ai-efficiency.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/beyond-the-algorithm-why-leadership-vision-beats-ai-efficiency-card.webp"
   },
   {
     "slug": "Best-CRM-Small-Business-2026",
-    "title": "The Ultimate Guide: Finding the Best CRM for Your Small Business in 2026",
+    "title": "Best CRM for Small Business 2026",
     "excerpt": "The best CRM for small business centralizes leads, pipeline, and follow-ups—so growth does not collapse into spreadsheets and buried inboxes. Features, checklist, and how to choose.",
     "category": "Business",
     "date": "2025-09-29",
     "dateModified": "2026-07-10",
-    "image": "/images/blog/Finding the Best CRM for Your Small Business.webp",
+    "image": "/images/blog/Best-CRM-Small-Business-2026.webp",
     "url": "/blog/Best-CRM-Small-Business-2026.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/Best-CRM-Small-Business-2026-card.webp"
   },
   {
     "slug": "5-Signs-You-Need-a-CRM-Now",
-    "title": "5 Signs You Need a CRM Now - Is Your Small Business Ready to Scale?",
+    "title": "5 Signs You Need a CRM Now",
     "excerpt": "As a small business owner, \"growth\" is the magic word. But with growth comes complexity. The methods that worked when you had ten clients start to fail when you have a hundred.",
     "category": "Marketing",
     "date": "2025-09-05",
-    "image": "/images/blog/5 Signs You Need a CRM Now.webp",
+    "image": "/images/blog/5-Signs-You-Need-a-CRM-Now.webp",
     "url": "/blog/5-Signs-You-Need-a-CRM-Now.html",
     "author": "Alec Asgari",
-    "author_image": "/assets/images/team/alec-asgari-author.webp"
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/5-Signs-You-Need-a-CRM-Now-card.webp"
   }
 ]

@@ -2021,10 +2021,22 @@ main {
   padding: 2rem 1rem;
 }
 
-#projects-grid {
+#projects-grid,
+#blog-grid,
+#home-latest-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
+}
+
+.blog-related-extra {
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.blog-related-extra a {
+  color: var(--accent);
 }
 
 .project-card-link {

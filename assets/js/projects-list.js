@@ -85,12 +85,17 @@
     );
   }
 
-  function renderCard(p) {
+  function renderCard(p, index) {
+    var eager = index < 2;
     return (
       '<article class="project-card-item">' +
       '<a href="' + esc(p.url) + '" class="project-card-link">' +
       '<div class="project-card">' +
-      '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" class="project-card-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
+      '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" class="project-card-thumb" width="720" height="405" loading="' +
+      (eager ? 'eager' : 'lazy') +
+      '" decoding="async"' +
+      (eager ? ' fetchpriority="high"' : '') +
+      ' onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\'">' +
       '<div class="project-card-body">' +
       '<span class="project-tag">' + esc(p.category) + '</span>' +
       '<h3>' + esc(p.title) + '</h3>' +
@@ -127,7 +132,9 @@
       grid.innerHTML =
         '<p class="projects-empty">No projects match your filters. Try another category or search term.</p>';
     } else {
-      grid.innerHTML = filtered.map(renderCard).join('');
+      grid.innerHTML = filtered.map(function (project, index) {
+        return renderCard(project, index);
+      }).join('');
     }
 
     grid.classList.add('is-visible');
