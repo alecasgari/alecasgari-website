@@ -1,5 +1,17 @@
 [
   {
+    "slug": "n8n-telegram-bot-voice-to-powerpoint",
+    "title": "n8n Telegram Bot That Creates Presentations",
+    "excerpt": "Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.",
+    "category": "Automation",
+    "date": "2026-09-18",
+    "image": "/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp",
+    "url": "/blog/n8n-telegram-bot-voice-to-powerpoint.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/n8n-telegram-bot-voice-to-powerpoint-card.webp"
+  },
+  {
     "slug": "strategic-ai-slowdown-sustainable-innovation-leadership",
     "title": "Strategic AI Slowdown for Leaders",
     "excerpt": "Explore why leaders must embrace a strategic AI slowdown to balance velocity with safety, data governance, and sustainable organizational impact.",

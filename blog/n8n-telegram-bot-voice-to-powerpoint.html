@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>n8n Telegram Bot That Creates Presentations — Alec Asgari</title>
+  <meta name="description" content="Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://alecasgari.com/blog/n8n-telegram-bot-voice-to-powerpoint.html">
+  <link rel="preload" as="image" href="/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","headline":"n8n Telegram Bot That Creates Presentations","description":"Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.","url":"https://alecasgari.com/blog/n8n-telegram-bot-voice-to-powerpoint.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://alecasgari.com/blog/n8n-telegram-bot-voice-to-powerpoint.html"},"image":{"@type":"ImageObject","url":"https://alecasgari.com/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp","width":1200,"height":630},"datePublished":"2026-09-18T09:00:00+04:00","dateModified":"2026-09-18T10:00:00+04:00","author":{"@type":"Person","@id":"https://alecasgari.com/about.html#person","name":"Alec Asgari","url":"https://alecasgari.com/about.html","sameAs":["https://www.linkedin.com/in/alecasgari/","https://github.com/alecasgari"]},"publisher":{"@type":"Person","name":"Alec Asgari","url":"https://alecasgari.com/about.html","image":{"@type":"ImageObject","url":"https://alecasgari.com/assets/images/team/alec-asgari-author.webp"}},"articleSection":"Automation","keywords":"n8n telegram bot, telegram bot that creates presentations, voice to powerpoint, n8n workflow, telegram voice transcription"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://alecasgari.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://alecasgari.com/blog.html"},{"@type":"ListItem","position":3,"name":"n8n Telegram Bot That Creates Presentations","item":"https://alecasgari.com/blog/n8n-telegram-bot-voice-to-powerpoint.html"}]}]}</script>
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="n8n Telegram Bot That Creates Presentations">
+  <meta property="og:description" content="Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.">
+  <meta property="og:image" content="https://alecasgari.com/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp">
+  <meta property="og:url" content="https://alecasgari.com/blog/n8n-telegram-bot-voice-to-powerpoint.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="n8n Telegram Bot That Creates Presentations">
+  <meta name="twitter:description" content="Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.">
+  <meta name="twitter:image" content="https://alecasgari.com/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp">
+  <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
+  <link rel="stylesheet" href="/assets/css/site.css?v=9">
+  <link rel="stylesheet" href="/assets/css/blog-detail.css?v=3">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="site-logo">
+        <img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="140" height="36">
+      </a>
+      <nav>
+        <ul class="site-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About Me</a></li>
+          <li><a href="/case-studies.html">Case Studies</a></li>
+          <li><a href="/projects.html">Projects</a></li>
+          <li><a href="/blog.html" class="active">Blog</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+    <div class="mobile-nav__backdrop" data-close-nav tabindex="-1" aria-hidden="true"></div>
+    <div class="mobile-nav__panel">
+      <div class="mobile-nav__intro">
+        <p class="mobile-nav__name">Alec Asgari</p>
+        <p class="mobile-nav__role">Systems · Automation · AI</p>
+      </div>
+      <div class="mobile-nav__quick">
+        <a href="/" class="mobile-nav__pill mobile-nav__pill--full"><iconify-icon icon="lucide:home"></iconify-icon> Home</a>
+        <a href="/about.html" class="mobile-nav__pill"><iconify-icon icon="lucide:user"></iconify-icon> About</a>
+        <a href="/blog.html" class="mobile-nav__pill"><iconify-icon icon="lucide:newspaper"></iconify-icon> Blog</a>
+        <a href="/projects.html" class="mobile-nav__pill"><iconify-icon icon="lucide:folder-kanban"></iconify-icon> Projects</a>
+        <a href="/case-studies.html" class="mobile-nav__pill"><iconify-icon icon="lucide:briefcase"></iconify-icon> Case Studies</a>
+      </div>
+      <p class="mobile-nav__label">More</p>
+      <div class="mobile-nav__grid">
+        <a href="/contact.html"><iconify-icon icon="lucide:mail"></iconify-icon> Contact</a>
+        <a href="https://calculator.alecasgari.com/" target="_blank" rel="noopener"><iconify-icon icon="lucide:calculator"></iconify-icon> Calculator</a>
+        <a href="/privacy-policy.html"><iconify-icon icon="lucide:shield"></iconify-icon> Privacy</a>
+      </div>
+      <div class="mobile-nav__contact">
+        <a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> hello@alecasgari.com</a>
+      </div>
+      <div class="mobile-nav__social" aria-label="Social media">
+        <a class="mobile-nav__social-link" href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener" aria-label="LinkedIn"><iconify-icon icon="lucide:linkedin"></iconify-icon></a>
+        <a class="mobile-nav__social-link" href="https://github.com/alecasgari" target="_blank" rel="noopener" aria-label="GitHub"><iconify-icon icon="lucide:github"></iconify-icon></a>
+        <a class="mobile-nav__social-link" href="mailto:hello@alecasgari.com" aria-label="Email"><iconify-icon icon="lucide:mail"></iconify-icon></a>
+      </div>
+      <div class="mobile-nav__actions">
+        <a href="/contact.html" class="btn btn-primary"><iconify-icon icon="lucide:send"></iconify-icon> Get in Touch</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="blog-detail-hero">
+      <picture class="blog-detail-hero-media">
+        <img src="/images/blog/n8n-telegram-bot-voice-to-powerpoint.webp" alt="n8n Telegram Bot That Creates Presentations" width="1600" height="900" fetchpriority="high" decoding="async">
+      </picture>
+      <div class="blog-detail-hero-overlay"></div>
+      <div class="blog-detail-hero-mesh" aria-hidden="true"></div>
+      <div class="container">
+        <p class="eyebrow hero-in">
+          <iconify-icon icon="lucide:newspaper"></iconify-icon>
+          <a href="/blog.html">Blog</a> / Automation
+        </p>
+        <div class="blog-detail-badges hero-in hero-in-d1">
+          <span class="blog-badge blog-badge--category">Automation</span>
+        </div>
+        <h1 class="hero-in hero-in-d1">n8n Telegram Bot That Creates Presentations</h1>
+        <p class="blog-detail-excerpt hero-in hero-in-d2">Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.</p>
+        <div class="blog-detail-meta-row hero-in hero-in-d3">
+          <div class="blog-detail-meta-item">
+            <img src="/assets/images/team/alec-asgari-author.webp" alt="Alec Asgari" width="36" height="36" decoding="async">
+            <span>Alec Asgari</span>
+          </div>
+          <div class="blog-detail-meta-item">
+            <iconify-icon icon="lucide:calendar"></iconify-icon>
+            <time datetime="2026-09-18T09:00:00+04:00">September 18, 2026</time>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container blog-detail-layout">
+        <article class="blog-detail-content reveal">
+          <div class="blog-prose"><p>A Telegram bot that creates presentations from a voice note is a real n8n pattern — not a demo GIF. I shipped one for a medical practice: voice in, structured slides out. This post is the architecture, the failure modes, and the line between a custom bot and a packaged stack.</p>
+<p>The live build is the <a href="/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html">n8n Telegram voice-to-PowerPoint project</a>. If you actually need email, CRM and files on a server you own, that is a different product — the <a href="https://calculator.alecasgari.com/" target="_blank" rel="noopener">SaaS cost calculator</a>.</p>
+<h2>What the workflow actually does</h2>
+<p>A user sends a voice message in Telegram, in any language. n8n catches it, OpenAI transcribes it, an agent extracts fields (patient details, clinical notes, whatever the template expects), a Google Slides master is copied and filled, then PowerPoint and PDF links come back in the same chat.</p>
+<p>Images are a second channel. Case photos arrive as separate Telegram messages, land in Google Drive, and get tracked in Sheets so the deck and the files stay aligned. That is the part most “voice to slides” tutorials skip.</p>
+<h2>Architecture, in five hops</h2>
+<ol>
+<li><strong>Telegram trigger</strong> — voice, text captions, and photo messages. The workflow has to wait and correlate, not fire a half-built deck on the first packet.</li>
+<li><strong>Transcription</strong> — OpenAI speech-to-text. Language is not assumed. Bad audio still produces confident nonsense; a human has to be able to reject the draft.</li>
+<li><strong>Structured extraction</strong> — an AI node maps free speech onto a schema. If a field is missing, the bot should ask, not invent.</li>
+<li><strong>Slide assembly</strong> — copy a Google Slides template, write fields, attach Drive images, export PPTX and PDF.</li>
+<li><strong>Delivery</strong> — send download links back in Telegram. Do not email a 40 MB attachment through a mailbox you do not control.</li>
+</ol>
+<p>n8n is the orchestrator. Telegram is the UI. Google is the document store. OpenAI is the speech and extraction layer. None of those are optional in this design; swapping one means redesigning the wait states.</p>
+<h2>Limits you should budget for</h2>
+<ul>
+<li><strong>Multi-message state.</strong> A case is rarely one voice bubble. You need session memory (Sheets, a data store, or n8n static data with a TTL) or you will mix Patient A’s photos into Patient B’s deck.</li>
+<li><strong>API quotas and cost.</strong> Transcription plus extraction on every note is not free. A clinic that dictates twenty cases a day will feel Whisper and GPT bills before they feel n8n hosting.</li>
+<li><strong>Template brittleness.</strong> Google Slides placeholders break when someone “improves” the master. Version the template; do not let staff edit the live master.</li>
+<li><strong>PHI and retention.</strong> A medical voice note is health data. Telegram, Drive, and OpenAI each have a different retention story. If you cannot explain where the audio lives after the job, do not build this for a clinic.</li>
+<li><strong>Telegram is a terrible CMS.</strong> Long edits, versioning, and “make slide 4 landscape” do not belong in chat. The bot drafts; a human opens the PPTX.</li>
+</ul>
+<h2>When you should not build this bot</h2>
+<p>Do not start here if the real pain is per-seat Google Workspace, HubSpot and Zapier. A custom Telegram bot will not cancel those invoices. Run the <a href="https://calculator.alecasgari.com/" target="_blank" rel="noopener">SaaS cost calculator</a>, then decide whether you want the Mailcow / SuiteCRM / Mautic / Nextcloud / n8n package or a scoped workflow.</p>
+<p>Do not start here if the team still pastes cases into WhatsApp and a shared drive with no naming convention. Automation copies chaos faster.</p>
+<p>Do not start here if you need a public “AI presentation maker” SaaS. This pattern is a private bot with a known template and a known user list.</p>
+<h2>What I would scope in a new build</h2>
+<p>Keep the five hops. Replace Google Slides with a branded PPTX library only if Drive is politically impossible. Add an explicit “looks wrong — redo” callback in Telegram so the transcription error does not become a patient-facing slide. Log every run with the Telegram user id, template version, and token cost.</p>
+<p>If you want this class of bot, <a href="/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html">see the shipped project</a> and <a href="/contact.html">get in touch</a>. If you want the whole stack instead, start with the calculator.</p>
+<h2>Frequently asked questions</h2>
+<h3>Can a Telegram bot create PowerPoint presentations from voice notes?</h3>
+<p>Yes. n8n transcribes the voice message, extracts fields, fills a Slides template, and returns PPTX and PDF links in Telegram. It is a workflow, not a magic button.</p>
+<h3>Is this the same as the one-time self-hosted stack?</h3>
+<p>No. The calculator is Mailcow, SuiteCRM, Mautic, Nextcloud and n8n on your server. This bot is custom n8n for one job. You can buy either, or both.</p>
+<h3>How long does a build like this take?</h3>
+<p>The shipped version was about two weeks with a known template and a single Telegram bot. Ambiguous fields, messy image intake, or a compliance review will stretch that.</p></div>
+          <div class="blog-tags"><p class="blog-tags-label">Tags</p><span class="blog-tag">n8n telegram bot</span><span class="blog-tag">telegram bot that creates presentations</span><span class="blog-tag">voice to powerpoint</span><span class="blog-tag">n8n workflow</span><span class="blog-tag">telegram voice transcription</span></div>
+          <div class="blog-author-box">
+            <img src="/assets/images/team/alec-asgari-author.webp" alt="Alec Asgari" width="56" height="56" loading="lazy" decoding="async">
+            <div>
+              <p class="blog-author-name">Alec Asgari</p>
+              <p class="role">Systems &amp; Automation Specialist</p>
+              <p>Alec Asgari is a systems and automation specialist with experience in CRM implementation, workflow automation, and cross-functional process design. He writes about organizational strategy, technology, and operational execution.</p>
+            </div>
+          </div>
+        </article>
+
+        <aside class="sidebar-panel blog-sidebar card-lift reveal" aria-label="Article information">
+          <p class="blog-sidebar-title"><iconify-icon icon="lucide:info"></iconify-icon> Article Info</p>
+          <ul>
+            <li><iconify-icon icon="lucide:folder"></iconify-icon><div><strong>Category</strong>Automation</div></li>
+            <li><iconify-icon icon="lucide:calendar"></iconify-icon><div><strong>Published</strong><time datetime="2026-09-18T09:00:00+04:00">September 18, 2026</time></div></li>
+            <li><iconify-icon icon="lucide:user"></iconify-icon><div><strong>Author</strong>Alec Asgari</div></li>
+          </ul>
+          <a href="/blog.html" class="btn btn-outline btn-block" style="margin-top:1rem">
+            <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+            All Articles
+          </a>
+                    <a href="https://calculator.alecasgari.com/" class="btn btn-primary btn-block" style="margin-top:0.5rem">
+            <iconify-icon icon="lucide:calculator"></iconify-icon>
+            SaaS Cost Calculator
+          </a>
+          <a href="/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html" class="btn btn-outline btn-block" style="margin-top:0.5rem">
+            <iconify-icon icon="lucide:bot"></iconify-icon>
+            See the live bot
+          </a>
+          <a href="/contact.html" class="btn btn-outline btn-block" style="margin-top:0.5rem">
+            <iconify-icon icon="lucide:mail"></iconify-icon>
+            Get in Touch
+          </a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section funnel-cta-section" data-funnel-cta><div class="container reveal"><p class="eyebrow"><iconify-icon icon="lucide:calculator"></iconify-icon> Next step</p><h2 class="section-title">Own the stack, or scope a custom n8n bot</h2><p class="section-lead">This article is the architecture. The commercial paths are the shipped Telegram bot, or a one-time Mailcow, SuiteCRM, Mautic, Nextcloud and n8n install.</p><p class="blog-related-extra"><a href="https://calculator.alecasgari.com/">SaaS cost calculator</a> · <a href="/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html">n8n Telegram voice-to-PowerPoint</a> · <a href="/blog/Best-CRM-Small-Business-2026.html">Best CRM for small business</a></p></div></section><section class="section section-alt"><div class="container reveal"><p class="eyebrow"><iconify-icon icon="lucide:book-open"></iconify-icon> More Articles</p><h2 class="section-title">Continue Reading</h2><div class="blog-related-grid"><a href="/blog/strategic-ai-slowdown-sustainable-innovation-leadership.html" class="project-related-card reveal"><div class="project-related-img"><img src="/images/blog/strategic-ai-slowdown-sustainable-innovation-leadership.webp" alt="Strategic AI Slowdown for Leaders" loading="lazy" decoding="async"></div><div class="project-related-body"><div class="project-related-labels"><span class="project-related-label">Technology</span></div><h3>Strategic AI Slowdown for Leaders</h3><p>Explore why leaders must embrace a strategic AI slowdown to balance velocity with safety, data governance, and sustainable organizational impact.</p></div></a><a href="/blog/securing-autonomous-ai-agents-in-enterprise-workflows.html" class="project-related-card reveal"><div class="project-related-img"><img src="/images/blog/securing-autonomous-ai-agents-in-enterprise-workflows.webp" alt="Securing Autonomous AI Agents" loading="lazy" decoding="async"></div><div class="project-related-body"><div class="project-related-labels"><span class="project-related-label">Technology</span></div><h3>Securing Autonomous AI Agents</h3><p>Discover how organizations can safely deploy autonomous AI agents by balancing operational speed with rigorous cybersecurity governance and workflow controls.</p></div></a><a href="/blog/navigating-ai-workforce-shift-junior-roles-upskilling.html" class="project-related-card reveal"><div class="project-related-img"><img src="/images/blog/navigating-ai-workforce-shift-junior-roles-upskilling.webp" alt="AI Workforce Shift and Upskilling" loading="lazy" decoding="async"></div><div class="project-related-body"><div class="project-related-labels"><span class="project-related-label">Technology</span></div><h3>AI Workforce Shift and Upskilling</h3><p>Explore how artificial intelligence is reshaping junior white-collar roles and discover practical strategies for workforce upskilling and workflow redesign.</p></div></a></div></div></section>
+
+    <section class="section section-alt section-tight">
+      <div class="container blog-detail-cta reveal">
+        <a href="/blog.html" class="btn btn-outline">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+          Back to Blog
+        </a>
+        <a href="/projects.html" class="btn btn-primary">
+          <iconify-icon icon="lucide:folder-kanban"></iconify-icon>
+          View Projects
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <a href="/" class="footer-logo"><img src="/assets/images/logos/logo-dark.svg" alt="Alec Asgari" width="120" height="32"></a>
+      <p class="footer-copy">© 2025–2026 Alec Asgari</p>
+      <ul class="footer-links">
+        <li><a href="/privacy-policy.html"><iconify-icon icon="lucide:shield"></iconify-icon> Privacy Policy</a></li>
+        <li><a href="https://www.linkedin.com/in/alecasgari/" target="_blank" rel="noopener"><iconify-icon icon="lucide:linkedin"></iconify-icon> LinkedIn</a></li>
+        <li><a href="https://github.com/alecasgari" target="_blank" rel="noopener"><iconify-icon icon="lucide:github"></iconify-icon> GitHub</a></li>
+        <li><a href="mailto:hello@alecasgari.com"><iconify-icon icon="lucide:mail"></iconify-icon> Email</a></li>
+      </ul>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="/assets/js/site-nav.js?v=9"></script>
+  <script src="/assets/js/site-reveal.js"></script>
+</body>
+</html>

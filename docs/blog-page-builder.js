@@ -475,6 +475,13 @@ function renderRelatedHtml(post, allPosts) {
     .join('');
 
   return (
+    `<section class="section funnel-cta-section" data-funnel-cta>` +
+    `<div class="container reveal">` +
+    `<p class="eyebrow"><iconify-icon icon="lucide:calculator"></iconify-icon> Next step</p>` +
+    `<h2 class="section-title">Own the stack, or scope a custom n8n bot</h2>` +
+    `<p class="section-lead">The commercial work is a one-time Mailcow, SuiteCRM, Mautic, Nextcloud and n8n install — or a scoped Telegram workflow.</p>` +
+    `<p class="blog-related-extra"><a href="https://calculator.alecasgari.com/">SaaS cost calculator</a> · <a href="/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html">n8n Telegram voice-to-PowerPoint</a> · <a href="/blog/Best-CRM-Small-Business-2026.html">Best CRM for small business</a></p>` +
+    `</div></section>` +
     `<section class="section section-alt">` +
     `<div class="container reveal">` +
     `<p class="eyebrow"><iconify-icon icon="lucide:book-open"></iconify-icon> More Articles</p>` +

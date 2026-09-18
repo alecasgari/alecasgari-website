@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alecasgari.com/sitemap-calculator.xml
