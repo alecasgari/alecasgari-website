@@ -9,6 +9,9 @@ DEPLOY_DIR="${DEPLOY_DIR:-/home/alecadmin/alecasgari-website}"
 REPO_URL="${REPO_URL:-https://github.com/alecasgari/alecasgari-website.git}"
 BRANCH="${BRANCH:-main}"
 STATIC_CONTAINER="${STATIC_CONTAINER:-alec-website-static}"
+# Canonical in-repo path (source of truth after git pull)
+CALCULATOR_SRC="${DEPLOY_DIR}/calculator"
+# Legacy Docker/NPM volume path — keep until container remounts to CALCULATOR_SRC
 CALCULATOR_DIR="${CALCULATOR_DIR:-/home/alecadmin/saas-calculator}"
 CALCULATOR_CONTAINER="${CALCULATOR_CONTAINER:-alec-calculator-static}"
 
@@ -46,21 +49,29 @@ else
   log "WARN: $STATIC_CONTAINER not running. Run server setup once (see README)."
 fi
 
-if [[ -d "$DEPLOY_DIR/saas-calculator" ]]; then
-  log "Syncing SaaS calculator to $CALCULATOR_DIR"
-  mkdir -p "$CALCULATOR_DIR" || log "WARN: could not create $CALCULATOR_DIR"
-  if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete "$DEPLOY_DIR/saas-calculator/" "$CALCULATOR_DIR/" || log "WARN: calculator rsync failed (check CALCULATOR_DIR mount)"
+if [[ -d "$CALCULATOR_SRC" ]]; then
+  if [[ "$CALCULATOR_DIR" == "$CALCULATOR_SRC" ]]; then
+    log "Calculator served in-place from $CALCULATOR_SRC"
   else
-    cp -a "$DEPLOY_DIR/saas-calculator/." "$CALCULATOR_DIR/" || log "WARN: calculator copy failed"
+    log "Syncing calculator → $CALCULATOR_DIR (legacy mount)"
+    log "Remount $CALCULATOR_CONTAINER to $CALCULATOR_SRC to drop this copy step"
+    mkdir -p "$CALCULATOR_DIR" || log "WARN: could not create $CALCULATOR_DIR"
+    if command -v rsync >/dev/null 2>&1; then
+      rsync -a --delete "$CALCULATOR_SRC/" "$CALCULATOR_DIR/" || log "WARN: calculator rsync failed"
+    else
+      cp -a "$CALCULATOR_SRC/." "$CALCULATOR_DIR/" || log "WARN: calculator copy failed"
+    fi
   fi
   if docker ps --format '{{.Names}}' | grep -qx "$CALCULATOR_CONTAINER"; then
     log "Calculator container $CALCULATOR_CONTAINER is running (files updated via mount)."
   else
-    log "WARN: $CALCULATOR_CONTAINER not running — verify NPM mount for calculator.alecasgari.com"
+    log "WARN: $CALCULATOR_CONTAINER not running — see deploy/nginx-calculator.conf"
   fi
+else
+  log "WARN: calculator folder missing at $CALCULATOR_SRC"
 fi
 
 log "Deploy finished."
-log "NPM should forward alecasgari.com → http://${STATIC_CONTAINER}:80"
+log "NPM: alecasgari.com → http://${STATIC_CONTAINER}:80"
+log "NPM: calculator.alecasgari.com → calculator folder root (see deploy/nginx-calculator.conf)"
 log "Commit: $(git rev-parse --short HEAD) — $(git log -1 --format=%s)"
