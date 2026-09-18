@@ -11,9 +11,9 @@ BRANCH="${BRANCH:-main}"
 STATIC_CONTAINER="${STATIC_CONTAINER:-alec-website-static}"
 # Canonical in-repo path (source of truth after git pull)
 CALCULATOR_SRC="${DEPLOY_DIR}/calculator"
-# Legacy Docker/NPM volume path — keep until container remounts to CALCULATOR_SRC
-CALCULATOR_DIR="${CALCULATOR_DIR:-/home/alecadmin/saas-calculator}"
-CALCULATOR_CONTAINER="${CALCULATOR_CONTAINER:-alec-calculator-static}"
+# Live container mounts this path (default = in-repo; no separate copy)
+CALCULATOR_DIR="${CALCULATOR_DIR:-$CALCULATOR_SRC}"
+CALCULATOR_CONTAINER="${CALCULATOR_CONTAINER:-calculator-web}"
 
 log() { echo "==> $*"; }
 
