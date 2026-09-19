@@ -14,7 +14,7 @@ const GITHUB = 'https://github.com/alecasgari';
 const FOOTER_COPY = '© 2025–2026 Alec Asgari';
 const ROBOTS_META =
   'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
-const CSS_SITE = '/assets/css/site.css?v=9';
+const CSS_SITE = '/assets/css/site.css?v=11';
 const CSS_BLOG = '/assets/css/blog-detail.css?v=3';
 
 function esc(s) {

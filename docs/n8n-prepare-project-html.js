@@ -134,7 +134,7 @@ function buildProjectHtml(data) {
   <meta name="description" content="${esc(excerpt)}">
   <link rel="canonical" href="${pageUrl}">
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
-  <link rel="stylesheet" href="/assets/css/site.css?v=4">
+  <link rel="stylesheet" href="/assets/css/site.css?v=11">
   <link rel="stylesheet" href="/assets/css/project-detail.css?v=2">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>

@@ -28,10 +28,12 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
   font-family: Inter, system-ui, -apple-system, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
@@ -558,6 +560,7 @@ body.nav-open {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .footer-logo img {
@@ -568,10 +571,24 @@ body.nav-open {
 
 .footer-links {
   display: flex;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
   list-style: none;
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .site-footer .inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-links {
+    width: 100%;
+  }
 }
 
 .footer-links a {
