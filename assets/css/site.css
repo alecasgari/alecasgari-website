@@ -29,6 +29,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
+  font-size: 15px;
 }
 
 body {
@@ -36,7 +37,7 @@ body {
   overflow-x: clip;
   font-family: Inter, system-ui, -apple-system, sans-serif;
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.55;
   color: var(--text);
   background: var(--bg);
   background-image:
@@ -353,7 +354,7 @@ body.nav-open {
   right: 0;
   bottom: 0;
   width: min(100%, 20.5rem);
-  padding: calc(var(--header-height) + 0.75rem) 1.25rem 1.5rem;
+  padding: 1.15rem 1.15rem 1rem;
   background: var(--nav-panel-bg);
   color: var(--nav-panel-fg);
   overflow-y: auto;
@@ -362,7 +363,7 @@ body.nav-open {
   box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.7rem;
 }
 
 .mobile-nav.is-open .mobile-nav__panel {
@@ -370,7 +371,7 @@ body.nav-open {
 }
 
 .mobile-nav__intro {
-  padding-bottom: 1rem;
+  padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -475,8 +476,8 @@ body.nav-open {
 .mobile-nav__contact {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.9rem 1rem;
+  gap: 0.45rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 12px;
   background: color-mix(in srgb, var(--bg) 85%, var(--text));
   border: 1px solid var(--border);
@@ -503,8 +504,11 @@ body.nav-open {
 }
 
 .mobile-nav__social {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   gap: 0.5rem;
 }
 
@@ -512,15 +516,21 @@ body.nav-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  min-height: 0;
   aspect-ratio: 1;
-  min-height: 2.75rem;
-  border-radius: 10px;
+  border-radius: 50%;
   color: var(--muted);
   background: color-mix(in srgb, var(--text) 4%, transparent);
   border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.mobile-nav__social-link--whatsapp {
+  color: #25d366;
 }
 
 .mobile-nav__social-link:hover {
@@ -532,7 +542,6 @@ body.nav-open {
 .mobile-nav__actions {
   display: grid;
   gap: 0.5rem;
-  margin-top: auto;
 }
 
 .mobile-nav__actions .btn {
@@ -611,6 +620,70 @@ body.nav-open {
   font-size: 0.88rem;
 }
 
+.site-float {
+  position: fixed;
+  left: max(0.9rem, env(safe-area-inset-left));
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
+  z-index: 990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.site-float__btn {
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s;
+}
+
+.site-float__btn svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+}
+
+.site-float__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.26);
+}
+
+.site-float__whatsapp {
+  background: #25d366;
+}
+
+.site-float__whatsapp:hover {
+  background: #1ebe5d;
+}
+
+.site-float__top {
+  display: none;
+  background: #0f172a;
+}
+
+.site-float__top.is-visible {
+  display: inline-flex;
+}
+
+body.nav-open .site-float {
+  visibility: hidden;
+}
+
+@media print {
+  .site-float {
+    display: none;
+  }
+}
+
 .legal-page {
   max-width: 48rem;
 }
@@ -657,7 +730,7 @@ main {
 
 .section-title {
   margin: 0 0 0.35rem;
-  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-size: clamp(1.45rem, 3.2vw, 1.95rem);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -742,9 +815,9 @@ main {
 
 .hero-cinematic h1 {
   margin: 0 0 1rem;
-  font-size: clamp(2rem, 5.5vw, 3.1rem);
+  font-size: clamp(1.7rem, 4.4vw, 2.55rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.03em;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
 }
@@ -752,8 +825,8 @@ main {
 .hero-cinematic .lead {
   margin: 0 0 1.75rem;
   color: rgba(255, 255, 255, 0.82);
-  font-size: 1.125rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .hero-actions {
@@ -790,7 +863,7 @@ main {
 
 .page-hero h1 {
   margin: 0 0 0.75rem;
-  font-size: clamp(1.85rem, 4vw, 2.6rem);
+  font-size: clamp(1.55rem, 3.4vw, 2.15rem);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -934,7 +1007,7 @@ main {
 
 .metric .value {
   display: block;
-  font-size: clamp(1.85rem, 4vw, 2.6rem);
+  font-size: clamp(1.55rem, 3.2vw, 2.1rem);
   font-weight: 800;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
@@ -1736,7 +1809,7 @@ main {
 
 .case-detail-hero h1 {
   margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: clamp(1.5rem, 3.4vw, 2.15rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   max-width: 48rem;

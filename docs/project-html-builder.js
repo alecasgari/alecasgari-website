@@ -182,7 +182,7 @@ function buildProjectHtml(data) {
   <link rel="canonical" href="${pageUrl}">
   <script type="application/ld+json">${jsonLd}</script>
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
-  <link rel="stylesheet" href="/assets/css/site.css?v=11">
+  <link rel="stylesheet" href="/assets/css/site.css?v=14">
   <link rel="stylesheet" href="/assets/css/project-detail.css?v=2">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
@@ -348,7 +348,7 @@ function buildProjectHtml(data) {
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script src="/assets/js/site-nav.js?v=9"></script>
+  <script src="/assets/js/site-nav.js?v=12"></script>
   <script src="/assets/js/site-reveal.js"></script>
 </body>
 </html>`;

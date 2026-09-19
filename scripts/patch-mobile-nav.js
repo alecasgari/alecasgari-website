@@ -98,10 +98,10 @@ function patchFile(filePath) {
   }
 
   // Bump site.css cache buster when present
-  html = html.replace(/\/assets\/css\/site\.css\?v=\d+/g, '/assets/css/site.css?v=11');
+  html = html.replace(/\/assets\/css\/site\.css\?v=\d+/g, '/assets/css/site.css?v=14');
   html = html.replace(
     /href="\/assets\/css\/site\.css"/g,
-    'href="/assets/css/site.css?v=11"'
+    'href="/assets/css/site.css?v=14"'
   );
 
   if (html === before) return { file: filePath, skipped: true, reason: 'unchanged' };

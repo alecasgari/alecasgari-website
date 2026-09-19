@@ -153,8 +153,8 @@ function buildBlogHtml(data, bodyHtml, tagList) {
   <meta property="og:description" content="${esc(excerpt)}">
   <meta property="og:image" content="https://alecasgari.com${esc(image)}">
   <link rel="shortcut icon" href="/assets/images/logos/favicon.svg">
-  <link rel="stylesheet" href="/assets/css/site.css?v=11">
-  <link rel="stylesheet" href="/assets/css/blog-detail.css?v=1">
+  <link rel="stylesheet" href="/assets/css/site.css?v=14">
+  <link rel="stylesheet" href="/assets/css/blog-detail.css?v=4">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-81C6JE60BQ"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-81C6JE60BQ');</script>
 </head>
@@ -265,7 +265,7 @@ function buildBlogHtml(data, bodyHtml, tagList) {
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-nav.js?v=12"></script>
   <script src="/assets/js/site-reveal.js"></script>
 </body>
 </html>`;

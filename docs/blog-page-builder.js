@@ -14,8 +14,8 @@ const GITHUB = 'https://github.com/alecasgari';
 const FOOTER_COPY = '© 2025–2026 Alec Asgari';
 const ROBOTS_META =
   'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
-const CSS_SITE = '/assets/css/site.css?v=11';
-const CSS_BLOG = '/assets/css/blog-detail.css?v=3';
+const CSS_SITE = '/assets/css/site.css?v=14';
+const CSS_BLOG = '/assets/css/blog-detail.css?v=4';
 
 function esc(s) {
   return String(s || '')
@@ -451,7 +451,7 @@ function buildBlogHtml(data, bodyHtml, tagList, options = {}) {
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script src="/assets/js/site-nav.js?v=9"></script>
+  <script src="/assets/js/site-nav.js?v=12"></script>
   <script src="/assets/js/site-reveal.js"></script>
 </body>
 </html>`;
