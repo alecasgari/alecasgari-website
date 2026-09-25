@@ -5,8 +5,8 @@
 (function () {
   var PLACEHOLDER = '/assets/images/hero-slider/hero-1.jpg';
   var PINNED_URLS = [
-    '/blog/Best-CRM-Small-Business-2026.html',
-    '/blog/5-Signs-You-Need-a-CRM-Now.html'
+    '/blog/saas-seat-cost-vs-owned-stack.html',
+    '/blog/Best-CRM-Small-Business-2026.html'
   ];
   var TELEGRAM_PROJECT = {
     url: '/projects/AI-Powered-Telegram--N8N-Workflow-for-Automated-Voice-to-Presentation.html',

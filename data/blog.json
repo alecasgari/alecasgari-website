@@ -1,5 +1,17 @@
 [
   {
+    "slug": "saas-seat-cost-vs-owned-stack",
+    "title": "HubSpot, Workspace, and Zapier Cost for Small Teams",
+    "excerpt": "What a 5–20 person team actually pays for HubSpot, Google Workspace, Mailchimp, Dropbox and Zapier — and when a one-time Mailcow, SuiteCRM, Mautic, Nextcloud and n8n stack is cheaper.",
+    "category": "Business",
+    "date": "2026-09-25",
+    "image": "/images/blog/saas-seat-cost-vs-owned-stack.webp",
+    "url": "/blog/saas-seat-cost-vs-owned-stack.html",
+    "author": "Alec Asgari",
+    "author_image": "/assets/images/team/alec-asgari-author.webp",
+    "card_image": "/images/blog/saas-seat-cost-vs-owned-stack-card.webp"
+  },
+  {
     "slug": "n8n-telegram-bot-voice-to-powerpoint",
     "title": "n8n Telegram Bot That Creates Presentations",
     "excerpt": "Architecture and limits of an n8n Telegram bot that transcribes voice notes and builds PowerPoint decks — and when you should not build one.",
